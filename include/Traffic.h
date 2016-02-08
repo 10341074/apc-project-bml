@@ -5,7 +5,13 @@
 #include <stdexcept>
 #include <vector>
 
+#include "Color.h"
+
 class Traffic{
+	private:
+	std::vector<std::vector<Color>> * pmat;
+	
+	public:
 	
 };
 

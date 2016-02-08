@@ -8,7 +8,7 @@ MPICXX = mpic++
 INCLUDE_DIR = include
 INCLUDE_MATRIX = include/matrix
 
-_DEPS = Traffic.h
+_DEPS = Color.h Traffic.h
 _DEPS_MATRIX =
 
 DEPS = $(patsubst %, $(INCLUDE_DIR)/%,  $(_DEPS)) $(patsubst %, $(INCLUDE_MATRIX)/%, $(_DEPS_MATRIX))
@@ -19,7 +19,7 @@ SRC_MATRIX_DIR = src/matrix
 OBJ_DIR = obj
 OBJ_MATRIX_DIR = obj/matrix
 
-_OBJ = main.o
+_OBJ = main.o Tokenize.o
 _OBJ_MATRIX =
 
 OBJ = $(patsubst %, $(OBJ_DIR)/%, $(_OBJ)) $(patsubst %, $(OBJ_MATRIX_DIR)/%, $(_OBJ_MATRIX))
@@ -33,7 +33,7 @@ apcbml_st: $(OBJ)
 run:
 	./apcbml_st
 distclean:
-	rm *~ $(INCLUDE_DIR)/*~ $(INCLUDE_MATRIX)/*~ $(SRC_DIR)/*~ $(SRC_MATRIX_DIR)/*~ $(OBJ_DIR)/*~ $(OBJ_MATRIX_DIR)/*~
+	-rm *~ $(INCLUDE_DIR)/*~ $(INCLUDE_MATRIX)/*~ $(SRC_DIR)/*~ $(SRC_MATRIX_DIR)/*~ $(OBJ_DIR)/*~ $(OBJ_MATRIX_DIR)/*~
 clean:
 	-rm apcbml_* $(OBJ_DIR)/*.o $(OBJ_MATRIX_DIR)/*.o
 	-rm *~ $(INCLUDE_DIR)/*~ $(INCLUDE_MATRIX)/*~ $(SRC_DIR)/*~ $(SRC_MATRIX_DIR)/*~ $(OBJ_DIR)/*~ $(OBJ_MATRIX_DIR)/*~
