@@ -2,8 +2,8 @@
 #define MATRIX_ROW_H
 #include <iostream>
 #include <stdexcept>
-#include <memory>
 #include <vector>
+#include <memory>
 
 #include "Color.h"
 
