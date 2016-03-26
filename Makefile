@@ -19,7 +19,7 @@ SRC_MATRIX_DIR = src/matrix
 OBJ_DIR = obj
 OBJ_MATRIX_DIR = obj/matrix
 
-_OBJ = main.o Tokenize.o
+_OBJ = main.o Tokenize.o Traffic.o
 _OBJ_MATRIX =
 
 OBJ = $(patsubst %, $(OBJ_DIR)/%, $(_OBJ)) $(patsubst %, $(OBJ_MATRIX_DIR)/%, $(_OBJ_MATRIX))
@@ -31,10 +31,10 @@ $(OBJ_MATRIX_DIR)/%.o : $(SRC_MATRIX_DIR)/%.cpp $(DEPS)
 apcbml_st: $(OBJ)
 	$(CXX) $(CXXFLAGS) -o $@ $^
 run:
-	./apcbml_st
+	./apcbml_st data/problem.csv
 distclean:
 	-rm *~ $(INCLUDE_DIR)/*~ $(INCLUDE_MATRIX)/*~ $(SRC_DIR)/*~ $(SRC_MATRIX_DIR)/*~ $(OBJ_DIR)/*~ $(OBJ_MATRIX_DIR)/*~
 clean:
 	-rm apcbml_* $(OBJ_DIR)/*.o $(OBJ_MATRIX_DIR)/*.o
-	-rm *~ $(INCLUDE_DIR)/*~ $(INCLUDE_MATRIX)/*~ $(SRC_DIR)/*~ $(SRC_MATRIX_DIR)/*~ $(OBJ_DIR)/*~ $(OBJ_MATRIX_DIR)/*~
+	-rm *~ $(INCLUDE_DIR)/*~ $(INCLUDE_MATRIX)/*~ $(SRC_DIR)/*~ $(SRC_MATRIX_DIR)/*~ $(OBJ_DIR)/*~ $(OBJ_MATRIX_DIR)/*~ output.csv
 

@@ -19,8 +19,6 @@ std::vector<Color> tokenize(const std::string & line){
 //     	std::string n=std::string(1,line[2*index]);
 //     	v[index]=(Color)std::stoul(n);
 	}
-			
-	
 	return v;
 }
 // extract times numbers from line	
@@ -45,7 +43,16 @@ void tokenize_first_line(const std::string & line, std::vector<std::size_t> & ti
 	times.push_back(std::stoul(line.substr(pos1,std::string::npos)));
 	return;
 }
-void tokenize(const std::string & line,std::vector<Color> & v){
+std::ostream & operator<<(std::ostream & os, const std::vector<Color> & v){
+	for(typename std::vector<Color>::const_iterator it = v.begin(); it != v.end()-1; ++it){
+		os << *it << SEPARATOR;
+	}
+	os << *(v.end()-1);
+	os << std::endl;
+
+	return os;
+}
+// void tokenize(const std::string & line,std::vector<Color> & v){
 //        std::size_t index=0;
 //        std::size_t len=line.length();
 // 
@@ -57,5 +64,5 @@ void tokenize(const std::string & line,std::vector<Color> & v){
 //        item=std::stoul(line.substr(pos+1,pos2-pos-1));
 //        
 //        r=std::stod(line.substr(pos2+1));
-        return;
-        }
+//        return;
+//        }
