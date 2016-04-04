@@ -1,6 +1,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <vector>
+#include <memory>
 #include <fstream>
 #include <string>
 
@@ -19,11 +20,13 @@ int main(int argc, char ** argv){
 	
 	std::cout << v ;
 	
-	Traffic traffic;
+	std::unique_ptr< std::vector<std::vector<Color>> > p(new std::vector<std::vector<Color>>);
+	Traffic traffic(p);
 	if_stream >> traffic;
 	if_stream.close();
 	
 	traffic.print();
+	
 	std::ofstream of_stream("output.csv");
 	of_stream << traffic;
 	of_stream.close();

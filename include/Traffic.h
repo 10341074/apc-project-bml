@@ -10,10 +10,12 @@
 
 class Traffic{
 	private:
-//	std::vector<std::vector<Color>> * pmat;
-	std::unique_ptr< std::vector<std::vector<Color>> > pmat;
+	std::vector<std::vector<Color>> * pmat;
+//	std::unique_ptr< std::vector<std::vector<Color>> > pmat;
 	public:
-	Traffic() : pmat(new std::vector<std::vector<Color>>) {}
+//	Traffic() : pmat(new std::vector<std::vector<Color>>) {}
+	Traffic() {}
+	Traffic(std::unique_ptr<std::vector<std::vector<Color>>> & p) : pmat(&*p) {}
 	void push_back(std::vector<Color> & v);
 	void tok_push_back(const std::string & line);
 	void print() const;
