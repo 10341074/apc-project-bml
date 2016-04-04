@@ -13,12 +13,4 @@ void tokenize_first_line(const std::string & line,std::vector<std::size_t> & tim
 
 std::ostream & operator<<(std::ostream & os, const std::vector<Color> & v);
 
-template <typename T> std::ostream & operator<<(std::ostream & os, const std::vector<T> & v){
-	for(typename std::vector<T>::const_iterator it = v.begin(); it != v.end(); ++it){
-		os << *it << SEPARATOR;
-	}
-	os << std::endl;
-	return os;
-}
-
 #endif

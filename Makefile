@@ -8,7 +8,7 @@ MPICXX = mpic++
 INCLUDE_DIR = include
 INCLUDE_MATRIX = include/matrix
 
-_DEPS = Color.h Tokenize.h Traffic.h
+_DEPS = Template.h Color.h Tokenize.h Traffic.h
 _DEPS_MATRIX =
 
 DEPS = $(patsubst %, $(INCLUDE_DIR)/%,  $(_DEPS)) $(patsubst %, $(INCLUDE_MATRIX)/%, $(_DEPS_MATRIX))

@@ -6,6 +6,7 @@
 #include <string>
 
 
+#include "Template.h"
 #include "Color.h"
 #include "Traffic.h"
 #include "Tokenize.h"
