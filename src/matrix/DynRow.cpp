@@ -27,7 +27,9 @@ DynRow & DynRow::operator=(DynRow && dr) {
 	dr.row = nullptr;
 	return * this;
 }
-
+DynRow::DynRow(Row * r) : 
+	row(r) {
+}
 Row::size_type DynRow::size() const {
 	if(row != nullptr)
 		throw std::logic_error("DynRow::size() with row = nullptr");
