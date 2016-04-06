@@ -20,7 +20,7 @@ OBJ_DIR = obj
 OBJ_MATRIX_DIR = obj/matrix
 
 _OBJ = main.o Tokenize.o Traffic.o
-_OBJ_MATRIX = DynRow.o
+_OBJ_MATRIX = DynRow.o RowsVector.o
 
 OBJ = $(patsubst %, $(OBJ_DIR)/%, $(_OBJ)) $(patsubst %, $(OBJ_MATRIX_DIR)/%, $(_OBJ_MATRIX))
 
