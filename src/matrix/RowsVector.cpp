@@ -33,6 +33,10 @@
 // }
 // //	Row::const_iterator cend() const;
 
+DynRow g(){
+	DynRow dr;
+	return dr;
+}
 
 void RowsVector::push_back(const DynRow & dr) {
 	std::cout << "RowsVector push_back &" << std::endl;
@@ -72,4 +76,8 @@ void RowsVector::column_shift() {
 	}
 	return;
 }
-
+void RowsVector::push_function(){
+	std::cout << "push function" <<std::endl;
+	drVec.push_back(g());
+	return;
+}

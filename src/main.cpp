@@ -50,8 +50,6 @@ int main(int argc, char ** argv){
 	Row * pp = nullptr;
 	delete pp;
 	
-// <<<<<<< HEAD
-// =======
 	Row row(10,Blue);
 	std::cout << row;
 	DynRow dr;
@@ -59,6 +57,7 @@ int main(int argc, char ** argv){
 	rvec.push_back(dr);
 	rvec.push_back(f());
 	
-// >>>>>>> Some tests on move-copy with push_back
+	rvec.push_function();
+	rvec.push_function();
 	return 0;
 }

@@ -37,6 +37,7 @@ class RowsVector {
 	void column_start();
 	void column_shift();
 	friend std::ostream & operator<<(std::ostream & os, const RowsVector & rowsVec);
+	void push_function();
 };
 
 #endif
