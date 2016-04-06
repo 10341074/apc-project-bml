@@ -8,8 +8,13 @@
 
 #include "Template.h"
 #include "Color.h"
+#include "Row.h"
+#include "DynRow.h"
+#include "RowsVector.h"
+
 #include "Traffic.h"
 #include "Tokenize.h"
+
 int main(int argc, char ** argv){
 	std::string if_string(argv[1]);
 	std::ifstream if_stream(if_string);
@@ -31,5 +36,11 @@ int main(int argc, char ** argv){
 	std::ofstream of_stream("output.csv");
 	of_stream << traffic;
 	of_stream.close();
+	
+	Row r;
+	std::cout << &r <<std::endl;
+	
+	Row * pp = nullptr;
+	delete pp;
 	return 0;
 }
