@@ -59,5 +59,11 @@ int main(int argc, char ** argv){
 	
 	rvec.push_function();
 	rvec.push_function();
+	
+	std::cout << "pointer" <<std::endl;
+	Row * pp2 = nullptr;
+	rvec.push_back(pp2);
+	rvec.push_back(pp2);
+	delete pp2;
 	return 0;
 }
