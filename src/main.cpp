@@ -15,6 +15,11 @@
 #include "Traffic.h"
 #include "Tokenize.h"
 
+DynRow f(){
+	DynRow dr;
+	return dr;
+}
+
 int main(int argc, char ** argv){
 	std::string if_string(argv[1]);
 	std::ifstream if_stream(if_string);
@@ -42,5 +47,13 @@ int main(int argc, char ** argv){
 	
 	Row * pp = nullptr;
 	delete pp;
+	
+	Row row(10,Blue);
+	std::cout << row;
+	DynRow dr;
+	RowsVector rvec;
+	rvec.push_back(dr);
+	rvec.push_back(f());
+	
 	return 0;
 }
