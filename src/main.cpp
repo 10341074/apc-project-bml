@@ -55,5 +55,7 @@ int main(int argc, char ** argv){
 	rvec.push_back(dr);
 	rvec.push_back(f());
 	
+	rvec.push_function();
+	rvec.push_function();
 	return 0;
 }

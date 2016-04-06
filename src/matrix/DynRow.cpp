@@ -1,8 +1,10 @@
 #include "DynRow.h"
 DynRow::DynRow() :
 	row(new Row){
+	std::cout << "DynRow def  cons" << std::endl;
 }
 DynRow::~DynRow() {
+	std::cout << "DynRow destr" << std::endl;
 	if(row != nullptr)
 		delete row;
 	row = nullptr;
