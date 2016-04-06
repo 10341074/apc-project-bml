@@ -18,7 +18,9 @@ class DynRow{
 	DynRow & operator=(const DynRow & dr);
 	DynRow(DynRow && dr);
 	DynRow & operator=(DynRow && dr);
-	
+
+	DynRow(Row * r);
+
 	Row::size_type size() const;
 	bool empty() const;
 	
@@ -31,5 +33,6 @@ class DynRow{
 	
 	void push_back(const Color & col);
 	void push_back(Color && col);
+	Row * get_row_pointer() { return row; }
 };
 #endif

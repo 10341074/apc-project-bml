@@ -16,6 +16,7 @@ class RowsVector {
 	void push_back(const DynRow & dr);
 	void push_back(DynRow && dr);
 	void push_function();
+	void push_back(Row * r);
 };
 
 #endif

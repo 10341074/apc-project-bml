@@ -19,3 +19,7 @@ void RowsVector::push_function(){
 	drVec.push_back(g());
 	return;
 }
+void RowsVector::push_back(Row * r){
+	drVec.push_back(r);
+return;
+}
