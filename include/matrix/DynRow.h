@@ -25,14 +25,14 @@ class DynRow{
 	bool empty() const;
 	
 	Row::iterator begin();
-	Row::iterator begin() const;					// !! danger possible modifications due to dynamic vector
+	Row::const_iterator begin() const;
 //	Row::const_iterator cbegin() const;
 	Row::iterator end();
-	Row::iterator end() const;						// !! danger possible modifications due to dynamic vector
+	Row::const_iterator end() const;
 //	Row::const_iterator cend() const;
 	
 	void push_back(const Color & col);
 	void push_back(Color && col);
-	Row * const get_row_pointer() const { return row; }
+	const Row * const get_row_pointer() const { return row; }
 };
 #endif

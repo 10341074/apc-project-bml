@@ -54,7 +54,7 @@ std::istream & operator>>(std::istream & is, Traffic & traffic){
 	}
 	return is;
 }
-std::ostream & operator<<(std::ostream & os, Traffic & traffic){
+std::ostream & operator<<(std::ostream & os, const Traffic & traffic){
 //	for(std::vector<std::vector<Color>>::const_iterator it = traffic.pmat->begin(); it != traffic.pmat->end(); ++it){
 //		os << *it;
 //	}

@@ -46,7 +46,7 @@ Row::iterator DynRow::begin(){
 		throw std::logic_error("DynRow::size() with row = nullptr");
 	return row->begin();
 }
-Row::iterator DynRow::begin() const {
+Row::const_iterator DynRow::begin() const {
 	if(row != nullptr)
 		throw std::logic_error("DynRow::size() with row = nullptr");
 	return row->begin();
@@ -57,7 +57,7 @@ Row::iterator DynRow::end() {
 		throw std::logic_error("DynRow::size() with row = nullptr");
 	return row->end();
 }
-Row::iterator DynRow::end() const {
+Row::const_iterator DynRow::end() const {
 	if(row != nullptr)
 		throw std::logic_error("DynRow::size() with row = nullptr");
 	return row->end();
