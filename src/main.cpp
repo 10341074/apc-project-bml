@@ -11,6 +11,7 @@
 #include "Row.h"
 #include "DynRow.h"
 #include "RowsVector.h"
+#include "Col.h"
 
 #include "Traffic.h"
 #include "Tokenize.h"
@@ -43,5 +44,6 @@ int main(int argc, char ** argv){
 	
 	Row * pp = nullptr;
 	delete pp;
+	
 	return 0;
 }

@@ -44,6 +44,8 @@ void RowsVector::push_back(DynRow && dr) {
 }
 void RowsVector::push_back(Row * r){
 	drVec.push_back(r);
+	cVec.push_back(r->begin());
+	cIndex = 0;
 return;
 }
 std::ostream & operator<<(std::ostream & os, const RowsVector & rowsVec) {
@@ -51,4 +53,20 @@ std::ostream & operator<<(std::ostream & os, const RowsVector & rowsVec) {
 		os << * it->get_row_pointer();
 	}
 	return os;
+}
+void RowsVector::column_start() {
+	if(drVec.size() != cVec.size())
+		throw std::logic_error("RowsVector::column_start() cVec and drVec different sizes");
+	DrVec::iterator dr_it = drVec.begin();
+	for(ColumnVec::iterator it = cVec.begin(); it != cVec.end(); ++it){
+		* it = dr_it->begin();
+		++ dr_it;
+	}
+	return;
+}
+void RowsVector::column_shift() {
+	for(ColumnVec::iterator it = cVec.begin(); it != cVec.end(); ++it){
+		++ (* it);
+	}
+	return;
 }

@@ -1,8 +1,21 @@
 #include "Col.h"
-// DynColor::DynColor(){}
-//	~DynColor();
-//	DynColor(const DynColor & dc);
-//	DynColor & operator=(const DynColor & dc);
-//	DynColor(DynColor && dc);
-//	DynColor & operator=(DynColor && dc);
-
+DynColor & DynColor::operator=(const Color & c) {
+	* item = c;
+	return * this;
+}
+DynColor & DynColor::operator=(Color && c) {
+	* item = c;
+	return * this;
+}
+DynColor & DynColor::operator=(const Row::iterator & it) {
+	item = it;
+	return * this;
+}
+DynColor & DynColor::operator=(Row::iterator && it) {
+	item = it;
+	return * this;
+}
+DynColor & DynColor::operator++() {
+	++ item;
+	return * this;
+}

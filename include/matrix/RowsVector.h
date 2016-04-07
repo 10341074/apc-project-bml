@@ -8,11 +8,15 @@
 #include "Color.h"
 #include "Row.h"
 #include "DynRow.h"
+#include "Col.h"
 
-using DrVec = std::vector<DynRow>;
+using DrVec = std::vector< DynRow >;
+using ColumnVec = std::vector< DynColor >;
 
 class RowsVector {
-	std::vector< DynRow > drVec;
+	DrVec drVec;
+	ColumnVec cVec;
+	Row::size_type cIndex = 0;	// column index
 	public:
 //	RowsVector() {}
 
@@ -20,16 +24,18 @@ class RowsVector {
 	bool empty() const;
 	
 	DrVec::iterator begin();
-	DrVec::iterator begin() const;					// !! danger possible modifications due to dynamic vector
+	DrVec::const_iterator begin() const;
 //	DrVec::const_iterator cbegin() const;
 	DrVec::iterator end();
-	DrVec::iterator end() const;						// !! danger possible modifications due to dynamic vector
+	DrVec::const_iterator end() const;
 //	DrVec::const_iterator cend() const;
 
 	void push_back(const DynRow & dr);
 	void push_back(DynRow && dr);
 	void push_back(Row * r);
 	
+	void column_start();
+	void column_shift();
 	friend std::ostream & operator<<(std::ostream & os, const RowsVector & rowsVec);
 };
 
