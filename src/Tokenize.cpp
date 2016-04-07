@@ -43,15 +43,6 @@ void tokenize_first_line(const std::string & line, std::vector<std::size_t> & ti
 	times.push_back(std::stoul(line.substr(pos1,std::string::npos)));
 	return;
 }
-std::ostream & operator<<(std::ostream & os, const std::vector<Color> & v){
-	for(typename std::vector<Color>::const_iterator it = v.begin(); it != v.end()-1; ++it){
-		os << *it << SEPARATOR;
-	}
-	os << *(v.end()-1);
-	os << std::endl;
-
-	return os;
-}
 // void tokenize(const std::string & line,std::vector<Color> & v){
 //        std::size_t index=0;
 //        std::size_t len=line.length();

@@ -26,7 +26,8 @@ int main(int argc, char ** argv){
 	
 	std::cout << v ;
 	
-	std::unique_ptr< std::vector<std::vector<Color>> > p(new std::vector<std::vector<Color>>);
+//	std::unique_ptr< std::vector<std::vector<Color>> > p(new std::vector<std::vector<Color>>);
+	RowsVector * p = new RowsVector;
 	Traffic traffic(p);
 	if_stream >> traffic;
 	if_stream.close();

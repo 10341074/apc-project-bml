@@ -33,6 +33,6 @@ class DynRow{
 	
 	void push_back(const Color & col);
 	void push_back(Color && col);
-	Row * get_row_pointer() { return row; }
+	Row * const get_row_pointer() const { return row; }
 };
 #endif
