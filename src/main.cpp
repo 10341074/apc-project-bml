@@ -4,7 +4,7 @@
 #include <memory>
 #include <fstream>
 #include <string>
-
+#include <sstream>
 
 #include "Template.h"
 #include "Color.h"
@@ -21,27 +21,42 @@ int main(int argc, char ** argv){
 	std::ifstream if_stream(if_string);
 	
 	std::string first_line;
-	std::getline(if_stream, first_line);
-	std::vector<std::size_t> v;
-	tokenize_first_line(first_line,v);
+	std::vector<std::size_t> times(1,0);
+	if(std::getline(if_stream, first_line))
+		tokenize_first_line(first_line,times);
 	
-	std::cout << v ;
+	std::cout << times ;
 	
 //	std::unique_ptr< std::vector<std::vector<Color>> > p(new std::vector<std::vector<Color>>);
 //	VecVector * p = new VecVector(ByRows);
-	Traffic traffic(ByRows);
-	Traffic t(ByCols,3,5);
+	Traffic tr_rows(ByRows);
+	Traffic tr_cols(ByCols);
 	
-	if_stream >> traffic;
+	if_stream >> tr_rows;
 	if_stream.close();
+	tr_cols.transpose_from(tr_rows);
 	
-	traffic.print();
-	t.move_from(traffic,Blue);	
-	t.print();
-	std::ofstream of_stream("output.csv");
-	of_stream << traffic;
-	of_stream.close();
+	Color col_cols = Blue, col_rows = Red;
+	Traffic * pYes = &tr_cols;
+	Traffic * pNo = &tr_rows;
+	Color cYes = col_cols;
+	Color cNo = col_rows;
 	
+	for(std::size_t interval=0; interval<times.size()-1; ++interval){
+		for(std::size_t timeCount=times[interval]; timeCount<times[interval+1]; ++timeCount){
+			(* pNo).move_from(* pYes, cYes);
+			std::swap(pYes,pNo);
+			std::swap(cYes,cNo);
+		}
+		std::stringstream convert;
+		convert << times[interval+1];
+		std::string ofname=convert.str();
+		ofname.append(".csv");
+		std::ofstream of(ofname);
+		
+		of << *pYes ;
+		of.close();
+	}
 //	Row r;
 //	std::cout << &r <<std::endl;
 	return 0;

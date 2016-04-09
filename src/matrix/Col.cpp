@@ -24,9 +24,10 @@ std::ostream & operator<<(std::ostream & os, const DynColor & dc) {
 	return os;
 }
 std::ostream & operator<<(std::ostream & os, const std::vector< DynColor> & cVec) {
-	for(std::vector<DynColor>::const_iterator it = cVec.begin(); it != cVec.end(); ++it) {
+	for(std::vector<DynColor>::const_iterator it = cVec.begin(); it != cVec.end()-1; ++it) {
 		os << *it << SEPARATOR;
 	}
+	os << * (cVec.end()-1);
 	os << std::endl;
 	return os;
 }

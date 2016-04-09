@@ -14,6 +14,7 @@
 
 class Traffic{
 	private:
+	TypeMatrix type;
 	VecVector * pmat = nullptr;
 	public:
 	Traffic(TypeMatrix t);
@@ -25,8 +26,12 @@ class Traffic{
 	Row::const_iterator get_row_it(size_type index) const;
 	DrVec::const_iterator get_vec_it_begin() const;
 	DrVec::const_iterator get_vec_it_end() const;
+	Row::size_type get_cMaxIndex() const;
+	size_type rows() const;
+	size_type cols() const;
 	
 	void move_from(const Traffic & from, Color cl);
+	void transpose_from(const Traffic & from);
 	
 	friend std::ostream & operator<<(std::ostream & os, const Traffic & traffic);
 };
