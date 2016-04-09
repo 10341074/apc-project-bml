@@ -10,7 +10,7 @@
 #include "Color.h"
 #include "Row.h"
 #include "DynRow.h"
-#include "RowsVector.h"
+#include "VecVector.h"
 #include "Col.h"
 
 #include "Traffic.h"
@@ -28,8 +28,9 @@ int main(int argc, char ** argv){
 	std::cout << v ;
 	
 //	std::unique_ptr< std::vector<std::vector<Color>> > p(new std::vector<std::vector<Color>>);
-	RowsVector * p = new RowsVector(ByRows);
-	Traffic traffic(p);
+//	VecVector * p = new VecVector(ByRows);
+	Traffic traffic(ByCols);
+	
 	if_stream >> traffic;
 	if_stream.close();
 	
@@ -39,11 +40,7 @@ int main(int argc, char ** argv){
 	of_stream << traffic;
 	of_stream.close();
 	
-	Row r;
-	std::cout << &r <<std::endl;
-	
-	Row * pp = nullptr;
-	delete pp;
-	
+//	Row r;
+//	std::cout << &r <<std::endl;
 	return 0;
 }

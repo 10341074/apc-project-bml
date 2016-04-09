@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -std=c++11 -Wall -I$(INCLUDE_DIR) -I$(INCLUDE_MATRIX)
+CXXFLAGS = -g -std=c++11 -Wall -I$(INCLUDE_DIR) -I$(INCLUDE_MATRIX)
 # CXXFLAGS = -O3 -std=c++11 -Wall -Wextra -I$(INCLUDE_DIR) -I$(INCLUDE_MATRIX)
 # CXXFLAGS = -O3 -march=native -std=c++11 -Wall -Wextra -I$(INCLUDE_DIR) -I$(INCLUDE_MATRIX)
 CXXGLAGS_OMP = -fopenmp -openmp
@@ -9,7 +9,7 @@ INCLUDE_DIR = include
 INCLUDE_MATRIX = include/matrix
 
 _DEPS = Template.h Color.h Tokenize.h Traffic.h
-_DEPS_MATRIX = Row.h DynRow.h RowsVector.h Col.h
+_DEPS_MATRIX = Row.h DynRow.h VecVector.h Col.h
 
 DEPS = $(patsubst %, $(INCLUDE_DIR)/%,  $(_DEPS)) $(patsubst %, $(INCLUDE_MATRIX)/%, $(_DEPS_MATRIX))
 
@@ -20,7 +20,7 @@ OBJ_DIR = obj
 OBJ_MATRIX_DIR = obj/matrix
 
 _OBJ = main.o Tokenize.o Traffic.o
-_OBJ_MATRIX = Row.o DynRow.o RowsVector.o Col.o
+_OBJ_MATRIX = Row.o DynRow.o VecVector.o Col.o
 
 OBJ = $(patsubst %, $(OBJ_DIR)/%, $(_OBJ)) $(patsubst %, $(OBJ_MATRIX_DIR)/%, $(_OBJ_MATRIX))
 

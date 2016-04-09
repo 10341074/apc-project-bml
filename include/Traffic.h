@@ -9,21 +9,15 @@
 #include "Color.h"
 #include "Row.h"
 #include "DynRow.h"
-#include "RowsVector.h"
+#include "VecVector.h"
 #include "Tokenize.h"
 
 class Traffic{
 	private:
-	RowsVector * pmat;
-//	std::vector<std::vector<Color>> * pmat;
-//	std::unique_ptr< std::vector<std::vector<Color>> > pmat;
+	VecVector * pmat = nullptr;
 	public:
-//	Traffic() : pmat(new std::vector<std::vector<Color>>) {}
-	Traffic();
-//	Traffic(std::unique_ptr<std::vector<std::vector<Color>>> & p) : pmat(&*p) {}
-	Traffic(RowsVector * p);
+	Traffic(TypeMatrix t);
 	~Traffic();
-//	void push_back(std::vector<Color> & v);
 	void tok_push_back(const std::string & line);
 	void print() const;
 	friend std::ostream & operator<<(std::ostream & os, const Traffic & traffic);
