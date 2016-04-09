@@ -4,6 +4,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <vector>
+#include <memory>
 
 #include "Template.h"
 #include "Color.h"
@@ -18,9 +19,12 @@ class DynRow{
 	DynRow & operator=(const DynRow & dr);
 	DynRow(DynRow && dr);
 	DynRow & operator=(DynRow && dr);
-
+	
+//	danger: memory is owned by external
 	DynRow(Row * r);
-
+	DynRow(std::unique_ptr<Row> r);
+	DynRow(Row::size_type s);
+	
 	Row::size_type size() const;
 	bool empty() const;
 	

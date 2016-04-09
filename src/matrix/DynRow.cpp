@@ -30,6 +30,12 @@ DynRow & DynRow::operator=(DynRow && dr) {
 DynRow::DynRow(Row * r) : 
 	row(r) {
 }
+DynRow::DynRow(std::unique_ptr<Row> r) :
+	row(r.release()) {
+}
+DynRow::DynRow(Row::size_type s) : 
+	row(new Row(s,White)) {
+}
 Row::size_type DynRow::size() const {
 	if(row != nullptr)
 		throw std::logic_error("DynRow::size() with row = nullptr");
