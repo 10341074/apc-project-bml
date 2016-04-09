@@ -1,7 +1,26 @@
 #include "VecVector.h"
+VecVector::VecVector(DrVec::size_type rows, Row::size_type cols) :
+	drVec(rows,DynRow(cols)), cVec(rows) {
+	cMaxIndex = cols;
+	cIndex = 0;
+	this->column_start();
+}
 bool VecVector::empty() const {
 	return drVec.empty();
 }
+DrVec::const_iterator VecVector::begin() const {
+	return drVec.begin();
+}
+DrVec::const_iterator VecVector::end() const {
+	return drVec.end();
+}
+ColumnVec::iterator VecVector::column_begin() {
+	return cVec.begin();
+}
+ColumnVec::iterator VecVector::column_end() {
+	return cVec.end();
+}
+
 // void VecVector::push_back(const DynRow & dr) {
 //	drVec.push_back(dr);
 //	return;
@@ -59,11 +78,8 @@ void VecVector::column_shift() {
 	}
 	return;
 }
-VecVector::VecVector(DrVec::size_type rows, Row::size_type cols) :
-	drVec(rows,DynRow(cols)), cVec(rows) {
-	cMaxIndex = cols;
-	cIndex = 0;
-	this->column_start();
+Row::const_iterator VecVector::get_it_from(size_type index) const {
+	return drVec[index].begin();
 }
 std::ostream & operator<<(std::ostream & os, VecVector & vecVec) {
 	vecVec.print(os);

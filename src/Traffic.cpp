@@ -13,6 +13,13 @@ Traffic::Traffic(TypeMatrix t) :
 		else if(t == ByCols)
 			pmat = new ColsVector;
 }
+Traffic::Traffic(TypeMatrix t, size_type rows, size_type cols) :
+	pmat(nullptr) {
+		if(t == ByRows)
+			pmat = new RowsVector(rows,cols);
+		else if(t == ByCols)
+			pmat = new ColsVector(cols,rows);
+}
 Traffic::~Traffic() {
 	if(pmat != nullptr)
 		delete pmat;
@@ -50,27 +57,63 @@ std::ostream & operator<<(std::ostream & os, const Traffic & traffic){
 		os << * traffic.pmat;
 	return os;
 }
-// void Traffic::move_row(size_type row, Color cl){
-//	std::cout<<mat.size()<<std::endl;
-//	if(row>=mat.size()){ throw std::out_of_range("Error: item outside matrix");}
-// 
-//	auto it_end = mat[row].end();
-//	std::vector<Color>::iterator it_old = (mat[row]).begin();
-//	Color first_cl = *it_old;
-//	
-//	for(std::vector<Color>::iterator it = mat[row].begin()+1; it<it_end; ++it){
-//		if(((*it) == White) && ((*it_old) == cl)){
-//			*it = *it_old;
-//			*it_old = White;
-//			++it;
-//			++it_old;
-//		}
-//	++it_old;
-//	}
-//	if((it_old<it_end) && (first_cl == White) && ((*it_old) == cl)){
-//		*mat[row].begin() = *it_old;
-//		*it_old = White;
-//		}
-//	return;
-// }
+Row::const_iterator Traffic::get_row_it(size_type index) const {
+	if(pmat == nullptr)
+		throw std::logic_error("Traffic::get_iterator of empty pmat");
+	return pmat->get_it_from(index);
+}
+DrVec::const_iterator Traffic::get_vec_it_begin() const {
+	if(pmat == nullptr)
+		throw std::logic_error("Traffic::get_iterator of empty pmat");
+	return pmat->begin();
+}
+DrVec::const_iterator Traffic::get_vec_it_end() const {
+	if(pmat == nullptr)
+		throw std::logic_error("Traffic::get_iterator of empty pmat");
+	return pmat->end();
+}
+void Traffic::move_from(const Traffic & from, Color cl){
+	DrVec::const_iterator ext_it = from.get_vec_it_begin();
+	DrVec::const_iterator ext_it_end = from.get_vec_it_end();
+	
+	pmat->column_start();
+	ColumnVec::iterator it_to_begin = pmat->column_begin();
+	ColumnVec::iterator it_to_end = pmat->column_end();
+	for(; ext_it != ext_it_end; ++ext_it) { // loop on all lines
+		Row::const_iterator it_from_old = ext_it->begin();
+		Row::const_iterator it_from = ext_it->begin() + 1;
+		Row::const_iterator it_from_end = ext_it->end();
+		ColumnVec::iterator it_to_old = it_to_begin;
+		ColumnVec::iterator it_to = it_to_begin + 1;
+		
+		Color first_cl = *it_from_old;
 
+		for(; it_from < it_from_end; ++it_from){
+			if(((*it_from) == White) && ((*it_from_old) == cl)){
+				* it_to = * it_from_old;
+				* it_to_old = White;
+				++it_to;
+				++it_to_old;
+				++it_from;
+				++it_from_old;
+			} else {
+				* it_to = * it_from;
+			}
+		++it_to;
+		++it_to_old;
+		++it_from_old;
+		}
+		if((it_from_old<it_from_end) && (first_cl == White) && ((*it_from_old) == cl)){
+			* it_to_begin = cl;
+			* it_to_old = White;
+			}
+		else
+			* it_to_begin = first_cl;
+//	for(auto it=it_to_begin; it<it_to_end; ++it){
+//		std::cout<<*it<<',';
+//	}
+//	std::cout<<std::endl;
+	pmat->column_shift();
+	}
+	return;
+}

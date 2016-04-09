@@ -29,13 +29,15 @@ int main(int argc, char ** argv){
 	
 //	std::unique_ptr< std::vector<std::vector<Color>> > p(new std::vector<std::vector<Color>>);
 //	VecVector * p = new VecVector(ByRows);
-	Traffic traffic(ByCols);
+	Traffic traffic(ByRows);
+	Traffic t(ByCols,3,5);
 	
 	if_stream >> traffic;
 	if_stream.close();
 	
 	traffic.print();
-	
+	t.move_from(traffic,Blue);	
+	t.print();
 	std::ofstream of_stream("output.csv");
 	of_stream << traffic;
 	of_stream.close();

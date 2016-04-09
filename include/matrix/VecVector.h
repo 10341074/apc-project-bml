@@ -32,12 +32,14 @@ class VecVector {
 	
 	bool empty() const;
 	
-	DrVec::iterator begin();
+//	DrVec::iterator begin();
 	DrVec::const_iterator begin() const;
 //	DrVec::const_iterator cbegin() const;
-	DrVec::iterator end();
+//	DrVec::iterator end();
 	DrVec::const_iterator end() const;
 //	DrVec::const_iterator cend() const;
+	ColumnVec::iterator column_begin();
+	ColumnVec::iterator column_end();
 
 	void push_back(const DynRow & dr);
 	void push_back(DynRow && dr);
@@ -46,6 +48,9 @@ class VecVector {
 
 	void column_start();
 	void column_shift();
+	
+	Row::const_iterator get_it_from(size_type index) const;
+
 	friend std::ostream & operator<<(std::ostream & os, VecVector & vecVec);
 };
 
