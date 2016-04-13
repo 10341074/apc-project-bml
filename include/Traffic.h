@@ -48,6 +48,7 @@ class TrafficS{
 		TrafficS(MatrixType t);
 		~TrafficS();
 		void tok_push_back(const std::string & line, const std::size_t & rowsCount);
+		friend std::ostream & operator<<(std::ostream & os, const TrafficS & traffic);
 };
 std::istream & operator>>(std::istream & is, TrafficS & traffic);
 #endif

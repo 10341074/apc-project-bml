@@ -32,32 +32,35 @@ int main(int argc, char ** argv){
 	Traffic tr_rows(ByRows);
 	Traffic tr_cols(ByCols);
 	
-	if_stream >> tr_rows;
+	TrafficS trs(ByRows);
+	if_stream >> trs;
+	std::cout << trs;
+//	if_stream >> tr_rows;
 	if_stream.close();
-	tr_cols.transpose_from(tr_rows);
-	
-	Color col_cols = Blue, col_rows = Red;
-	Traffic * pYes = &tr_cols;
-	Traffic * pNo = &tr_rows;
-	Color cYes = col_cols;
-	Color cNo = col_rows;
-	
-	for(std::size_t interval=0; interval<times.size()-1; ++interval){
-		for(std::size_t timeCount=times[interval]; timeCount<times[interval+1]; ++timeCount){
-			(* pNo).move_from(* pYes, cYes);
-			std::swap(pYes,pNo);
-			std::swap(cYes,cNo);
-		}
-		std::stringstream convert;
-		convert << times[interval+1];
-		std::string ofname=convert.str();
-		ofname.append(".csv");
-		std::ofstream of(ofname);
-		
-		of << *pYes ;
-		of.close();
-	}
-//	Row r;
+//	tr_cols.transpose_from(tr_rows);
+//	
+//	Color col_cols = Blue, col_rows = Red;
+//	Traffic * pYes = &tr_cols;
+//	Traffic * pNo = &tr_rows;
+//	Color cYes = col_cols;
+//	Color cNo = col_rows;
+//	
+//	for(std::size_t interval=0; interval<times.size()-1; ++interval){
+//		for(std::size_t timeCount=times[interval]; timeCount<times[interval+1]; ++timeCount){
+//			(* pNo).move_from(* pYes, cYes);
+//			std::swap(pYes,pNo);
+//			std::swap(cYes,cNo);
+//		}
+//		std::stringstream convert;
+//		convert << times[interval+1];
+//		std::string ofname=convert.str();
+//		ofname.append(".csv");
+//		std::ofstream of(ofname);
+//		
+//		of << *pYes ;
+//		of.close();
+//	}
+// //	Row r;
 //	std::cout << &r <<std::endl;
 	return 0;
 }

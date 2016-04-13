@@ -211,4 +211,10 @@ void TrafficS::tok_push_back(const std::string & line, const std::size_t & rowsC
 		this->rmat->push_back(row,colsTot);
 	return;
 }
+std::ostream & operator<<(std::ostream & os, const TrafficS & traffic){
+	if(traffic.rmat != nullptr) {
+		os << * traffic.rmat;
+	}
+	return os;
+}
 

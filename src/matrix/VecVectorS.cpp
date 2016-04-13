@@ -8,7 +8,6 @@ void VecVectorS::push_back(std::list<Car> & l2, const std::size_t & count) {
 		cMaxIndex = count;
 	else if(cMaxIndex != count)
 		throw std::runtime_error("VecVector::push_back row with different length");
-
 	
 	vec.push_back( std::list<Car>());
 	std::list<Car> & l1 = *(--vec.end());
@@ -26,8 +25,11 @@ std::ostream & operator<<(std::ostream & os, RowsVectorS & rowsvec) {
 		++it_next;
 		std::list<Car>::const_iterator it_end = it_ext->end();
 		--it_end;
+		for(std::size_t in = 0; in < it->J; ++in) {
+			os << White << Separator;
+		}
 		for( ; it != it_end; ++it){
-			std::size_t num = it_next->J - it->J;
+			std::size_t num = it_next->J - it->J - 1;
 			os << it->A << Separator;
 			for(std::size_t in = 0; in < num; ++in) {
 				os <<	White << Separator;
