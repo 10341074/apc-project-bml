@@ -10,15 +10,16 @@
 #include "Row.h"
 #include "DynRow.h"
 #include "VecVector.h"
+#include "VecVectorS.h"
 #include "Tokenize.h"
 
 class Traffic{
 	private:
-	TypeMatrix type;
+	MatrixType type;
 	VecVector * pmat = nullptr;
 	public:
-	Traffic(TypeMatrix t);
-	Traffic(TypeMatrix t,size_type rows, size_type cols);
+	Traffic(MatrixType t);
+	Traffic(MatrixType t,size_type rows, size_type cols);
 	~Traffic();
 	void tok_push_back(const std::string & line);
 	void print() const;
@@ -38,4 +39,16 @@ class Traffic{
 
 std::istream & operator>>(std::istream & is, Traffic & traffic);
 
+class TrafficS{
+	private:
+		MatrixType type;
+		RowsVectorS * rmat = nullptr;
+		ColsVectorS * cmat = nullptr;
+	public:
+		TrafficS(MatrixType t);
+		~TrafficS();
+		void tok_push_back(const std::string & line, const std::size_t & rowsCount);
+};
+std::istream & operator>>(std::istream & is, TrafficS & traffic);
 #endif
+

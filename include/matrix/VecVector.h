@@ -13,7 +13,6 @@
 
 using DrVec 		= std::vector< DynRow >;
 using ColumnVec 	= std::vector< DynColor >;
-enum TypeMatrix{ByRows, ByCols};
 
 class VecVector {
 	protected:

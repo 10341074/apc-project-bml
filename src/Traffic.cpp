@@ -6,7 +6,7 @@
 #include "Tokenize.h"
 
 #define START '0'
-Traffic::Traffic(TypeMatrix t) : 
+Traffic::Traffic(MatrixType t) : 
 	pmat(nullptr) {
 		type = t;
 		if(t == ByRows)
@@ -14,7 +14,7 @@ Traffic::Traffic(TypeMatrix t) :
 		else if(t == ByCols)
 			pmat = new ColsVector;
 }
-Traffic::Traffic(TypeMatrix t, size_type rows, size_type cols) :
+Traffic::Traffic(MatrixType t, size_type rows, size_type cols) :
 	pmat(nullptr) {
 		type = t;
 		if(t == ByRows)
@@ -165,3 +165,50 @@ void Traffic::transpose_from(const Traffic & from) {
 	}
 	return;
 }
+
+TrafficS::TrafficS(MatrixType t) :
+	type(t) {
+	if(type == ByRows) {
+		rmat = new RowsVectorS;
+	} else if(type == ByCols) {
+		cmat = new ColsVectorS;
+	}
+}
+TrafficS::~TrafficS() {
+	if(rmat != nullptr) {
+		delete rmat; rmat = nullptr;
+	}
+	if(cmat != nullptr) {
+		delete cmat; cmat = nullptr;
+	}
+}
+std::istream & operator>>(std::istream & is, TrafficS & traffic){
+	std::string line;
+	std::size_t rowsCount = 0;
+	while(getline(is,line)){
+		traffic.tok_push_back(line,rowsCount);
+		++rowsCount;
+	}
+	return is;
+}
+void TrafficS::tok_push_back(const std::string & line, const std::size_t & rowsCount) {
+	const std::size_t len=line.length();
+	const std::size_t colsTot = (len + 1)/2; 
+	std::list<Car> row;
+	const char * p2one = &line[0];
+	std::size_t colsCount = 0;
+	
+	for( ; colsCount < colsTot; ++colsCount){
+			Color c = static_cast<Color>(*p2one -START);
+			if(c != White) {
+				row.push_back(Car(rowsCount, colsCount, c));
+			}
+		p2one+=2;
+	}
+//	if(rmat == nullptr)
+//		throw std::logic_error("Traffic::tok_push_back null pmat");
+	if(type == ByRows)
+		this->rmat->push_back(row,colsTot);
+	return;
+}
+
