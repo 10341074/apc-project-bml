@@ -15,17 +15,26 @@
 
 using Data = std::list< std::list<Car> >;
 
+class VecVectorS;
+class RowsVectorS;
+class ColsVectorS;
+std::ostream & operator<<(std::ostream & os, const std::list<std::list<Car>> & v);
+std::ostream & operator<<(std::ostream & os, const std::list<Car> & v);
+
 class VecVectorS {
 	protected:
+	MatrixType type = None;
 	Data vec;
-	std::size_t vec_len = 0;
-	std::size_t cMaxIndex = 0;
+	std::size_t vec_size = 0;
+	std::size_t lin_size = 0;
 //	DrVec::size_type size() const;
-//	virtual void update_counts() {}
+//	virtual void update_	counts() {}
 //	virtual void print(std::ostream & os) {}
 	public:
 	VecVectorS();
+	VecVectorS(MatrixType t);
 	~VecVectorS();
+	VecVectorS(const VecVectorS * p);
 	VecVectorS(const VecVectorS & v) 				= delete;
 	VecVectorS(VecVectorS && v) 						= delete;
 	VecVectorS & operator=(const VecVectorS & v)	= delete;
@@ -59,6 +68,7 @@ class VecVectorS {
 //	friend std::ostream & operator<<(std::ostream & os, VecVector & vecVec);
 };
 
+
 class RowsVectorS : public VecVectorS {
 	std::size_t rowsCount = 0;
 	std::size_t colsCount = 0;
@@ -66,13 +76,17 @@ class RowsVectorS : public VecVectorS {
 //	void update_counts();
 //	void print(std::ostream & os);
 	public:
+	RowsVectorS() : VecVectorS(ByRows) {}
+	RowsVectorS(const RowsVectorS & v);
 //	RowsVector() { rowsCount = 0; colsCount = 0; }
 //	RowsVector(DrVec::size_type rows, Row::size_type cols);
 //	virtual ~RowsVector() {}
-	
+	void print() const;
+	void transpose(ColsVectorS & colsvec);
 	size_type rows() const { return rowsCount; }
 	size_type cols() const { return colsCount; }
 	friend std::ostream & operator<<(std::ostream & os, RowsVectorS & rowsvec);
+	friend ColsVectorS;
 };
 class ColsVectorS : public VecVectorS {
 	std::size_t rowsCount = 0;
@@ -81,12 +95,16 @@ class ColsVectorS : public VecVectorS {
 //	void update_counts();
 //	void print(std::ostream & os);
 	public:
+	ColsVectorS() : VecVectorS(ByCols) {}
+	ColsVectorS(const ColsVectorS & v);
 //	ColsVector() { rowsCount = 0; colsCount = 0; }
 //	ColsVector(DrVec::size_type cols, Row::size_type rows);
 //	virtual ~ColsVector() {}
-	
+	void print() const;
+	void transpose(RowsVectorS & rowsvec);
 	size_type rows() const { return rowsCount; }
 	size_type cols() const { return colsCount; }
-//	friend std::ostream & operator<<(std::ostream & os, ColsVector & colsVec);
+	friend std::ostream & operator<<(std::ostream & os, ColsVectorS & colsvec);
+	friend RowsVectorS;
 };
 #endif

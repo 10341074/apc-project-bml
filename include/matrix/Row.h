@@ -10,7 +10,7 @@
 #include "Color.h"
 #include "Car.h"
 
-enum MatrixType{ByRows, ByCols};
+enum MatrixType{ByRows, ByCols, None};
 
 using Row = std::vector<Color>;
 
