@@ -99,13 +99,13 @@ void RowsVectorS::move_forward(const Color & cl) {
 //			// move
 			RowS::iterator itl = l.begin();
 			RowS::iterator itl_next = l.begin();
-			++itl_next;
+//			++itl_next;
 			std::size_t j_next = itl_next->J;
 			for( ; itl != itl_end; ++itl) {
-				if((itl->A == cl) && (itl->J + 1 < j_next))
-					++(itl->J);
 				++itl_next;
 				j_next = itl_next->J;
+				if((itl->A == cl) && (itl->J + 1 < j_next))
+					++(itl->J);
 			}
 //			--itl_end;
 			l.pop_back();
@@ -178,13 +178,13 @@ void ColsVectorS::move_forward(const Color & cl) {
 //			// move
 			RowS::iterator itl = l.begin();
 			RowS::iterator itl_next = l.begin();
-			++itl_next;
+//			++itl_next;
 			std::size_t i_next = itl_next->I;
 			for( ; itl != itl_end; ++itl) {
-				if((itl->A == cl) && (itl->I + 1 < i_next))
-					++(itl->I);
 				++itl_next;
 				i_next = itl_next->I;
+				if((itl->A == cl) && (itl->I + 1 < i_next))
+					++(itl->I);
 			}
 //			--itl_end;
 			l.pop_back();
