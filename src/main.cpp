@@ -31,16 +31,42 @@ int main(int argc, char ** argv){
 //	VecVector * p = new VecVector(ByRows);
 	Traffic tr_rows(ByRows);
 	Traffic tr_cols(ByCols);
-	
-	TrafficS trs(ByRows);
-	ColsVectorS c;
+///*
+	TrafficS trs;
+//	ColsVectorS c;
 	if_stream >> trs;
-	RowsVectorS * rmat = trs.get_rmat();
-	std::cout << *rmat;
-	c.transpose(*rmat	);
-	std::cout << c;
 	if_stream.close();
 
+	Color col_cols = Blue, col_rows = Red;
+	MatrixType t1 = ByCols, t2 = ByRows;
+	
+	MatrixType * pYes = &t1;
+	MatrixType * pNo = &t2;
+	Color cYes = col_cols;
+	Color cNo = col_rows;
+	
+//	for(std::size_t interval=0; interval<1; ++interval){
+	for(std::size_t interval=0; interval<times.size()-1; ++interval){
+		for(std::size_t timeCount=times[interval]; timeCount<times[interval+1]; ++timeCount){
+			// prendi e muovi
+//			std::cout << trs;
+			trs.transpose(*pYes);
+			trs.move_forward(*pYes, cYes);
+			std::swap(pYes,pNo);
+			std::swap(cYes,cNo);
+//			std::cout << "time "<< timeCount << '\n' << trs;
+		}
+		std::stringstream convert;
+		convert << times[interval+1];
+		std::string ofname=convert.str();
+		ofname.append(".csv");
+		std::ofstream of(ofname);
+		
+		of << trs ;
+		of.close();
+	}
+
+//*/
 /*
 	if_stream >> tr_rows;
 	if_stream.close();

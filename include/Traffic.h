@@ -41,17 +41,19 @@ std::istream & operator>>(std::istream & is, Traffic & traffic);
 
 class TrafficS{
 	private:
-		MatrixType type;
+		MatrixType type = None;
 		RowsVectorS * rmat = nullptr;
 		ColsVectorS * cmat = nullptr;
 	public:
-		TrafficS(MatrixType t);
+		TrafficS();
 		~TrafficS();
 		void tok_push_back(const std::string & line, const std::size_t & rowsCount);
 		friend std::ostream & operator<<(std::ostream & os, const TrafficS & traffic);
+		friend std::istream & operator>>(std::istream & is, TrafficS & traffic);
+		void move_forward(const MatrixType & t, const Color & cl);
+		void transpose(const MatrixType & t);
 		RowsVectorS * get_rmat() { return rmat; }
 		ColsVectorS * get_cmat() { return cmat; }
 };
-std::istream & operator>>(std::istream & is, TrafficS & traffic);
 #endif
 

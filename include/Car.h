@@ -13,6 +13,7 @@ class Car{
 	const Color A;
 	
 	Car(const std::size_t & i, const std::size_t & j, const Color & a) : I(i), J(j), A(a) {}
+	Car(const Car & c) : I(c.I), J(c.J), A(c.A) {}
 };
 
 #endif

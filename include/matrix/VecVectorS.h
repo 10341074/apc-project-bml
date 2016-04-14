@@ -10,16 +10,14 @@
 #include "Color.h"
 #include "Car.h"
 #include "Row.h"
-#include "DynRow.h"
-#include "Col.h"
+// #include "DynRow.h"
+// #include "Col.h"
 
 using Data = std::list< std::list<Car> >;
 
 class VecVectorS;
 class RowsVectorS;
 class ColsVectorS;
-std::ostream & operator<<(std::ostream & os, const std::list<std::list<Car>> & v);
-std::ostream & operator<<(std::ostream & os, const std::list<Car> & v);
 
 class VecVectorS {
 	protected:
@@ -32,9 +30,9 @@ class VecVectorS {
 //	virtual void print(std::ostream & os) {}
 	public:
 	VecVectorS();
-	VecVectorS(MatrixType t);
+	VecVectorS(MatrixType t);							// to inherited classes' constructors
 	~VecVectorS();
-	VecVectorS(const VecVectorS * p);
+	VecVectorS(const VecVectorS * p);				// to inherited classes' copy constructors
 	VecVectorS(const VecVectorS & v) 				= delete;
 	VecVectorS(VecVectorS && v) 						= delete;
 	VecVectorS & operator=(const VecVectorS & v)	= delete;
@@ -81,6 +79,7 @@ class RowsVectorS : public VecVectorS {
 //	RowsVector() { rowsCount = 0; colsCount = 0; }
 //	RowsVector(DrVec::size_type rows, Row::size_type cols);
 //	virtual ~RowsVector() {}
+	void move_forward(const Color & cl);
 	void print() const;
 	void transpose(ColsVectorS & colsvec);
 	size_type rows() const { return rowsCount; }
@@ -100,6 +99,7 @@ class ColsVectorS : public VecVectorS {
 //	ColsVector() { rowsCount = 0; colsCount = 0; }
 //	ColsVector(DrVec::size_type cols, Row::size_type rows);
 //	virtual ~ColsVector() {}
+	void move_forward(const Color & cl);
 	void print() const;
 	void transpose(RowsVectorS & rowsvec);
 	size_type rows() const { return rowsCount; }

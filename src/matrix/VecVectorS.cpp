@@ -24,14 +24,15 @@ std::ostream & operator<<(std::ostream & os, RowsVectorS & rowsvec) {
 	Data::const_iterator it_ext_end = rowsvec.vec.end();
 	for( ; it_ext != it_ext_end; ++it_ext) {	// loop on rows
 		std::list<Car>::const_iterator it = it_ext->begin();
-		std::list<Car>::const_iterator it_next = it;
-//		std::advance(it_next,1);
-		++it_next;
 		std::list<Car>::const_iterator it_end = it_ext->end();
-		--it_end;
-		for(std::size_t in = 0; in < it->J; ++in) {
+		for(std::size_t in = 0; (it!=it_end) && (in < it->J); ++in) {
 			os << White << Separator;
 		}
+		std::list<Car>::const_iterator it_next = it;
+		++it_next;
+		it_end = it_ext->end();
+		--it_end;
+//		std::cout << "verifica"<< (it == it_end);
 		for( ; it != it_end; ++it){
 			std::size_t num = it_next->J - it->J - 1;
 			os << it->A << Separator;
@@ -40,8 +41,14 @@ std::ostream & operator<<(std::ostream & os, RowsVectorS & rowsvec) {
 			}
 			++it_next;
 		}
-		os << it->A;
-		std::size_t num = rowsvec.lin_size - it->J - 1;
+		std::size_t num = 0;
+		if(it!=it_ext->end()) {
+			os << it->A;
+			num = rowsvec.lin_size - it->J - 1;
+		} else {
+			os << White;
+			num = rowsvec.lin_size - 1;
+		}
 		for(std::size_t in = 0; in < num; ++in) {
 			os <<	Separator << White;
 		}
@@ -75,9 +82,56 @@ void RowsVectorS::transpose(ColsVectorS & colsvec) {
 	return;
 }
 void RowsVectorS::print() const {
-	std::cout << "Prova row " << std::endl<<vec << std::endl;
-//	std::cout << vec;
+	std::cout << "Print by rows ("<<vec_size<<","<<lin_size<<")"<< std::endl<<vec << std::endl;
 	return;
+}
+void RowsVectorS::move_forward(const Color & cl) {
+	for(Data::iterator itv = vec.begin(); itv != vec.end(); ++itv) {	// loop on lines
+		RowS & l = * itv;
+		if(!l.empty()) {
+			// add first as last
+			l.push_back( * l.begin() );
+			RowS::iterator itl_end = l.end();
+			--itl_end;
+//			std::cout << "end " << itl_end->A<<std::endl;
+//			std::cout << "linnn " << l ; 
+			itl_end->J += lin_size;
+//			// move
+			RowS::iterator itl = l.begin();
+			RowS::iterator itl_next = l.begin();
+			++itl_next;
+			std::size_t j_next = itl_next->J;
+			for( ; itl != itl_end; ++itl) {
+				if((itl->A == cl) && (itl->J + 1 < j_next))
+					++(itl->J);
+				++itl_next;
+				j_next = itl_next->J;
+			}
+//			--itl_end;
+			l.pop_back();
+			itl_end = l.end(); // deque invaidates pointer?
+			--itl_end;
+			
+			if(itl_end->J >= lin_size) {
+				itl_end->J %= lin_size;
+				l.splice(l.begin(),l,itl_end);
+			}
+		}
+	}
+//	this->print();
+	return;
+} 
+ColsVectorS::ColsVectorS(const ColsVectorS & v) :
+	VecVectorS(&v), rowsCount(v.rowsCount), colsCount(v.colsCount) {
+}
+std::ostream & operator<<(std::ostream & os, ColsVectorS & colsvec) {
+	ColsVectorS cols2(colsvec);
+	RowsVectorS rows2;
+//	cols2.print();
+	rows2.transpose(cols2);
+//	rows2.print();
+	os << rows2;
+	return os;
 }
 void ColsVectorS::transpose(RowsVectorS & rowsvec) {
 	rowsCount = rowsvec.rowsCount;
@@ -102,38 +156,49 @@ void ColsVectorS::transpose(RowsVectorS & rowsvec) {
 		}
 		++it;
 	}
+//	std::cout << "transpose from rows "<< std::endl;
+//	rowsvec.print();
 	return;
-}
-ColsVectorS::ColsVectorS(const ColsVectorS & v) :
-	VecVectorS(&v), rowsCount(v.rowsCount), colsCount(v.colsCount) {
-}
-std::ostream & operator<<(std::ostream & os, ColsVectorS & colsvec) {
-	ColsVectorS cols2(colsvec);
-	RowsVectorS rows2;
-	cols2.print();
-	rows2.transpose(cols2);
-	rows2.print();
-	os << rows2;
-	return os;
 }
 void ColsVectorS::print() const {
-	std::cout << "Prova col " << std::endl<< vec << std::endl;
+	std::cout << "Print by cols (" <<vec_size<<","<<lin_size<<")"<< std::endl<< vec << std::endl;
 	return;
 }
-std::ostream & operator<<(std::ostream & os, const std::list<std::list<Car>> & v){
-	for(std::list<std::list<Car>>::const_iterator it = v.begin(); it != v.end(); ++it){
-		os <<"riga "<< *it;
-//		os << std::endl;
+void ColsVectorS::move_forward(const Color & cl) {
+	for(Data::iterator itv = vec.begin(); itv != vec.end(); ++itv) {	// loop on lines
+		RowS & l = * itv;
+		if(!l.empty()) {
+			// add first as last
+			l.push_back( * l.begin() );
+			RowS::iterator itl_end = l.end();
+			--itl_end;
+//			std::cout << "end " << itl_end->A<<std::endl;
+//			std::cout << "linnn " << l ; 
+			itl_end->I += lin_size;
+//			// move
+			RowS::iterator itl = l.begin();
+			RowS::iterator itl_next = l.begin();
+			++itl_next;
+			std::size_t i_next = itl_next->I;
+			for( ; itl != itl_end; ++itl) {
+				if((itl->A == cl) && (itl->I + 1 < i_next))
+					++(itl->I);
+				++itl_next;
+				i_next = itl_next->I;
+			}
+//			--itl_end;
+			l.pop_back();
+			itl_end = l.end(); // deque invaidates pointer?
+			--itl_end;
+			
+			if(itl_end->I >= lin_size) {
+				itl_end->I %= lin_size;
+				l.splice(l.begin(),l,itl_end);
+			}
+		}
 	}
-	os << "//" << std::endl;
-	return os;
-}
-std::ostream & operator<<(std::ostream & os, const std::list<Car> & v){
-	for(std::list<Car>::const_iterator it = v.begin(); it != v.end(); ++it){
-		os << it->A;
-		os << ":";
-	}
-	os << std::endl;
-	return os;
-}
+//	this->print();
+//	std::cout<<*this;
+	return;
+} 
 

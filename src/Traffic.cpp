@@ -165,15 +165,17 @@ void Traffic::transpose_from(const Traffic & from) {
 	}
 	return;
 }
-
-TrafficS::TrafficS(MatrixType t) :
-	type(t) {
-	if(type == ByRows) {
-		rmat = new RowsVectorS;
-	} else if(type == ByCols) {
-		cmat = new ColsVectorS;
-	}
+TrafficS::TrafficS() :
+	rmat(new RowsVectorS), cmat(new ColsVectorS) {
 }
+// TrafficS::TrafficS(MatrixType t) :
+//	type(t) {
+//	if(type == ByRows) {
+//		rmat = new RowsVectorS;
+//	} else if(type == ByCols) {
+//		cmat = new ColsVectorS;
+//	}
+// }
 TrafficS::~TrafficS() {
 	if(rmat != nullptr) {
 		delete rmat; rmat = nullptr;
@@ -185,10 +187,13 @@ TrafficS::~TrafficS() {
 std::istream & operator>>(std::istream & is, TrafficS & traffic){
 	std::string line;
 	std::size_t rowsCount = 0;
+	traffic.type = ByRows;
 	while(getline(is,line)){
 		traffic.tok_push_back(line,rowsCount);
 		++rowsCount;
 	}
+//	std::cout << "Read from file " << traffic.type <<std::endl;
+//	std::cout << * traffic.rmat;
 	return is;
 }
 void TrafficS::tok_push_back(const std::string & line, const std::size_t & rowsCount) {
@@ -207,14 +212,43 @@ void TrafficS::tok_push_back(const std::string & line, const std::size_t & rowsC
 	}
 //	if(rmat == nullptr)
 //		throw std::logic_error("Traffic::tok_push_back null pmat");
-	if(type == ByRows)
+//	if(type == ByRows)
+	if(rmat != nullptr)
 		this->rmat->push_back(row,colsTot);
 	return;
 }
 std::ostream & operator<<(std::ostream & os, const TrafficS & traffic){
-	if(traffic.rmat != nullptr) {
+	if((traffic.type == ByRows) && (traffic.rmat != nullptr)) {
 		os << * traffic.rmat;
+	} else if ((traffic.type == ByCols) && (traffic.cmat != nullptr)) {
+		os << * traffic.cmat;
 	}
 	return os;
+}
+void TrafficS::move_forward(const MatrixType & t, const Color & cl) {
+	if((t == ByRows) && (rmat != nullptr) && (type == ByRows)) {
+		rmat->move_forward(cl);
+//		std::cout << "move "<<type<<std::endl;
+//		std::cout << *rmat;
+	} else if((t == ByCols) && (cmat != nullptr) && (type == ByCols)) {
+		cmat->move_forward(cl);
+//		std::cout << "move "<<type<<std::endl;
+//		std::cout << *cmat;
+	}
+	return;
+}
+void TrafficS::transpose(const MatrixType & t) {
+	if((t == ByCols) && (rmat != nullptr) && (cmat != nullptr) && (type == ByRows)) {
+			cmat->transpose( * rmat );
+			type = ByCols;
+//			std::cout << "already transposed " << type << "of " << t << std::endl;
+//			std::cout << * cmat;
+	} else if((t == ByRows) && (cmat != nullptr) && (rmat != nullptr) && (type == ByCols)) {
+			rmat->transpose( * cmat );
+			type = ByRows;
+//			std::cout << "already transposed " << type << " of " << t << std::endl;
+//			std::cout << * rmat;
+	}
+	return;
 }
 
