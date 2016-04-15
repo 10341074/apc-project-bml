@@ -272,6 +272,7 @@ TrafficD::~TrafficD() {
 		delete cmat; cmat = nullptr;
 	}
 }
+
 std::istream & operator>>(std::istream & is, TrafficD & traffic){
 	std::string line;
 	std::size_t rowsCount = 0;
@@ -284,16 +285,17 @@ std::istream & operator>>(std::istream & is, TrafficD & traffic){
 //	std::cout << * traffic.rmat;
 	return is;
 }
+
 void TrafficD::tok_push_back(const std::string & line, const std::size_t & rowsCount) {
 	const std::size_t len=line.length();
 	const std::size_t colsTot = (len + 1)/2; 
-	std::list<Color> row;
+	std::list<ColorP> row;
 	const char * p2one = &line[0];
 	std::size_t colsCount = 0;
 	
 	for( ; colsCount < colsTot; ++colsCount){
 		Color c = static_cast<Color>(*p2one -START);
-		row.push_back(c);
+		row.push_back(ColorP(c));
 		p2one+=2;
 	}
 //	if(rmat == nullptr)
@@ -341,4 +343,4 @@ void TrafficD::print() const {
 //	}
 //	return;
 // }
-
+//*/

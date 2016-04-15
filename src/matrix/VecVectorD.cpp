@@ -1,4 +1,23 @@
 #include "VecVectorD.h"
+std::ostream & operator<<(std::ostream & os, const ColorP & o) {
+	os << o.my_c;
+	return os;
+}
+std::ostream & operator<<(std::ostream & os, const std::list<std::list<ColorP>> & v) {
+	for(std::list<std::list<ColorP>>::const_iterator it1 = v.begin(); it1 != v.end(); ++it1) {
+		if(it1->begin() != it1->end()) {
+			std::list<ColorP>::const_iterator it2_end = it1->end();
+			--it2_end;
+			std::list<ColorP>::const_iterator it2 = it1->begin();
+			for( ; it2 != it2_end; ++it2) {
+				os << * it2 << Separator;
+			}
+			os << * it2 << std::endl;
+		}
+	}
+	return os;
+}
+
 std::ostream & operator<<(std::ostream & os, const OwnerDataD & d) {
 	os << d.vec;
 	return os;
@@ -29,7 +48,8 @@ void OwnerDataD::print() const {
 	std::cout << std::endl;
 	return;
 }
-void VecVectorD::push_back(std::list<Color> & l2, const std::size_t & count) {
+
+void VecVectorD::push_back(std::list<ColorP> & l2, const std::size_t & count) {
 	RowD & vec = pVec->vec;
 	ColumnD & cVec = pVec->cVec;
 	if(vec.empty()) {
@@ -41,8 +61,8 @@ void VecVectorD::push_back(std::list<Color> & l2, const std::size_t & count) {
 		throw std::runtime_error("VecVector::push_back row with different length");
 	++vec_size;
 	// add row
-	vec.push_back( std::list<Color>() );
-	std::list<Color> & l1 = * (--vec.end());
+	vec.push_back( std::list<ColorP>() );
+	std::list<ColorP> & l1 = * (--vec.end());
 	l1.splice(l1.begin(), l2);
 	// add column
 	std::list<ColorD * > white;
@@ -50,10 +70,10 @@ void VecVectorD::push_back(std::list<Color> & l2, const std::size_t & count) {
 	std::list<ColorD * > red;
 	
 	std::list<std::list<ColorD>>::iterator it_c = cVec.begin();
-	for(std::list<Color>::iterator it = l1.begin(); it != l1.end(); ++it) {
+	for(std::list<ColorP>::iterator it = l1.begin(); it != l1.end(); ++it) {
 		it_c->push_back(it);
 		ColorD & last = * (--(it_c->end()));
-		switch(* it) {
+		switch(it->c()) {
 			case(White):
 				white.push_back(&last);
 				break;

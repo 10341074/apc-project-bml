@@ -38,3 +38,4 @@ std::ostream & operator<<(std::ostream & os, const std::list<std::list<Color>> &
 	}
 	return os;
 }
+

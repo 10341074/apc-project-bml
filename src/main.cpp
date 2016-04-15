@@ -36,7 +36,7 @@ int main(int argc, char ** argv){
 	if_stream >> trd;
 	if_stream.close();
 	std::cout << trd;
-//	trd.print();
+	trd.print();
 //*/
 /*
 	TrafficS trs;

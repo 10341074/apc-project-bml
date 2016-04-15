@@ -15,8 +15,10 @@
 using DataD 		= std::vector< DynRow >;
 using ColumnVec 	= std::vector< DynColor >;
 
-using ColorD		= std::list<Color>::iterator;
-using RowD			= std::list< std::list<Color> >;
+// class ColorP;
+
+using ColorD		= std::list<ColorP>::iterator;
+using RowD			= std::list< std::list<ColorP> >;
 using ColumnD		= std::list< std::list<ColorD> >;
 
 class VecVectorD;
@@ -27,11 +29,14 @@ class ColorP{
 	Color 		my_c = White;
 	ColorD * 	my_p = nullptr;
 	public:
+	ColorP(const Color & c) : my_c(c) {}
 	Color & c() { return my_c; }
 	const Color & c() const {return my_c;}
 	ColorD * & p() { return my_p; }
 	ColorD * const & p() const {return my_p; }
+	friend std::ostream & operator<<(std::ostream & os, const ColorP & o);
 };
+std::ostream & operator<<(std::ostream & os, const std::list<std::list<ColorP>> & v);
 
 class OwnerDataD{
 	RowD 			vec;
@@ -80,7 +85,7 @@ class VecVectorD {
 //	ColumnVec::iterator column_begin();
 //	ColumnVec::iterator column_end();
 
-	void push_back(std::list<Color> & l2, const std::size_t & count);
+	void push_back(std::list<ColorP> & l2, const std::size_t & count);
 	void push_back_white(std::list<ColorD * > & l2);
 	void push_back_blue(std::list<ColorD * > & l2);
 	void push_back_red(std::list<ColorD * > & l2);
