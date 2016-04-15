@@ -19,5 +19,6 @@ using RowS = std::list<Car>;
 std::ostream & operator<<(std::ostream & os, const Row & v);
 std::ostream & operator<<(std::ostream & os, const std::list<std::list<Car>> & v);
 std::ostream & operator<<(std::ostream & os, const std::list<Car> & v);
+std::ostream & operator<<(std::ostream & os, const std::list<std::list<Color>> & v);
 
 #endif

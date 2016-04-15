@@ -11,6 +11,8 @@
 #include "Row.h"
 #include "DynRow.h"
 #include "VecVector.h"
+#include "VecVectorS.h"
+#include "VecVectorD.h"
 #include "Col.h"
 
 #include "Traffic.h"
@@ -29,9 +31,14 @@ int main(int argc, char ** argv){
 	
 //	std::unique_ptr< std::vector<std::vector<Color>> > p(new std::vector<std::vector<Color>>);
 //	VecVector * p = new VecVector(ByRows);
-	Traffic tr_rows(ByRows);
-	Traffic tr_cols(ByCols);
 ///*
+	TrafficD trd;
+	if_stream >> trd;
+	if_stream.close();
+	std::cout << trd;
+//	trd.print();
+//*/
+/*
 	TrafficS trs;
 //	ColsVectorS c;
 	if_stream >> trs;
@@ -68,6 +75,8 @@ int main(int argc, char ** argv){
 
 //*/
 /*
+	Traffic tr_rows(ByRows);
+	Traffic tr_cols(ByCols);
 	if_stream >> tr_rows;
 	if_stream.close();
 	tr_cols.transpose_from(tr_rows);

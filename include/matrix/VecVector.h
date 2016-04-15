@@ -11,33 +11,33 @@
 #include "DynRow.h"
 #include "Col.h"
 
-using DrVec 		= std::vector< DynRow >;
+using DataD 		= std::vector< DynRow >;
 using ColumnVec 	= std::vector< DynColor >;
 
 class VecVector {
 	protected:
-	DrVec 		drVec;
+	DataD 		vec;
 	ColumnVec 	cVec;
-	Row::size_type cIndex = 0;	// column index
-	Row::size_type cMaxIndex = 0;
+	Row::size_type lin_ind = 0;	// column index
+	Row::size_type lin_size = 0;
 
-	DrVec::size_type size() const;
+	DataD::size_type size() const;
 	virtual void update_counts() {}
 	virtual void print(std::ostream & os) {}
 	public:
-	VecVector() {cIndex = 0; cMaxIndex = 0;}
-	VecVector(DrVec::size_type rows, Row::size_type cols);
+	VecVector() {lin_ind = 0; lin_size = 0;}
+	VecVector(DataD::size_type rows, Row::size_type cols);
 	virtual ~VecVector() {}
 	
 	bool empty() const;
-	Row::size_type get_cMaxIndex() const {return cMaxIndex; }
-	size_type get_length() const { return drVec.size(); }
-//	DrVec::iterator begin();
-	DrVec::const_iterator begin() const;
-//	DrVec::const_iterator cbegin() const;
-//	DrVec::iterator end();
-	DrVec::const_iterator end() const;
-//	DrVec::const_iterator cend() const;
+	Row::size_type get_lin_size() const {return lin_size; }
+	size_type get_length() const { return vec.size(); }
+//	DataD::iterator begin();
+	DataD::const_iterator begin() const;
+//	DataD::const_iterator cbegin() const;
+//	DataD::iterator end();
+	DataD::const_iterator end() const;
+//	DataD::const_iterator cend() const;
 	ColumnVec::iterator column_begin();
 	ColumnVec::iterator column_end();
 
@@ -57,14 +57,14 @@ class VecVector {
 };
 
 class RowsVector: public VecVector {
-	DrVec::size_type rowsCount = 0;
+	DataD::size_type rowsCount = 0;
 	Row::size_type colsCount = 0;
 	protected:
 	void update_counts();
 	void print(std::ostream & os);
 	public:
 	RowsVector() { rowsCount = 0; colsCount = 0; }
-	RowsVector(DrVec::size_type rows, Row::size_type cols);
+	RowsVector(DataD::size_type rows, Row::size_type cols);
 	virtual ~RowsVector() {}
 	
 	size_type cols() const { return colsCount; }
@@ -72,14 +72,14 @@ class RowsVector: public VecVector {
 	friend std::ostream & operator<<(std::ostream & os, RowsVector & rowsvec);
 };
 class ColsVector: public VecVector {
-	DrVec::size_type colsCount = 0;
+	DataD::size_type colsCount = 0;
 	Row::size_type rowsCount = 0;
 	protected:
 	void update_counts();
 	void print(std::ostream & os);
 	public:
 	ColsVector() { rowsCount = 0; colsCount = 0; }
-	ColsVector(DrVec::size_type cols, Row::size_type rows);
+	ColsVector(DataD::size_type cols, Row::size_type rows);
 	virtual ~ColsVector() {}
 	
 	size_type rows() const { return rowsCount; }

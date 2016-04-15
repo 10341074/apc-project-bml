@@ -64,20 +64,20 @@ Row::const_iterator Traffic::get_row_it(size_type index) const {
 		throw std::logic_error("Traffic::get_iterator of empty pmat");
 	return pmat->get_it_from(index);
 }
-DrVec::const_iterator Traffic::get_vec_it_begin() const {
+DataD::const_iterator Traffic::get_vec_it_begin() const {
 	if(pmat == nullptr)
 		throw std::logic_error("Traffic::get_iterator of empty pmat");
 	return pmat->begin();
 }
-DrVec::const_iterator Traffic::get_vec_it_end() const {
+DataD::const_iterator Traffic::get_vec_it_end() const {
 	if(pmat == nullptr)
 		throw std::logic_error("Traffic::get_iterator of empty pmat");
 	return pmat->end();
 }
-Row::size_type Traffic::get_cMaxIndex() const {
+Row::size_type Traffic::get_lin_size() const {
 	if(pmat == nullptr)
-		throw std::logic_error("Traffic::get_cMaxIndex of empty pmat");
-	return pmat->get_cMaxIndex();
+		throw std::logic_error("Traffic::get_lin_size of empty pmat");
+	return pmat->get_lin_size();
 }
 size_type Traffic::rows() const {
 	if(pmat == nullptr)
@@ -86,15 +86,15 @@ size_type Traffic::rows() const {
 }
 size_type Traffic::cols() const {
 	if(pmat == nullptr)
-		throw std::logic_error("Traffic::get_cMaxIndex of empty pmat");
+		throw std::logic_error("Traffic::get_lin_size of empty pmat");
 	return pmat->cols();
 }
 void Traffic::move_from(const Traffic & from, Color cl){
-	DrVec::const_iterator ext_it = from.get_vec_it_begin();
-	DrVec::const_iterator ext_it_end = from.get_vec_it_end();
+	DataD::const_iterator ext_it = from.get_vec_it_begin();
+	DataD::const_iterator ext_it_end = from.get_vec_it_end();
 	if(pmat == nullptr)
 		throw std::logic_error("Traffic::move of empty pmat");
-	if(from.get_cMaxIndex() != pmat->get_length())
+	if(from.get_lin_size() != pmat->get_length())
 		throw std::logic_error("Traffic::move with to matrices with not coincident lengths");
 	pmat->column_start();
 	ColumnVec::iterator it_to_begin = pmat->column_begin();
@@ -137,8 +137,8 @@ void Traffic::move_from(const Traffic & from, Color cl){
 	return;
 }
 void Traffic::transpose_from(const Traffic & from) {
-	DrVec::const_iterator ext_it = from.get_vec_it_begin();
-	DrVec::const_iterator ext_it_end = from.get_vec_it_end();
+	DataD::const_iterator ext_it = from.get_vec_it_begin();
+	DataD::const_iterator ext_it_end = from.get_vec_it_end();
 	delete pmat;
 	if(type == ByRows)
 		pmat = new RowsVector(from.rows(), from.cols());
@@ -146,7 +146,7 @@ void Traffic::transpose_from(const Traffic & from) {
 		pmat = new ColsVector(from.cols(), from.rows());
 	if(pmat == nullptr)
 		throw std::logic_error("Traffic::transpose of empty pmat");
-	if(from.get_cMaxIndex() != pmat->get_length())
+	if(from.get_lin_size() != pmat->get_length())
 		throw std::logic_error("Traffic::transpose with to matrices with not coincident lengths");
 	pmat->column_start();
 	ColumnVec::iterator it_to_begin = pmat->column_begin();
@@ -251,4 +251,94 @@ void TrafficS::transpose(const MatrixType & t) {
 	}
 	return;
 }
+
+
+TrafficD::TrafficD() :
+	data(), rmat(new RowsVectorD(&data)), cmat(new ColsVectorD(&data)) {
+}
+// TrafficS::TrafficS(MatrixType t) :
+//	type(t) {
+//	if(type == ByRows) {
+//		rmat = new RowsVectorS;
+//	} else if(type == ByCols) {
+//		cmat = new ColsVectorS;
+//	}
+// }
+TrafficD::~TrafficD() {
+	if(rmat != nullptr) {
+		delete rmat; rmat = nullptr;
+	}
+	if(cmat != nullptr) {
+		delete cmat; cmat = nullptr;
+	}
+}
+std::istream & operator>>(std::istream & is, TrafficD & traffic){
+	std::string line;
+	std::size_t rowsCount = 0;
+	traffic.type = ByRows;
+	while(getline(is,line)){
+		traffic.tok_push_back(line,rowsCount);
+		++rowsCount;
+	}
+//	std::cout << "Read from file " << traffic.type <<std::endl;
+//	std::cout << * traffic.rmat;
+	return is;
+}
+void TrafficD::tok_push_back(const std::string & line, const std::size_t & rowsCount) {
+	const std::size_t len=line.length();
+	const std::size_t colsTot = (len + 1)/2; 
+	std::list<Color> row;
+	const char * p2one = &line[0];
+	std::size_t colsCount = 0;
+	
+	for( ; colsCount < colsTot; ++colsCount){
+		Color c = static_cast<Color>(*p2one -START);
+		row.push_back(c);
+		p2one+=2;
+	}
+//	if(rmat == nullptr)
+//		throw std::logic_error("Traffic::tok_push_back null pmat");
+//	if(type == ByRows)
+	if(rmat != nullptr)
+		this->rmat->push_back(row,colsTot);
+	return;
+}
+std::ostream & operator<<(std::ostream & os, const TrafficD & traffic){
+	if((traffic.type == ByRows) && (traffic.rmat != nullptr)) {
+		os << * traffic.rmat;
+	} else if ((traffic.type == ByCols) && (traffic.cmat != nullptr)) {
+		os << * traffic.cmat;
+	}
+	return os;
+}
+void TrafficD::print() const {
+	data.print();
+	return;
+}
+// void TrafficS::move_forward(const MatrixType & t, const Color & cl) {
+//	if((t == ByRows) && (rmat != nullptr) && (type == ByRows)) {
+//		rmat->move_forward(cl);
+// //		std::cout << "move "<<type<<std::endl;
+// //		std::cout << *rmat;
+//	} else if((t == ByCols) && (cmat != nullptr) && (type == ByCols)) {
+//		cmat->move_forward(cl);
+// //		std::cout << "move "<<type<<std::endl;
+// //		std::cout << *cmat;
+//	}
+//	return;
+// }
+// void TrafficS::transpose(const MatrixType & t) {
+//	if((t == ByCols) && (rmat != nullptr) && (cmat != nullptr) && (type == ByRows)) {
+//			cmat->transpose( * rmat );
+//			type = ByCols;
+// //			std::cout << "already transposed " << type << "of " << t << std::endl;
+// //			std::cout << * cmat;
+//	} else if((t == ByRows) && (cmat != nullptr) && (rmat != nullptr) && (type == ByCols)) {
+//			rmat->transpose( * cmat );
+//			type = ByRows;
+// //			std::cout << "already transposed " << type << " of " << t << std::endl;
+// //			std::cout << * rmat;
+//	}
+//	return;
+// }
 

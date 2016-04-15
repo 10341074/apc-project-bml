@@ -24,4 +24,17 @@ std::ostream & operator<<(std::ostream & os, const std::list<Car> & v){
 	os << std::endl;
 	return os;
 }
-
+std::ostream & operator<<(std::ostream & os, const std::list<std::list<Color>> & v) {
+	for(std::list<std::list<Color>>::const_iterator it1 = v.begin(); it1 != v.end(); ++it1) {
+		if(it1->begin() != it1->end()) {
+			std::list<Color>::const_iterator it2_end = it1->end();
+			--it2_end;
+			std::list<Color>::const_iterator it2 = it1->begin();
+			for( ; it2 != it2_end; ++it2) {
+				os << * it2 << Separator;
+			}
+			os << * it2 << std::endl;
+		}
+	}
+	return os;
+}

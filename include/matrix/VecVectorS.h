@@ -25,7 +25,7 @@ class VecVectorS {
 	Data vec;
 	std::size_t vec_size = 0;
 	std::size_t lin_size = 0;
-//	DrVec::size_type size() const;
+//	DataD::size_type size() const;
 //	virtual void update_	counts() {}
 //	virtual void print(std::ostream & os) {}
 	public:
@@ -39,14 +39,14 @@ class VecVectorS {
 	VecVectorS & operator=(VecVectorS && v)		= delete;
 
 //	bool empty() const;
-//	Row::size_type get_cMaxIndex() const {return cMaxIndex; }
-//	size_type get_length() const { return drVec.size(); }
-// //	DrVec::iterator begin();
-//	DrVec::const_iterator begin() const;
-// //	DrVec::const_iterator cbegin() const;
-// //	DrVec::iterator end();
-//	DrVec::const_iterator end() const;
-// //	DrVec::const_iterator cend() const;
+//	Row::size_type get_lin_size() const {return lin_size; }
+//	size_type get_length() const { return vec.size(); }
+// //	DataD::iterator begin();
+//	DataD::const_iterator begin() const;
+// //	DataD::const_iterator cbegin() const;
+// //	DataD::iterator end();
+//	DataD::const_iterator end() const;
+// //	DataD::const_iterator cend() const;
 //	ColumnVec::iterator column_begin();
 //	ColumnVec::iterator column_end();
 // 
@@ -77,7 +77,7 @@ class RowsVectorS : public VecVectorS {
 	RowsVectorS() : VecVectorS(ByRows) {}
 	RowsVectorS(const RowsVectorS & v);
 //	RowsVector() { rowsCount = 0; colsCount = 0; }
-//	RowsVector(DrVec::size_type rows, Row::size_type cols);
+//	RowsVector(DataD::size_type rows, Row::size_type cols);
 //	virtual ~RowsVector() {}
 	void move_forward(const Color & cl);
 	void print() const;
@@ -97,7 +97,7 @@ class ColsVectorS : public VecVectorS {
 	ColsVectorS() : VecVectorS(ByCols) {}
 	ColsVectorS(const ColsVectorS & v);
 //	ColsVector() { rowsCount = 0; colsCount = 0; }
-//	ColsVector(DrVec::size_type cols, Row::size_type rows);
+//	ColsVector(DataD::size_type cols, Row::size_type rows);
 //	virtual ~ColsVector() {}
 	void move_forward(const Color & cl);
 	void print() const;
