@@ -73,6 +73,7 @@ void VecVectorD::push_back(std::list<ColorP> & l2, const std::size_t & count) {
 	for(std::list<ColorP>::iterator it = l1.begin(); it != l1.end(); ++it) {
 		it_c->push_back(it);
 		ColorD & last = * (--(it_c->end()));
+		it->p() = &last;
 		switch(it->c()) {
 			case(White):
 				white.push_back(&last);

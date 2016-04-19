@@ -26,7 +26,7 @@ class RowsVectorD;
 class ColsVectorD;
 
 class ColorP{
-	Color 		my_c = White;
+	Color			my_c = White;
 	ColorD * 	my_p = nullptr;
 	public:
 	ColorP(const Color & c) : my_c(c) {}
@@ -116,7 +116,7 @@ class RowsVectorD: public VecVectorD {
 	RowsVectorD(OwnerDataD * d) : VecVectorD(ByRows, d) {}
 //	RowsVector(DataD::size_type rows, Row::size_type cols);
 //	virtual ~RowsVector() {}
-	
+	void move_forward(const Color & cl);
 	size_type cols() const { return colsCount; }
 	size_type rows() const { return rowsCount; }
 	friend std::ostream & operator<<(std::ostream & os, RowsVectorD & rowsvec);
@@ -132,7 +132,7 @@ class ColsVectorD: public VecVectorD {
 	ColsVectorD(OwnerDataD * d) : VecVectorD(ByCols, d) {}
 //	ColsVector(DataD::size_type cols, Row::size_type rows);
 //	virtual ~ColsVector() {}
-	
+	void move_forward(const Color & cl);
 	std::size_t rows() const { return rowsCount; }
 	std::size_t cols() const { return colsCount; }
 	friend std::ostream & operator<<(std::ostream & os, ColsVectorD & colsvec);
