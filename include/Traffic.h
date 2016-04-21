@@ -11,6 +11,7 @@
 #include "DynRow.h"
 #include "VecVector.h"
 #include "VecVectorS.h"
+#include "VecVectorD.h"
 #include "Tokenize.h"
 
 class Traffic{
@@ -54,6 +55,24 @@ class TrafficS{
 		void transpose(const MatrixType & t);
 		RowsVectorS * get_rmat() { return rmat; }
 		ColsVectorS * get_cmat() { return cmat; }
+};
+class TrafficD{
+	private:
+		MatrixType type = None;
+		OwnerDataD	data;
+		RowsVectorD * rmat = nullptr;
+		ColsVectorD * cmat = nullptr;
+	public:
+		TrafficD();
+		~TrafficD();
+		void tok_push_back(const std::string & line, const std::size_t & rowsCount);
+		friend std::ostream & operator<<(std::ostream & os, const TrafficD & traffic);
+		friend std::istream & operator>>(std::istream & is, TrafficD & traffic);
+		void print() const;
+		void move_forward(const MatrixType & t, const Color & cl);
+//		void transpose(const MatrixType & t);
+		RowsVectorD * get_rmat() { return rmat; }
+		ColsVectorD * get_cmat() { return cmat; }
 };
 #endif
 

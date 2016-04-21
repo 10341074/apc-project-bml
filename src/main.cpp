@@ -26,12 +26,16 @@ int main(int argc, char ** argv){
 		tokenize_first_line(first_line,times);
 	
 	std::cout << times ;
-	
+///*
+	TrafficD trd;
+	if_stream >> trd;
+	if_stream.close();
+	std::cout << trd;
+	trd.print();
+//*/
 //	std::unique_ptr< std::vector<std::vector<Color>> > p(new std::vector<std::vector<Color>>);
 //	VecVector * p = new VecVector(ByRows);
-	Traffic tr_rows(ByRows);
-	Traffic tr_cols(ByCols);
-///*
+/*
 	TrafficS trs;
 //	ColsVectorS c;
 	if_stream >> trs;
@@ -68,6 +72,8 @@ int main(int argc, char ** argv){
 
 //*/
 /*
+	Traffic tr_rows(ByRows);
+	Traffic tr_cols(ByCols);
 	if_stream >> tr_rows;
 	if_stream.close();
 	tr_cols.transpose_from(tr_rows);

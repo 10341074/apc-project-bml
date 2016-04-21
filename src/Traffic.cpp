@@ -252,3 +252,69 @@ void TrafficS::transpose(const MatrixType & t) {
 	return;
 }
 
+TrafficD::TrafficD() :
+	data(), rmat(new RowsVectorD(&data)), cmat(new ColsVectorD(&data)) {
+}
+// TrafficS::TrafficS(MatrixType t) :
+//	type(t) {
+//	if(type == ByRows) {
+//		rmat = new RowsVectorS;
+//	} else if(type == ByCols) {
+//		cmat = new ColsVectorS;
+//	}
+// }
+TrafficD::~TrafficD() {
+	if(rmat != nullptr) {
+		delete rmat; rmat = nullptr;
+	}
+	if(cmat != nullptr) {
+		delete cmat; cmat = nullptr;
+	}
+}
+std::istream & operator>>(std::istream & is, TrafficD & traffic){
+	std::string line;
+	std::size_t rowsCount = 0;
+	traffic.type = ByRows;
+	while(getline(is,line)){
+		traffic.tok_push_back(line,rowsCount);
+		++rowsCount;
+	}
+//	std::cout << "Read from file " << traffic.type <<std::endl;
+//	std::cout << * traffic.rmat;
+	return is;
+}
+void TrafficD::tok_push_back(const std::string & line, const std::size_t & rowsCount) {
+	const std::size_t len=line.length();
+	const std::size_t colsTot = (len + 1)/2; 
+	std::list< std::vector< Color > > row;
+	row.push_back(std::vector<Color>(colsTot));
+	const char * p2one = &line[0];
+//	std::size_t colsCount = 0;
+	
+	std::vector<Color> & rowv =  * row.begin();
+//	for( ; colsCount < colsTot; ++colsCount){
+	for(std::vector<Color>::iterator it = rowv.begin() ; it < rowv.end(); ++it){
+		Color c = static_cast<Color>(*p2one -START);
+//		row->push_back(c);
+		* it = c;
+		p2one+=2;
+	}
+//	if(rmat == nullptr)
+//		throw std::logic_error("Traffic::tok_push_back null pmat");
+//	if(type == ByRows)
+	if(rmat != nullptr)
+		this->rmat->push_back(row,colsTot);
+	return;
+}
+std::ostream & operator<<(std::ostream & os, const TrafficD & traffic){
+	if((traffic.type == ByRows) && (traffic.rmat != nullptr)) {
+		os << * traffic.rmat;
+	} else if ((traffic.type == ByCols) && (traffic.cmat != nullptr)) {
+		os << * traffic.cmat;
+	}
+	return os;
+}
+void TrafficD::print() const {
+	data.print();
+	return;
+}
