@@ -281,6 +281,7 @@ std::istream & operator>>(std::istream & is, TrafficD & traffic){
 	}
 //	std::cout << "Read from file " << traffic.type <<std::endl;
 //	std::cout << * traffic.rmat;
+	traffic.rmat->border_columns();
 	return is;
 }
 void TrafficD::tok_push_back(const std::string & line, const std::size_t & rowsCount) {
@@ -319,11 +320,11 @@ void TrafficD::print() const {
 	return;
 }
 void TrafficD::move_forward(const MatrixType & t, const Color & cl) {
-	if((t == ByRows) && (rmat != nullptr) && (type == ByRows)) {
+	if((t == ByRows) && (rmat != nullptr)) {
 		rmat->move_forward(cl);
 //		std::cout << "move "<<type<<std::endl;
 //		std::cout << *rmat;
-	} else if((t == ByCols) && (cmat != nullptr) && (type == ByCols)) {
+	} else if((t == ByCols) && (cmat != nullptr)) {
 		cmat->move_forward(cl);
 //		std::cout << "move "<<type<<std::endl;
 //		std::cout << *cmat;

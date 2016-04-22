@@ -27,15 +27,35 @@ int main(int argc, char ** argv){
 	
 	std::cout << times ;
 ///*
+	Color col_cols = Blue, col_rows = Red;
+	MatrixType t1 = ByCols, t2 = ByRows;
+	
+	MatrixType * pYes = &t1;
+	MatrixType * pNo = &t2;
+	Color cYes = col_cols;
+	Color cNo = col_rows;
+
 	TrafficD trd;
 	if_stream >> trd;
 	if_stream.close();
-	std::cout << trd;
-//	trd.print();
-	trd.move_forward(ByRows,Blue);
-	trd.move_forward(ByRows,Blue);
-	trd.move_forward(ByRows,Red);
-	std::cout << trd;
+	for(std::size_t interval=0; interval<times.size()-1; ++interval){
+		for(std::size_t timeCount=times[interval]; timeCount<times[interval+1]; ++timeCount){
+	//			std::cout << trs;
+			trd.move_forward(*pYes, cYes);
+			std::swap(pYes,pNo);
+			std::swap(cYes,cNo);
+	//			std::cout << "time "<< timeCount << '\n' << trs;
+		}
+		std::stringstream convert;
+		convert << times[interval+1];
+		std::string ofname=convert.str();
+		ofname.append(".csv");
+		std::ofstream of(ofname);
+		
+		of << trd ;
+		of.close();
+	}
+
 //*/
 //	std::unique_ptr< std::vector<std::vector<Color>> > p(new std::vector<std::vector<Color>>);
 //	VecVector * p = new VecVector(ByRows);

@@ -53,17 +53,17 @@ void OwnerDataD::print() const {
 		std::cout << std::endl;
 	} 
 	std::cout << "White\n";
-	for(std::list<ColorD * >::const_iterator it = white.begin(); it != white.end(); ++it) {
+	for(std::list<ColorDD >::const_iterator it = white.begin(); it != white.end(); ++it) {
 		std::cout << ***it << Separator;
 	}
 	std::cout << std::endl;
 	std::cout << "Blue\n";
-	for(std::list<ColorD * >::const_iterator it = blue.begin(); it != blue.end(); ++it) {
+	for(std::list<ColorDD >::const_iterator it = blue.begin(); it != blue.end(); ++it) {
 		std::cout << ***it << Separator;
 	}
 	std::cout << std::endl;
 	std::cout << "Red\n";
-	for(std::list<ColorD * >::const_iterator it = red.begin(); it != red.end(); ++it) {
+	for(std::list<ColorDD >::const_iterator it = red.begin(); it != red.end(); ++it) {
 		std::cout << ***it << Separator;
 	}
 	std::cout << std::endl;
@@ -89,9 +89,9 @@ void VecVectorD::push_back(CarsD & l2, const std::size_t & count) {
 	// update row and column
 	std::vector<Color> & 	v_car = * ( --(cars.end()) );
 	std::vector<ColorP> & 	v_row = * ( --(vec.end()) );
-	std::list<ColorD * > white;
-	std::list<ColorD * > blue;
-	std::list<ColorD * > red;
+	std::list<ColorDD > white;
+	std::list<ColorDD > blue;
+	std::list<ColorDD > red;
 
 	ColumnD::iterator 									it_c = cvec.begin();
 	std::vector<ColorP>::iterator						it_r = v_row.begin();
@@ -100,18 +100,18 @@ void VecVectorD::push_back(CarsD & l2, const std::size_t & count) {
 	++it_r;
 	for( ; it != v_car.end(); ++it) {
 		it_c->push_back(it_r);
-		ColorD & last = * ( --(it_c->end()) );
+		ColorDD last = ( --(it_c->end()) );
 		it_r->cp() = & * it;
-		it_r->p() = &last;
+		it_r->p() = last;
 		switch( * it ) {
 			case(White):
-				white.push_back(&last);
+				white.push_back(last);
 				break;
 			case(Blue):
-				blue.push_back(&last);
+				blue.push_back(last);
 				break;
 			case(Red):
-				red.push_back(&last);
+				red.push_back(last);
 				break;
 //			default:
 //				break;
@@ -133,18 +133,31 @@ void VecVectorD::push_back(CarsD & l2, const std::size_t & count) {
 	this->push_back_red(red);
 	return;
 }
-void VecVectorD::push_back_white(std::list<ColorD * > & l2) {
-	std::list<ColorD * > & l1 = pvec->white;
+void VecVectorD::border_columns() {
+	ColumnD & 				cvec = pvec->cvec;
+	ColumnD::iterator 	it_c = cvec.begin();
+	for( ; it_c != cvec.end(); ++it_c) {
+		std::list< ColorD >::iterator it_c2 = it_c->end();
+		--it_c2;
+		it_c->emplace_front(* it_c2);
+		it_c2 = it_c->begin();
+		++it_c2;
+		it_c->emplace_back(* it_c2);
+	}
+	return;
+}
+void VecVectorD::push_back_white(std::list<ColorDD > & l2) {
+	std::list<ColorDD > & l1 = pvec->white;
 	l1.splice(l1.end(), l2);
 	return;
 }
-void VecVectorD::push_back_blue(std::list<ColorD * > & l2) {
-	std::list<ColorD * > & l1 = pvec->blue;
+void VecVectorD::push_back_blue(std::list<ColorDD > & l2) {
+	std::list<ColorDD > & l1 = pvec->blue;
 	l1.splice(l1.end(), l2);
 	return;
 }
-void VecVectorD::push_back_red(std::list<ColorD * > & l2) {
-	std::list<ColorD * > & l1 = pvec->red;
+void VecVectorD::push_back_red(std::list<ColorDD > & l2) {
+	std::list<ColorDD > & l1 = pvec->red;
 	l1.splice(l1.end(), l2);
 	return;
 }
@@ -156,7 +169,7 @@ std::ostream & operator<<(std::ostream & os, RowsVectorD & rowsvec) {
 	return os;
 }
 void RowsVectorD::move_forward(const Color & cl) {
-	std::list<ColorD * > * cll = & pvec->white;
+	std::list<ColorDD > * cll = & pvec->white;
 	switch(cl) {
 		case(Blue):
 			cll = & pvec->blue;
@@ -167,16 +180,16 @@ void RowsVectorD::move_forward(const Color & cl) {
 		case(White):
 			break;
 	}
-	std::list<ColorD * *> cllp;
-	for(std::list<ColorD * >::iterator it = cll->begin(); it != cll->end(); ++it) {
+	std::list<ColorDD *> cllp;
+	for(std::list<ColorDD >::iterator it = cll->begin(); it != cll->end(); ++it) {
 		ColorD it_r 	= * * it;
 		ColorD it_r2 	= it_r; ++it_r2;
 		if(it_r2->cl() == White) {
 			cllp.push_back(& * it);
 		}
 	}
-	for(std::list<ColorD * *>::iterator it = cllp.begin(); it != cllp.end(); ++it) {
-		ColorD * & col	= * * it;
+	for(std::list<ColorDD *>::iterator it = cllp.begin(); it != cllp.end(); ++it) {
+		ColorDD & col	= * * it;
 		ColorD it_r 	= * col;
 		ColorD it_r2 	= it_r; ++it_r2;
 		std::swap(it_r->cl(),it_r2->cl());
@@ -192,7 +205,33 @@ std::ostream & operator<<(std::ostream & os, ColsVectorD & colsvec) {
 	return os;
 }
 void ColsVectorD::move_forward(const Color & cl) {
-	
+	std::list<ColorDD > * cll = & pvec->white;
+	switch(cl) {
+		case(Blue):
+			cll = & pvec->blue;
+			break;
+		case(Red):
+			cll = & pvec->red;
+			break;
+		case(White):
+			break;
+	}
+	std::list<ColorDD *> cllp;
+	for(std::list<ColorDD >::iterator it = cll->begin(); it != cll->end(); ++it) {
+		ColorDD 	it_c = * it;
+		ColorDD 	it_c2 = it_c; ++it_c2;
+		if((*it_c2)->cl() == White) {
+			cllp.push_back(& * it);
+		}
+	}
+	for(std::list<ColorDD *>::iterator it = cllp.begin(); it != cllp.end(); ++it) {
+		ColorDD & col	= * * it;
+		ColorDD it_c 	= col;
+		ColorDD it_c2 	= it_c; ++it_c2;
+		std::swap((*it_c)->cl(),(*it_c2)->cl());
+		// update color list
+		col = (*it_c2)->p();
+	}
 	return;
 }
 /*
