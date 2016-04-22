@@ -6,7 +6,7 @@
 #include <list>
 // #include <memory>
 
-// #include "Template.h"
+#include "Template.h"
 #include "Color.h"
 #include "Row.h"
 // #include "DynRow.h"
@@ -29,14 +29,16 @@ class ColsVectorD;
 
 class ColorP {
 	private:
-		Color	*		my_c = nullptr;
+		Color	*				my_c = nullptr;
 		ColorD * 			my_p = nullptr;
 	public:
 		ColorP()											{}
-		ColorP(const Color * c) 				: my_c(c) {}
+		ColorP(Color * c)			 				: my_c(c) {}
 		ColorP(const ColorP & c)				: my_c(c.my_c), my_p(c.my_p) {}
-		Color * & c()								{ return my_c; }
-		Color * const & c() const 				{ return my_c; }
+		Color * & cp()								{ return my_c; }
+		Color * const & cp() const 			{ return my_c; }
+		Color & cl()								{ return * my_c; }
+		Color & cl() const 						{ return * my_c; }
 		ColorD * & p()								{ return my_p; }
 		ColorD * const & p() const 			{ return my_p; }
 		friend std::ostream & operator<<(std::ostream & os, const ColorP & o);

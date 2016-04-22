@@ -13,10 +13,14 @@ std::ostream & operator<<(std::ostream & os, const RowD & v) {
 			// last column is copy of first column
 			if(it2 != it2_end) {
 				--it2_end;
-				for( ; it2 != it2_end; ++it2) {
-					os << * it2 << Separator;
+				// first column is copy of last
+				if(it2 != it2_end) {
+					++it2;
+					for( ; it2 != it2_end; ++it2) {
+						os << * it2 << Separator;
+					}
+					os << * it2 << std::endl;
 				}
-				os << * it2 << std::endl;
 			}
 		}
 	}
@@ -79,9 +83,9 @@ void VecVectorD::push_back(CarsD & l2, const std::size_t & count) {
 	} else if(lin_size != count)
 		throw std::runtime_error("VecVector::push_back row with different length");
 	++vec_size;
-	// (rows 1 longer) add cars
+	// (rows 2 longer) add cars
 	cars.splice(cars.end(),l2);
-	vec.push_back( std::vector<ColorP>(count+1) );
+	vec.push_back( std::vector<ColorP>(count+1+1) );
 	// update row and column
 	std::vector<Color> & 	v_car = * ( --(cars.end()) );
 	std::vector<ColorP> & 	v_row = * ( --(vec.end()) );
@@ -92,10 +96,12 @@ void VecVectorD::push_back(CarsD & l2, const std::size_t & count) {
 	ColumnD::iterator 									it_c = cvec.begin();
 	std::vector<ColorP>::iterator						it_r = v_row.begin();
 	std::vector<Color>::iterator 						it = v_car.begin();
+	// (rows 2 longer) not first column
+	++it_r;
 	for( ; it != v_car.end(); ++it) {
 		it_c->push_back(it_r);
 		ColorD & last = * ( --(it_c->end()) );
-		it_r->c() = & * it;
+		it_r->cp() = & * it;
 		it_r->p() = &last;
 		switch( * it ) {
 			case(White):
@@ -113,8 +119,15 @@ void VecVectorD::push_back(CarsD & l2, const std::size_t & count) {
 		++it_r;
 		++it_c;
 	}
+	// (rows 2 longer) add first column equal to last
+	std::vector<ColorP>::iterator 	it_rr = v_row.begin();
+	--it_r;
+	* it_rr = * it_r;
 	// (rows 1 longer) add last column equal to first
-	* it_r = * v_row.begin();
+	++it_rr;
+	++it_r;
+	* it_r = * it_rr;
+//	* it_r = * v_row.begin();
 	this->push_back_white(white);
 	this->push_back_blue(blue);
 	this->push_back_red(red);
@@ -142,11 +155,45 @@ std::ostream & operator<<(std::ostream & os, RowsVectorD & rowsvec) {
 	}
 	return os;
 }
+void RowsVectorD::move_forward(const Color & cl) {
+	std::list<ColorD * > * cll = & pvec->white;
+	switch(cl) {
+		case(Blue):
+			cll = & pvec->blue;
+			break;
+		case(Red):
+			cll = & pvec->red;
+			break;
+		case(White):
+			break;
+	}
+	std::list<ColorD * *> cllp;
+	for(std::list<ColorD * >::iterator it = cll->begin(); it != cll->end(); ++it) {
+		ColorD it_r 	= * * it;
+		ColorD it_r2 	= it_r; ++it_r2;
+		if(it_r2->cl() == White) {
+			cllp.push_back(& * it);
+		}
+	}
+	for(std::list<ColorD * *>::iterator it = cllp.begin(); it != cllp.end(); ++it) {
+		ColorD * & col	= * * it;
+		ColorD it_r 	= * col;
+		ColorD it_r2 	= it_r; ++it_r2;
+		std::swap(it_r->cl(),it_r2->cl());
+		// update color list
+		col = it_r2->p();
+	}
+	return;
+}
 std::ostream & operator<<(std::ostream & os, ColsVectorD & colsvec) {
 	if(colsvec.pvec != nullptr) {
 		os << * colsvec.pvec;
 	}
 	return os;
+}
+void ColsVectorD::move_forward(const Color & cl) {
+	
+	return;
 }
 /*
 //*/

@@ -318,3 +318,16 @@ void TrafficD::print() const {
 	data.print();
 	return;
 }
+void TrafficD::move_forward(const MatrixType & t, const Color & cl) {
+	if((t == ByRows) && (rmat != nullptr) && (type == ByRows)) {
+		rmat->move_forward(cl);
+//		std::cout << "move "<<type<<std::endl;
+//		std::cout << *rmat;
+	} else if((t == ByCols) && (cmat != nullptr) && (type == ByCols)) {
+		cmat->move_forward(cl);
+//		std::cout << "move "<<type<<std::endl;
+//		std::cout << *cmat;
+	}
+	return;
+}
+

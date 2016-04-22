@@ -31,7 +31,11 @@ int main(int argc, char ** argv){
 	if_stream >> trd;
 	if_stream.close();
 	std::cout << trd;
-	trd.print();
+//	trd.print();
+	trd.move_forward(ByRows,Blue);
+	trd.move_forward(ByRows,Blue);
+	trd.move_forward(ByRows,Red);
+	std::cout << trd;
 //*/
 //	std::unique_ptr< std::vector<std::vector<Color>> > p(new std::vector<std::vector<Color>>);
 //	VecVector * p = new VecVector(ByRows);
