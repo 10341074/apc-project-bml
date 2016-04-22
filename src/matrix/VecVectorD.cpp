@@ -69,6 +69,12 @@ void OwnerDataD::print() const {
 	std::cout << std::endl;
 	return;
 }
+bool OwnerDataD::choose_white() const {
+	if(2 * white.size() > red.size() + blue.size())
+		return true;
+	else 
+		return false;
+}
 void VecVectorD::push_back(CarsD & l2, const std::size_t & count) {
 	// count == l2->size()
 	CarsD & 	cars 		= pvec->cars;
@@ -198,6 +204,26 @@ void RowsVectorD::move_forward(const Color & cl) {
 	}
 	return;
 }
+void RowsVectorD::move_white(const Color & cl) {
+	std::list<ColorDD > * cll = & pvec->white;
+	std::list<ColorDD *> cllp;
+	for(std::list<ColorDD >::iterator it = cll->begin(); it != cll->end(); ++it) {
+		ColorD it_r 	= * * it;
+		ColorD it_r2 	= it_r; --it_r2;
+		if(it_r2->cl() == cl) {
+			cllp.push_back(& * it);
+		}
+	}
+	for(std::list<ColorDD *>::iterator it = cllp.begin(); it != cllp.end(); ++it) {
+		ColorDD & col	= * * it;
+		ColorD it_r 	= * col;
+		ColorD it_r2 	= it_r; --it_r2;
+		std::swap(it_r->cl(),it_r2->cl());
+		// update color list
+		col = it_r2->p();
+	}
+	return;
+}
 std::ostream & operator<<(std::ostream & os, ColsVectorD & colsvec) {
 	if(colsvec.pvec != nullptr) {
 		os << * colsvec.pvec;
@@ -228,6 +254,26 @@ void ColsVectorD::move_forward(const Color & cl) {
 		ColorDD & col	= * * it;
 		ColorDD it_c 	= col;
 		ColorDD it_c2 	= it_c; ++it_c2;
+		std::swap((*it_c)->cl(),(*it_c2)->cl());
+		// update color list
+		col = (*it_c2)->p();
+	}
+	return;
+}
+void ColsVectorD::move_white(const Color & cl) {
+	std::list<ColorDD > * cll = & pvec->white;
+	std::list<ColorDD *> cllp;
+	for(std::list<ColorDD >::iterator it = cll->begin(); it != cll->end(); ++it) {
+		ColorDD 	it_c = * it;
+		ColorDD 	it_c2 = it_c; --it_c2;
+		if((*it_c2)->cl() == cl) {
+			cllp.push_back(& * it);
+		}
+	}
+	for(std::list<ColorDD *>::iterator it = cllp.begin(); it != cllp.end(); ++it) {
+		ColorDD & col	= * * it;
+		ColorDD it_c 	= col;
+		ColorDD it_c2 	= it_c; --it_c2;
 		std::swap((*it_c)->cl(),(*it_c2)->cl());
 		// update color list
 		col = (*it_c2)->p();

@@ -70,6 +70,8 @@ class TrafficD{
 		friend std::istream & operator>>(std::istream & is, TrafficD & traffic);
 		void print() const;
 		void move_forward(const MatrixType & t, const Color & cl);
+		void move_white(const MatrixType & t, const Color & cl);
+		bool choose_white() const { return data.choose_white(); }
 //		void transpose(const MatrixType & t);
 		RowsVectorD * get_rmat() { return rmat; }
 		ColsVectorD * get_cmat() { return cmat; }

@@ -16,6 +16,8 @@
 #include "Traffic.h"
 #include "Tokenize.h"
 
+#define CALL_MEMBER_FN(object,ptrToMember)  ((object).*(ptrToMember))
+    
 int main(int argc, char ** argv){
 	std::string if_string(argv[1]);
 	std::ifstream if_stream(if_string);
@@ -35,16 +37,24 @@ int main(int argc, char ** argv){
 	Color cYes = col_cols;
 	Color cNo = col_rows;
 
+	void (TrafficD:: * move)(const MatrixType & t, const Color & cl);
+	move = & TrafficD::move_forward;
+	
 	TrafficD trd;
 	if_stream >> trd;
 	if_stream.close();
+	if(trd.choose_white()) {
+		move = & TrafficD::move_white;
+		std::cout << "Choosen white\n";
+	} else {
+		std::cout << "Choosen coloured\n";
+	}
 	for(std::size_t interval=0; interval<times.size()-1; ++interval){
 		for(std::size_t timeCount=times[interval]; timeCount<times[interval+1]; ++timeCount){
-	//			std::cout << trs;
-			trd.move_forward(*pYes, cYes);
+			CALL_MEMBER_FN(trd,move)(*pYes,cYes);
+//			(trd).*(move(*pYes, cYes));
 			std::swap(pYes,pNo);
 			std::swap(cYes,cNo);
-	//			std::cout << "time "<< timeCount << '\n' << trs;
 		}
 		std::stringstream convert;
 		convert << times[interval+1];

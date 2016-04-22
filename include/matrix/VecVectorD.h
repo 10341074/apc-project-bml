@@ -55,6 +55,7 @@ class OwnerDataD{
 		std::list<ColorDD > red; 
 	public:
 		void print() const;
+		bool choose_white() const;
 		friend std::ostream & operator<<(std::ostream & os, const OwnerDataD & d);
 		friend VecVectorD;
 		friend RowsVectorD;
@@ -127,6 +128,7 @@ class RowsVectorD: public VecVectorD {
 //	RowsVector(DataD::size_type rows, Row::size_type cols);
 //	virtual ~RowsVector() {}
 	void move_forward(const Color & cl);
+	void move_white(const Color & cl);
 	size_type cols() const { return colsCount; }
 	size_type rows() const { return rowsCount; }
 	friend std::ostream & operator<<(std::ostream & os, RowsVectorD & rowsvec);
@@ -143,6 +145,7 @@ class ColsVectorD: public VecVectorD {
 //	ColsVector(DataD::size_type cols, Row::size_type rows);
 //	virtual ~ColsVector() {}
 	void move_forward(const Color & cl);
+	void move_white(const Color & cl);
 	std::size_t rows() const { return rowsCount; }
 	std::size_t cols() const { return colsCount; }
 	friend std::ostream & operator<<(std::ostream & os, ColsVectorD & colsvec);
