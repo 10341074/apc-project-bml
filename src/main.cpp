@@ -28,6 +28,8 @@ int main(int argc, char ** argv){
 		tokenize_first_line(first_line,times);
 	
 	std::cout << times ;
+	
+	clock_t time = clock();
 ///*
 	Color col_cols = Blue, col_rows = Red;
 	MatrixType t1 = ByCols, t2 = ByRows;
@@ -65,6 +67,7 @@ int main(int argc, char ** argv){
 		of << trd ;
 		of.close();
 	}
+		time=clock()-time;	std::cout<<"time =\n"<<((float)time)/CLOCKS_PER_SEC<<std::endl;	time=clock();
 
 //*/
 //	std::unique_ptr< std::vector<std::vector<Color>> > p(new std::vector<std::vector<Color>>);
