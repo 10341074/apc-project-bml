@@ -27,6 +27,7 @@ int main(int argc, char ** argv){
 	
 	std::cout << times ;
 	
+	clock_t time = clock();
 //	std::unique_ptr< std::vector<std::vector<Color>> > p(new std::vector<std::vector<Color>>);
 //	VecVector * p = new VecVector(ByRows);
 	Traffic tr_rows(ByRows);
@@ -57,6 +58,7 @@ int main(int argc, char ** argv){
 		of << *pYes ;
 		of.close();
 	}
+		time=clock()-time;	std::cout<<"time =\n"<<((float)time)/CLOCKS_PER_SEC<<std::endl;	time=clock();
 //	Row r;
 //	std::cout << &r <<std::endl;
 	return 0;
