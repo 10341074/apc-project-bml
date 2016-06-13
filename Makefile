@@ -10,7 +10,7 @@ INCLUDE_MATRIX = include/matrix
 
 _DEPS = Template.h Color.h Car.h Tokenize.h Traffic.h
 _DEPS_MATRIX = Row.h DynRow.h VecVector.h Col.h DynRowDeque.h
-_DEPS_MATRIX += VecVectorS.h VecVectorD.h
+_DEPS_MATRIX += VecVectorS.h VecVectorD.h Cell.h
 
 DEPS = $(patsubst %, $(INCLUDE_DIR)/%,  $(_DEPS)) $(patsubst %, $(INCLUDE_MATRIX)/%, $(_DEPS_MATRIX))
 
@@ -22,7 +22,7 @@ OBJ_MATRIX_DIR = obj/matrix
 
 _OBJ = main.o Tokenize.o Traffic.o
 _OBJ_MATRIX = Row.o DynRow.o VecVector.o Col.o DynRowDeque.o
-_OBJ_MATRIX += VecVectorS.o VecVectorD.o
+_OBJ_MATRIX += VecVectorS.o VecVectorD.o Cell.o
 
 OBJ = $(patsubst %, $(OBJ_DIR)/%, $(_OBJ)) $(patsubst %, $(OBJ_MATRIX_DIR)/%, $(_OBJ_MATRIX))
 
@@ -40,3 +40,5 @@ clean:
 	-rm apcbml_* $(OBJ_DIR)/*.o $(OBJ_MATRIX_DIR)/*.o
 	-rm *~ $(INCLUDE_DIR)/*~ $(INCLUDE_MATRIX)/*~ $(SRC_DIR)/*~ $(SRC_MATRIX_DIR)/*~ $(OBJ_DIR)/*~ $(OBJ_MATRIX_DIR)/*~ *.csv 
 
+test: obj/matrix/Cell.o
+	g++ -std=c++11 -o apcbml_test src/main-test.cpp obj/matrix/Cell.o -Iinclude/matrix -Iinclude
