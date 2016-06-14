@@ -28,9 +28,23 @@ class Cell {
 		Color 		color;
 		CellNBHD 	nbhd;
 	public:
-	Cell(Color color);
-	void print_color() const;
+		Cell(Color color);
+	
+		void update_u(Cell * p);
+		void update_d(Cell * p);
+		void update_l(Cell * p);
+		void update_r(Cell * p);
 		
+		Color & 				get_color();
+		const Color & 		get_color() const;
+		
+		Cell * get_u();		// now non-const can return non-const (possible modifications)
+		Cell * get_d();		// put const versiion ?? or more time in construction?
+		Cell * get_l();
+		Cell * get_r();
+
+		void print_color() const;
+		friend std::ostream & operator<<(std::ostream & os, const Cell & c);
 };
 
 void f();
