@@ -44,7 +44,10 @@ distclean:
 clean:
 	-rm apcbml_* $(OBJ_DIR)/*.o $(OBJ_MATRIX_DIR)/*.o
 	-rm *~ $(INCLUDE_DIR)/*~ $(INCLUDE_MATRIX)/*~ $(SRC_DIR)/*~ $(SRC_MATRIX_DIR)/*~ $(OBJ_DIR)/*~ $(OBJ_MATRIX_DIR)/*~ *.csv
+	-rm generator/main
 
 test: obj/matrix/Cell.o obj/matrix/CellMatrix.o
 	g++ -std=c++11 -o apcbml_test src/main-test.cpp $^ -Iinclude/matrix -Iinclude
-
+gen:
+	$(CXX) -Wall -std=c++11 -o generator/main generator/main.cpp
+	generator/main 10 10 8 generator/input.csv
