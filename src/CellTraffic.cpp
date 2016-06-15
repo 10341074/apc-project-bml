@@ -47,7 +47,7 @@ void CellTraffic::tok_push_back(const std::string & line, const std::size_t & ro
 	for(CarsDataIn::iterator it = rowv.begin() ; it < rowv.end(); ++it){
 		Color c = static_cast<Color>(*p2one -START);
 //		row->push_back(c);
-		it->get_color() = c;
+		* it = c;
 		p2one+=2;
 	}
 //	if(rmat == nullptr)

@@ -1,5 +1,26 @@
 #include "CellMatrix.h"
-
+CarsDataIn::const_iterator find_cell(const CarsData & d, const std::size_t & i, const std::size_t & j) {
+	CarsData::const_iterator it_ext = d.begin();
+	for(std::size_t ind_ext = 0; ind_ext < i; ++ind_ext) {
+		++it_ext;
+	}
+	CarsDataIn::const_iterator it_in = it_ext->begin();
+	for(std::size_t ind_in = 0; ind_in < j; ++ind_in) {
+		++it_in;
+	}
+	return it_in;
+}
+CarsDataIn::iterator find_cell(CarsData & d, const std::size_t & i, const std::size_t & j) {
+	CarsData::iterator it_ext = d.begin();
+	for(std::size_t ind_ext = 0; ind_ext < i; ++ind_ext) {
+		++it_ext;
+	}
+	CarsDataIn::iterator it_in = it_ext->begin();
+	for(std::size_t ind_in = 0; ind_in < j; ++ind_in) {
+		++it_in;
+	}
+	return it_in;
+}
 std::ostream & operator<<(std::ostream & os, const OwnerData & d) {
 	for(CarsData::const_iterator it1 = d.cars.begin(); it1 != d.cars.end(); ++it1) {
 		for(CarsDataIn::const_iterator it2 = it1->begin(); it2 != it1->end(); ++it2) {
@@ -19,53 +40,19 @@ void OwnerData::print() const {
 	}
 	std::cout << "White\n";
 	for(OneColor::const_iterator it = white.begin(); it != white.end(); ++it) {
-		std::cout << **it << Separator;
+		std::cout << * find_cell(cars,it->i(), it->j() ) << Separator;
 	}
 	std::cout << std::endl;
 	std::cout << "Blue\n";
 	for(OneColor::const_iterator it = blue.begin(); it != blue.end(); ++it) {
-		std::cout << **it << Separator;
+		std::cout << * find_cell(cars,it->i(), it->j() ) << Separator;
 	}
 	std::cout << std::endl;
 	std::cout << "Red\n";
 	for(OneColor::const_iterator it = red.begin(); it != red.end(); ++it) {
-		std::cout << **it << Separator;
+		std::cout << * find_cell(cars,it->i(), it->j() ) << Separator;
 	}
 	std::cout << std::endl;
-	std::cout << "from right\n";
-	for(CarsData::const_iterator it1 = cars.begin(); it1 != cars.end(); ++it1) {
-		for(CarsDataIn::const_iterator it2 = it1->begin(); it2 != it1->end(); ++it2) {
-			Cell * c = it2->get_r();
-			std::cout << * c << Separator;
-		}
-		std::cout << std::endl;
-	}
-	std::cout << "from left\n";
-	for(CarsData::const_iterator it1 = cars.begin(); it1 != cars.end(); ++it1) {
-		for(CarsDataIn::const_iterator it2 = it1->begin(); it2 != it1->end(); ++it2) {
-			Cell * c = it2->get_l();
-			std::cout << * c << Separator;
-		}
-		std::cout << std::endl;
-	}
-	std::cout << "from up\n";
-	for(CarsData::const_iterator it1 = cars.begin(); it1 != cars.end(); ++it1) {
-		for(CarsDataIn::const_iterator it2 = it1->begin(); it2 != it1->end(); ++it2) {
-			Cell * c = it2->get_u();
-			std::cout << * c << Separator;
-		}
-		std::cout << std::endl;
-	}
-	std::cout << "from down\n";
-	for(CarsData::const_iterator it1 = cars.begin(); it1 != cars.end(); ++it1) {
-		for(CarsDataIn::const_iterator it2 = it1->begin(); it2 != it1->end(); ++it2) {
-			Cell * c = it2->get_d();
-			std::cout << * c << Separator;
-		}
-		std::cout << std::endl;
-	}
-
-
 	return;
 }
 
@@ -106,68 +93,33 @@ void CellMatrix::push_back_red(OneColor & l2) {
 	l1.splice(l1.end(), l2);
 	return;
 }
-void two_lines(CarsData::iterator it_ext, CarsData::iterator it_ext2, OneColor & white, OneColor & blue, OneColor & red) {
+void one_line(CarsData::iterator it_ext, std::size_t index_row, OneColor & white, OneColor & blue, OneColor & red) {
 		// current row
 		CarsDataIn::iterator it_in				= it_ext->begin();
-		CarsDataIn::iterator it_in_next		= it_in;	++it_in_next;
 		CarsDataIn::iterator it_in_end		= it_ext->end();
-		// next row
-		CarsDataIn::iterator it_in2			= it_ext2->begin();
-//		CarsDataIn::iterator it_in2_next		= it_in2; ++it_in2_next;
-//		CarsDataIn::iterator it_in2_end		= it2_ext->end();
-
-		Cell * first = &*it_in;	// save for after
-		for( ; it_in_next != it_in_end; ++it_in_next) { // loop on columns along 1 row
-			// 1 interface with next along row
-			it_in->update_r(&*it_in_next);
-			it_in_next->update_l(&*it_in);
-			
-			// 2 interface with next along col
-			it_in->update_d(&*it_in2);
-			it_in2->update_u(&*it_in);
-			
+		
+		std::size_t index_col = 0;
+		
+		for( ; it_in != it_in_end; ++it_in) { // loop on columns along 1 row			
 			// 3 save color
-			switch( it_in->get_color() ) {
+			switch( * it_in ) {
 				case(White):
-					white.push_back(&*it_in);
+					white.push_back(Coordinates(index_row, index_col));
 					break;
 				case(Blue):
-					blue.push_back(&*it_in);
+					blue.push_back(Coordinates(index_row, index_col));
 					break;
 				case(Red):
-					red.push_back(&*it_in);
+					red.push_back(Coordinates(index_row, index_col));
 					break;
 //				default:
 //					break;
 			}
-			// advance 3 iterator
-			++it_in;
-			++it_in2;
-			}
-		
-		// it_in points to last
-		// 1 interface with next along row
-		it_in->update_r(first);
-		first->update_l(&*it_in);
-		// 2 interface with next along col
-		it_in->update_d(&*it_in2);
-		it_in2->update_u(&*it_in);
-		// 3 save color
-		switch( it_in->get_color() ) {
-			case(White):
-		white.push_back(&*it_in);
-				break;
-			case(Blue):
-				blue.push_back(&*it_in);
-				break;
-			case(Red):
-				red.push_back(&*it_in);
-				break;
-//			default:
-//				break;
+			++index_col;
 		}
 	return;
 }
+
 ///*
 void CellMatrix::update_data() {
 	std::cout << "update data " << std::endl;
@@ -183,21 +135,16 @@ void CellMatrix::update_data() {
 	if(it_ext->begin() == it_ext->end()){ // length zero row (check only first row)
 		return;
 	}
-	
-	CarsData::iterator it_ext2 = it_ext; ++it_ext2;		// to next row
-	for( ; it_ext2 != it_ext_end; ++it_ext2) {	// loop on rows, without last				
-		two_lines(it_ext,it_ext2,white,blue,red);
-		
-		// advance 2 iterators
-		++it_ext;	// advance current row with it_ext2 (next row)
-	}
-	// it_ext points to last
-	// last row	
-	two_lines(it_ext,pvec->cars.begin(),white,blue,red);
-	
+	std::size_t index_row = 0;
+	for( ; it_ext != it_ext_end; ++it_ext) {	// loop on rows			
+		one_line(it_ext,index_row,white,blue,red);
+		++index_row;
+	}	
+
 	this->push_back_white(white);
 	this->push_back_blue(blue);
 	this->push_back_red(red);
+
 	return;
 }
 //*/
@@ -225,58 +172,67 @@ void CellMatrixRows::move_forward(const Color & cl) {
 //	}
 //	std::cout<< std::endl;
 
-	std::vector<std::size_t> to_be_moved; to_be_moved.reserve(color.size());
-	std::size_t index = 0;
+	std::vector<CarsDataIn::iterator> to_be_moved1; to_be_moved1.reserve(color.size());
+	std::vector<CarsDataIn::iterator> to_be_moved2; to_be_moved2.reserve(color.size());
+	
 	for(OneColor::iterator it = color.begin(); it != color.end(); ++it) {
-		Cell * next = (*it)->get_r();
-//	std::cout << "color pointed1 " << (*it)->get_color() << std::endl;	
-
-		if(next->get_color() == White) {
-			to_be_moved.push_back(index);
+		std::size_t 				index_next = (it->j() + 1) % inn_size;
+		CarsDataIn::iterator 	color_current = find_cell(pvec->cars, it->i(), it->j() );
+		CarsDataIn::iterator 	color_next = color_current + 1;
+		if(index_next == 0) {
+			color_next = find_cell(pvec->cars, it->i(), index_next);
+			}
+		if( * color_next == White) {
+			to_be_moved1.push_back(color_current);
+			to_be_moved2.push_back(color_next);
+			// immediate update of color 
+			it->j() = index_next;
 		}
-	++index;
 	}
-	OneColor::iterator it = color.begin();
-	index = 0;
-	for(std::size_t index_to_be_moved=0; index_to_be_moved < to_be_moved.size(); ++index_to_be_moved) {
-		for(; index < to_be_moved[index_to_be_moved]; ++index) {
-			++it;
-		}
-		Cell * next = (*it)->get_r();
-		std::swap((*it)->get_color(),next->get_color());
-//						std::cout << "color pointed" << next->get_color() << std::endl;	
 
-		// update color list
-		* it = next;
+	std::vector<CarsDataIn::iterator>::iterator it1 = to_be_moved1.begin();
+	std::vector<CarsDataIn::iterator>::iterator it2 = to_be_moved2.begin();
+	for(std::size_t index=0; index < to_be_moved1.size(); ++index) {
+
+		std::swap(*(*it1),*(*it2));
+		++it1;
+		++it2;
 	}
-//	std::cout << "had been moved " << cl;
-//	for(OneColor::const_iterator itt = color.begin(); itt != color.end(); ++itt) {
-//		std::cout << **itt << Separator;
+//			std::cout << "had been moved " << cl;
+//	for(OneColor::const_iterator itt = pvec->red.begin(); itt != pvec->red.end(); ++itt) {
+//		std::cout << * find_cell(pvec->cars, itt->i(), itt->j() ) << Separator;
 //	}
 //	std::cout<< std::endl;
+
 	return;
 }
+
 void CellMatrixRows::move_white(const Color & cl) {
 	OneColor & color = pvec->white;
-	std::vector<std::size_t> to_be_moved; to_be_moved.reserve(color.size());
-	std::size_t index = 0;
+	std::vector<CarsDataIn::iterator> to_be_moved1; to_be_moved1.reserve(color.size());
+	std::vector<CarsDataIn::iterator> to_be_moved2; to_be_moved2.reserve(color.size());
+	
 	for(OneColor::iterator it = color.begin(); it != color.end(); ++it) {
-		Cell * next = (*it)->get_l();
-		if(next->get_color() == cl) {
-			to_be_moved.push_back(index);
+		std::size_t 				index_next = (it->j() - 1 + inn_size) % inn_size; // positive
+		CarsDataIn::iterator 	color_current = find_cell(pvec->cars, it->i(), it->j() );
+		CarsDataIn::iterator 	color_next = color_current - 1;
+		if(index_next == (inn_size - 1)) {
+			color_next = find_cell(pvec->cars, it->i(), index_next);
+			}
+		if( * color_next == cl) {
+			to_be_moved1.push_back(color_current);
+			to_be_moved2.push_back(color_next);
+			// immediate update of color 
+			it->j() = index_next;
 		}
-	++index;
 	}
-	OneColor::iterator it = color.begin();
-	index = 0;
-	for(std::size_t index_to_be_moved=0; index_to_be_moved < to_be_moved.size(); ++index_to_be_moved) {
-		for(; index < to_be_moved[index_to_be_moved]; ++index) {
-			++it;
-		}
-		Cell * next = (*it)->get_l();
-		std::swap((*it)->get_color(),next->get_color());		
-		// update color list
-		* it = next;
+	std::vector<CarsDataIn::iterator>::iterator it1 = to_be_moved1.begin();
+	std::vector<CarsDataIn::iterator>::iterator it2 = to_be_moved2.begin();
+	for(std::size_t index=0; index < to_be_moved1.size(); ++index) {
+
+		std::swap(*(*it1),*(*it2));
+		++it1;
+		++it2;
 	}
 	return;
 }
@@ -300,50 +256,59 @@ void CellMatrixCols::move_forward(const Color & cl) {
 	}
 	
 	OneColor & color = * ptr_color;
+	
+	std::size_t ext_size = (pvec->cars).size();
+	std::vector<CarsDataIn::iterator> to_be_moved1; to_be_moved1.reserve(color.size());
+	std::vector<CarsDataIn::iterator> to_be_moved2; to_be_moved2.reserve(color.size());
 
-	std::vector<std::size_t> to_be_moved; to_be_moved.reserve(color.size());
-	std::size_t index = 0;
 	for(OneColor::iterator it = color.begin(); it != color.end(); ++it) {
-		Cell * next = (*it)->get_d();
-		if(next->get_color() == White) {
-			to_be_moved.push_back(index);
+		std::size_t 				index_next = (it->i() + 1) % ext_size;
+		CarsDataIn::iterator 	color_current = find_cell(pvec->cars, it->i(), it->j() );
+		CarsDataIn::iterator 	color_next = find_cell(pvec->cars, index_next, it->j() );
+		if( * color_next == White) {
+			to_be_moved1.push_back(color_current);
+			to_be_moved2.push_back(color_next);
+			// immediate update of color 
+			it->i() = index_next;
 		}
-	++index;
 	}
-	OneColor::iterator it = color.begin();
-	index = 0;
-	for(std::size_t index_to_be_moved=0; index_to_be_moved < to_be_moved.size(); ++index_to_be_moved) {
-		for(; index < to_be_moved[index_to_be_moved]; ++index) {
-			++it;
-		}
-		Cell * next = (*it)->get_d();
-		std::swap((*it)->get_color(),next->get_color());		
-		// update color list
-		* it = next;
+	std::vector<CarsDataIn::iterator>::iterator it1 = to_be_moved1.begin();
+	std::vector<CarsDataIn::iterator>::iterator it2 = to_be_moved2.begin();
+	for(std::size_t index=0; index < to_be_moved1.size(); ++index) {
+
+		std::swap(*(*it1),*(*it2));
+		++it1;
+		++it2;
+
 	}
 	return;
 }
 void CellMatrixCols::move_white(const Color & cl) {
 	OneColor & color = pvec->white;
-	std::vector<std::size_t> to_be_moved; to_be_moved.reserve(color.size());
-	std::size_t index = 0;
+
+	std::size_t ext_size = (pvec->cars).size();
+	std::vector<CarsDataIn::iterator> to_be_moved1; to_be_moved1.reserve(color.size());
+	std::vector<CarsDataIn::iterator> to_be_moved2; to_be_moved2.reserve(color.size());
+	
 	for(OneColor::iterator it = color.begin(); it != color.end(); ++it) {
-		Cell * next = (*it)->get_u();
-		if(next->get_color() == cl) {
-			to_be_moved.push_back(index);
+		std::size_t 				index_next = (it->i() - 1 + ext_size) % ext_size;
+		CarsDataIn::iterator 	color_current = find_cell(pvec->cars, it->i(), it->j() );
+		CarsDataIn::iterator 	color_next = find_cell(pvec->cars, index_next, it->j() );
+		if( * color_next == cl) {
+			to_be_moved1.push_back(color_current);
+			to_be_moved2.push_back(color_next);
+			// immediate update of color 
+			it->i() = index_next;
 		}
-	++index;
 	}
-	OneColor::iterator it = color.begin();
-	index = 0;
-	for(std::size_t index_to_be_moved=0; index_to_be_moved < to_be_moved.size(); ++index_to_be_moved) {
-		for(; index < to_be_moved[index_to_be_moved]; ++index) {
-			++it;
-		}
-		Cell * next = (*it)->get_u();
-		std::swap((*it)->get_color(),next->get_color());		
-		// update color list
-		* it = next;
+	std::vector<CarsDataIn::iterator>::iterator it1 = to_be_moved1.begin();
+	std::vector<CarsDataIn::iterator>::iterator it2 = to_be_moved2.begin();
+	for(std::size_t index=0; index < to_be_moved1.size(); ++index) {
+
+		std::swap(*(*it1),*(*it2));
+		++it1;
+		++it2;
+
 	}
 	return;
 }

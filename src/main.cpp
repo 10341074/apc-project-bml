@@ -52,8 +52,8 @@ int main(int argc, char ** argv){
 	} else {
 		std::cout << "Choosen coloured\n";
 	}
-/*	
-	std::cout << trd;
+/*
+		std::cout << trd;
 	std::cout << std::endl;
 	trd.move_forward(ByRows,Red);
 	std::cout<<"from outside\n";

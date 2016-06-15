@@ -1,8 +1,16 @@
-this project version (note updated at 17.00 of 15-06-16 ):
+this project version (note updated at 21 of 15-06-16 ):
+using CarsDataIn = std::vector< Color >  ;			
+using CarsData = std::list< CarsDataIn	 >;
+using CarsD = std::list< std::vector< Color > >;
+
+// idea: per liste white,blue,red prima lista poi vector
+using OneColor	= std::list< Coordinates >;
+
 Cell version with:
-	* list of vector for matrix
-	* list for OneColor
-	* use of cells
+	* list of vector of color
+	* list for OneColor with coorfinates
+	* use of coordinateso
+
 
 
 generals:

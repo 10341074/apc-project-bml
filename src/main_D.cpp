@@ -68,7 +68,6 @@ int main(int argc, char ** argv){
 		of.close();
 	}
 		time=clock()-time;	std::cout<<"time =\n"<<((float)time)/CLOCKS_PER_SEC<<std::endl;	time=clock();
-
 //*/
 //	std::unique_ptr< std::vector<std::vector<Color>> > p(new std::vector<std::vector<Color>>);
 //	VecVector * p = new VecVector(ByRows);

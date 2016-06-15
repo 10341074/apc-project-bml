@@ -14,17 +14,23 @@
 // #include "DynRow.h"
 // #include "Col.h"
 
-using CarsDataIn		= 				 std::vector< Cell >  ;			
-using CarsData 		= std::list< std::vector< Cell > >;
+//using CarsDataIn		= 				 std::vector< Cell >  ;			
+using CarsDataIn		= 				 std::vector< Color >  ;			
+//using CarsData 		= std::list< std::vector< Cell > >;
+using CarsData 		= std::list< std::vector< Color > >;
 using CarsD 			= std::list< std::vector< Color > >;
 
 // idea: per liste white,blue,red prima lista poi vector
-using OneColor		= std::list< Cell * >;
+//using OneColor		= std::list< Cell * >;
+using OneColor		= std::list< Coordinates >;
 
 class CellMatrix;
 class CellMatrixRows;
 class CellMatrixCols;
 
+
+CarsDataIn::const_iterator find_cell(const CarsData & d, const std::size_t & i, const std::size_t & j);
+CarsDataIn::iterator find_cell(CarsData & d, const std::size_t & i, const std::size_t & j);
 class OwnerData{
 	private:
 		CarsData			cars;
