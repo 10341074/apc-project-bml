@@ -28,6 +28,7 @@ class Cell {
 		Color 		color;
 		CellNBHD 	nbhd;
 	public:
+		Cell() {}
 		Cell(Color color);
 	
 		void update_u(Cell * p);
@@ -42,6 +43,13 @@ class Cell {
 		Cell * get_d();		// put const versiion ?? or more time in construction?
 		Cell * get_l();
 		Cell * get_r();
+		
+		// to print -> const version
+		Cell * const get_u() const;
+		Cell * const get_d() const;
+		Cell * const get_l() const;
+		Cell * const get_r() const;
+	
 
 		void print_color() const;
 		friend std::ostream & operator<<(std::ostream & os, const Cell & c);

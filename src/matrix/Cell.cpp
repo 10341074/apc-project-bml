@@ -6,15 +6,15 @@ void Cell::update_u(Cell * p) {
 	return;
 }
 void Cell::update_d(Cell * p) {
-	nbhd.cell_u=p;
+	nbhd.cell_d=p;
 	return;
 }
 void Cell::update_l(Cell * p) {
-	nbhd.cell_u=p;
+	nbhd.cell_l=p;
 	return;
 }
 void Cell::update_r(Cell * p) {
-	nbhd.cell_u=p;
+	nbhd.cell_r=p;
 	return;
 }
 Color & Cell::get_color() {
@@ -33,6 +33,19 @@ Cell * Cell::get_l() {
 	return nbhd.cell_l;
 }
 Cell * Cell::get_r() {
+	return nbhd.cell_r;
+}
+
+Cell * const Cell::get_u() const {
+	return nbhd.cell_u;
+}
+Cell * const Cell::get_d() const {
+	return nbhd.cell_d;
+}
+Cell * const Cell::get_l() const {
+	return nbhd.cell_l;
+}
+Cell * const Cell::get_r() const {
 	return nbhd.cell_r;
 }
 

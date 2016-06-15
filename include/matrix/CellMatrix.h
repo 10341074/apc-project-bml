@@ -8,7 +8,7 @@
 
 #include "Template.h"
 #include "Color.h"
-// #include "Row.h"
+#include "Row.h"
 #include "Coordinates.h"
 #include "Cell.h"
 // #include "DynRow.h"
@@ -22,6 +22,8 @@ using CarsD 			= std::list< std::vector< Color > >;
 using OneColor		= std::list< Cell * >;
 
 class CellMatrix;
+class CellMatrixRows;
+class CellMatrixCols;
 
 class OwnerData{
 	private:
@@ -35,17 +37,20 @@ class OwnerData{
 		bool choose_white() const;
 		friend std::ostream & operator<<(std::ostream & os, const OwnerData & d);
 		friend CellMatrix;
+		friend CellMatrixRows;
+		friend CellMatrixCols;
 };
 
 class CellMatrix {
 	protected:
+		MatrixType 		type = None;
 		OwnerData * 	pvec = nullptr;
 	
 		std::size_t ext_size = 0;
 		std::size_t inn_size = 0;
 
 	public:
-		CellMatrix(OwnerData * d) : pvec(d) {}
+		CellMatrix(MatrixType t, OwnerData * d) : type(t), pvec(d) {}
 		~CellMatrix() {}
 	
 		void push_back(CarsData & l2, const std::size_t & count);
@@ -55,11 +60,28 @@ class CellMatrix {
 //		void border_columns();
 		void update_data();
 			
-		void move_forward(const Color & cl);
-		void move_white(const Color & cl);
-
 		friend std::ostream & operator<<(std::ostream & os, CellMatrix & mat);
 };
+
+class CellMatrixRows: public CellMatrix {
+	public:
+	CellMatrixRows() = delete;
+	CellMatrixRows(OwnerData * d) : CellMatrix(ByRows, d) {}
+
+	void move_forward(const Color & cl);
+	void move_white(const Color & cl);
+	friend std::ostream & operator<<(std::ostream & os, CellMatrixRows & mat);
+};
+class CellMatrixCols: public CellMatrix {
+	public:
+	CellMatrixCols() = delete;
+	CellMatrixCols(OwnerData * d) : CellMatrix(ByCols, d) {}
+
+	void move_forward(const Color & cl);
+	void move_white(const Color & cl);
+	friend std::ostream & operator<<(std::ostream & os, CellMatrixCols & mat);
+};
+
 /*
 //*/
 #endif

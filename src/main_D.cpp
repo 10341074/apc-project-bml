@@ -16,7 +16,6 @@
 #include "Traffic.h"
 #include "Tokenize.h"
 
-#include "CellTraffic.h"
 #define CALL_MEMBER_FN(object,ptrToMember)  ((object).*(ptrToMember))
     
 int main(int argc, char ** argv){
@@ -31,7 +30,7 @@ int main(int argc, char ** argv){
 	std::cout << times ;
 	
 	clock_t time = clock();
-
+///*
 	Color col_cols = Blue, col_rows = Red;
 	MatrixType t1 = ByCols, t2 = ByRows;
 	
@@ -40,34 +39,18 @@ int main(int argc, char ** argv){
 	Color cYes = col_cols;
 	Color cNo = col_rows;
 
-	void (CellTraffic:: * move)(const MatrixType & t, const Color & cl);
-	move = & CellTraffic::move_forward;
+	void (TrafficD:: * move)(const MatrixType & t, const Color & cl);
+	move = & TrafficD::move_forward;
 	
-	CellTraffic trd;
+	TrafficD trd;
 	if_stream >> trd;
 	if_stream.close();
 	if(trd.choose_white()) {
-		move = & CellTraffic::move_white;
+		move = & TrafficD::move_white;
 		std::cout << "Choosen white\n";
 	} else {
 		std::cout << "Choosen coloured\n";
 	}
-/*	
-	std::cout << trd;
-	std::cout << std::endl;
-	trd.move_forward(ByRows,Red);
-	std::cout<<"from outside\n";
-	trd.print();
-	std::cout<<"finish\n";
-
-
-	trd.move_forward(ByRows,Red);
-	std::cout << trd;
-	trd.print();
-	
-//*/
-///*
-
 	for(std::size_t interval=0; interval<times.size()-1; ++interval){
 		for(std::size_t timeCount=times[interval]; timeCount<times[interval+1]; ++timeCount){
 			CALL_MEMBER_FN(trd,move)(*pYes,cYes);

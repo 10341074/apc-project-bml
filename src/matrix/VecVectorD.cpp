@@ -70,7 +70,7 @@ void OwnerDataD::print() const {
 	return;
 }
 bool OwnerDataD::choose_white() const {
-	if(2 * white.size() > red.size() + blue.size())
+	if(2 * white.size() < red.size() + blue.size())
 		return true;
 	else 
 		return false;
@@ -175,6 +175,7 @@ std::ostream & operator<<(std::ostream & os, RowsVectorD & rowsvec) {
 	return os;
 }
 void RowsVectorD::move_forward(const Color & cl) {
+//	std::cout << "move forw by rows" << std::endl;
 	std::list<ColorDD > * cll = & pvec->white;
 	switch(cl) {
 		case(Blue):
@@ -205,6 +206,7 @@ void RowsVectorD::move_forward(const Color & cl) {
 	return;
 }
 void RowsVectorD::move_white(const Color & cl) {
+//	std::cout << "move white by rows" << std::endl;
 	std::list<ColorDD > * cll = & pvec->white;
 	std::list<ColorDD *> cllp;
 	for(std::list<ColorDD >::iterator it = cll->begin(); it != cll->end(); ++it) {
@@ -231,6 +233,7 @@ std::ostream & operator<<(std::ostream & os, ColsVectorD & colsvec) {
 	return os;
 }
 void ColsVectorD::move_forward(const Color & cl) {
+//	std::cout << "move forw by cols" << std::endl;
 	std::list<ColorDD > * cll = & pvec->white;
 	switch(cl) {
 		case(Blue):
@@ -261,6 +264,7 @@ void ColsVectorD::move_forward(const Color & cl) {
 	return;
 }
 void ColsVectorD::move_white(const Color & cl) {
+//	std::cout << "move white by colßs" << std::endl;
 	std::list<ColorDD > * cll = & pvec->white;
 	std::list<ColorDD *> cllp;
 	for(std::list<ColorDD >::iterator it = cll->begin(); it != cll->end(); ++it) {
