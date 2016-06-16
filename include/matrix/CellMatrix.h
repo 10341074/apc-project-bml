@@ -14,25 +14,29 @@
 // #include "DynRow.h"
 // #include "Col.h"
 
+#include "CellData.h"
+
 using CarsDataIn		= 				 std::vector< Cell >  ;			
-using CarsData 		= std::list< std::vector< Cell > >;
+using CarsData 		= std::vector< std::vector< Cell > >;
 using CarsD 			= std::list< std::vector< Color > >;
 
 // idea: per liste white,blue,red prima lista poi vector
-using OneColor		= std::list< Cell * >;
+using OneColor		= std::vector< Cell * >;
 
 class CellMatrix;
 class CellMatrixRows;
 class CellMatrixCols;
 
+void one_color_conv(const OneColor_Old & c_old, OneColor & c_new);
 class OwnerData{
 	private:
 		CarsData			cars;
 
 		OneColor white; 
 		OneColor blue; 
-		OneColor red; 
+		OneColor red;
 	public:
+		void load_data(const OwnerData_Old & d);
 		void print() const;
 		bool choose_white() const;
 		friend std::ostream & operator<<(std::ostream & os, const OwnerData & d);
@@ -81,6 +85,7 @@ class CellMatrixCols: public CellMatrix {
 	void move_white(const Color & cl);
 	friend std::ostream & operator<<(std::ostream & os, CellMatrixCols & mat);
 };
+void two_lines_old(CarsData_Old::iterator it_ext, CarsData_Old::iterator it_ext2, OneColor_Old & white, OneColor_Old & blue, OneColor_Old & red);
 
 /*
 //*/

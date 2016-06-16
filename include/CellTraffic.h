@@ -14,10 +14,11 @@
 #include "VecVectorD.h"
 #include "Tokenize.h"
 #include "CellMatrix.h"
-
+#include "CellData.h"
 class CellTraffic{
 	private:
 		MatrixType type = None;
+		OwnerData_Old	data_old;
 		OwnerData	data;
 		CellMatrixRows * rmat = nullptr;
 		CellMatrixCols * cmat = nullptr;
@@ -34,6 +35,7 @@ class CellTraffic{
 //		void transpose(const MatrixType & t);
 		CellMatrixRows * get_rmat() { return rmat; }
 		CellMatrixCols * get_cmat() { return cmat; }
+		void update_data();
 };
 #endif
 

@@ -8,7 +8,7 @@
 
 #define START '0'
 CellTraffic::CellTraffic() :
-	data(), rmat(new CellMatrixRows(&data)), cmat(new CellMatrixCols(&data)) {
+	data_old(), data(), rmat(new CellMatrixRows(&data)), cmat(new CellMatrixCols(&data)) {
 }
 CellTraffic::~CellTraffic() {
 	if(rmat != nullptr) {
@@ -31,13 +31,20 @@ std::istream & operator>>(std::istream & is, CellTraffic & traffic){
 //	std::cout << * traffic.rmat;
 
 //	traffic.rmat->border_columns();
+
+//	traffic.rmat->update_data();
+//	traffic.update_data();
+	
+	traffic.data.load_data(traffic.data_old);
+	traffic.data_old.empty_data();
 	traffic.rmat->update_data();
+
 	return is;
 }
 void CellTraffic::tok_push_back(const std::string & line, const std::size_t & rowsCount) {
 	const std::size_t len=line.length();
 	const std::size_t colsTot = (len + 1)/2; 
-	CarsData row;
+	CarsData_Old row;
 	row.push_back(CarsDataIn(colsTot));
 	const char * p2one = &line[0];
 //	std::size_t colsCount = 0;
@@ -53,8 +60,21 @@ void CellTraffic::tok_push_back(const std::string & line, const std::size_t & ro
 //	if(rmat == nullptr)
 //		throw std::logic_error("Traffic::tok_push_back null pmat");
 //	if(type == ByRows)
-	if(rmat != nullptr)
-		this->rmat->push_back(row,colsTot);
+
+	
+//	if(rmat != nullptr)
+//		this->rmat->push_back(row,colsTot);
+	
+	const std::size_t count = colsTot;
+	CarsData_Old & 	cars 		= data_old.cars;
+	if(cars.empty()) {
+		data_old.inn_size = count;
+	} else if(data_old.inn_size != count)
+		throw std::runtime_error("CellTraffic::push_back row with different length");
+	++data_old.ext_size;
+	// add row
+	cars.splice(cars.end(),row);
+
 	return;
 }
 //*/
@@ -92,6 +112,105 @@ void CellTraffic::move_white(const MatrixType & t, const Color & cl) {
 //		std::cout << "move "<<type<<std::endl;
 //		std::cout << *cmat;
 	}
+	return;
+}
+
+void two_lines_old(CarsData_Old::iterator it_ext, CarsData_Old::iterator it_ext2, OneColor_Old & white, OneColor_Old & blue, OneColor_Old & red) {
+		// current row
+		CarsDataIn_Old::iterator it_in				= it_ext->begin();
+		CarsDataIn_Old::iterator it_in_next		= it_in;	++it_in_next;
+		CarsDataIn_Old::iterator it_in_end		= it_ext->end();
+		// next row
+		CarsDataIn_Old::iterator it_in2			= it_ext2->begin();
+//		CarsDataIn::iterator it_in2_next		= it_in2; ++it_in2_next;
+//		CarsDataIn::iterator it_in2_end		= it2_ext->end();
+
+		Cell * first = &*it_in;	// save for after
+		for( ; it_in_next != it_in_end; ++it_in_next) { // loop on columns along 1 row
+			// 1 interface with next along row
+			it_in->update_r(&*it_in_next);
+			it_in_next->update_l(&*it_in);
+			
+			// 2 interface with next along col
+			it_in->update_d(&*it_in2);
+			it_in2->update_u(&*it_in);
+			
+			// 3 save color
+			switch( it_in->get_color() ) {
+				case(White):
+					white.push_back(&*it_in);
+					break;
+				case(Blue):
+					blue.push_back(&*it_in);
+					break;
+				case(Red):
+					red.push_back(&*it_in);
+					break;
+//				default:
+//					break;
+			}
+			// advance 3 iterator
+			++it_in;
+			++it_in2;
+			}
+		
+		// it_in points to last
+		// 1 interface with next along row
+		it_in->update_r(first);
+		first->update_l(&*it_in);
+		// 2 interface with next along col
+		it_in->update_d(&*it_in2);
+		it_in2->update_u(&*it_in);
+		// 3 save color
+		switch( it_in->get_color() ) {
+			case(White):
+		white.push_back(&*it_in);
+				break;
+			case(Blue):
+				blue.push_back(&*it_in);
+				break;
+			case(Red):
+				red.push_back(&*it_in);
+				break;
+//			default:
+//				break;
+		}
+	return;
+}
+///*
+void CellTraffic::update_data() {
+	std::cout << "update data traffic" << std::endl;
+	OneColor_Old white;
+	OneColor_Old blue;
+	OneColor_Old red;
+
+	CarsData_Old::iterator it_ext 			= data_old.cars.begin();
+	CarsData_Old::iterator it_ext_end 	= data_old.cars.end();
+	if(it_ext == it_ext_end) {			// empty matrix
+		return;
+	}
+	if(it_ext->begin() == it_ext->end()){ // length zero row (check only first row)
+		return;
+	}
+	
+	CarsData_Old::iterator it_ext2 = it_ext; ++it_ext2;		// to next row
+	for( ; it_ext2 != it_ext_end; ++it_ext2) {	// loop on rows, without last				
+		two_lines_old(it_ext,it_ext2,white,blue,red);
+		
+		// advance 2 iterators
+		++it_ext;	// advance current row with it_ext2 (next row)
+	}
+	// it_ext points to last
+	// last row	
+	two_lines_old(it_ext,data_old.cars.begin(),white,blue,red);
+	
+	OneColor_Old & lw = data_old.white;
+	lw.splice(lw.end(), white);
+	OneColor_Old & lb = data_old.blue;
+	lb.splice(lb.end(), blue);
+	OneColor_Old & lr = data_old.red;
+	lr.splice(lr.end(), red);
+
 	return;
 }
 

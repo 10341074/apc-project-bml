@@ -10,7 +10,7 @@ INCLUDE_MATRIX = include/matrix
 
 _DEPS = Template.h Color.h Car.h Tokenize.h Traffic.h Coordinates.h CellTraffic.h
 _DEPS_MATRIX = Row.h DynRow.h VecVector.h Col.h DynRowDeque.h
-_DEPS_MATRIX += VecVectorS.h VecVectorD.h Cell.h CellMatrix.h
+_DEPS_MATRIX += VecVectorS.h VecVectorD.h Cell.h CellMatrix.h CellData.h
 
 DEPS = $(patsubst %, $(INCLUDE_DIR)/%,  $(_DEPS)) $(patsubst %, $(INCLUDE_MATRIX)/%, $(_DEPS_MATRIX))
 
@@ -22,7 +22,7 @@ OBJ_MATRIX_DIR = obj/matrix
 
 _OBJ = Tokenize.o Traffic.o CellTraffic.o
 _OBJ_MATRIX = Row.o DynRow.o VecVector.o Col.o DynRowDeque.o
-_OBJ_MATRIX += VecVectorS.o VecVectorD.o Cell.o CellMatrix.o
+_OBJ_MATRIX += VecVectorS.o VecVectorD.o Cell.o CellMatrix.o CellData.o
 
 OBJ = $(patsubst %, $(OBJ_DIR)/%, $(_OBJ)) $(patsubst %, $(OBJ_MATRIX_DIR)/%, $(_OBJ_MATRIX))
 

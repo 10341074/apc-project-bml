@@ -1,4 +1,31 @@
 #include "CellMatrix.h"
+void one_color_conv(const OneColor_Old & c_old, OneColor & c_new) {
+	c_new = OneColor(c_old.size(),nullptr);
+	OneColor_Old::const_iterator it_old = c_old.begin();
+	OneColor_Old::const_iterator it_old_end = c_old.end();
+	OneColor::iterator it_new = c_new.begin();
+	for( ; it_old != it_old_end; ++it_old) {
+		*it_new = *it_old;
+		++it_new;
+	}
+	return;
+}
+
+void OwnerData::load_data(const OwnerData_Old & d) {
+//	one_color_conv(d.white, white);
+//	one_color_conv(d.blue, blue);
+//	one_color_conv(d.red, red);
+
+	cars = CarsData(d.ext_size, CarsDataIn(d.inn_size));
+	CarsData_Old::const_iterator it_old = d.cars.begin();
+	CarsData_Old::const_iterator it_old_end = d.cars.end();
+	CarsData::iterator it_new = cars.begin();
+	for( ; it_old != it_old_end; ++it_old) {
+		*it_new = *it_old;
+		++it_new;
+	}
+	return;
+}
 
 std::ostream & operator<<(std::ostream & os, const OwnerData & d) {
 	for(CarsData::const_iterator it1 = d.cars.begin(); it1 != d.cars.end(); ++it1) {
@@ -75,7 +102,7 @@ bool OwnerData::choose_white() const {
 	else 
 		return false;
 }
-
+/*
 void CellMatrix::push_back(CarsData & l2, const std::size_t & count) {
 	// count == l2->size()
 	CarsData & 	cars 		= pvec->cars;
@@ -106,7 +133,8 @@ void CellMatrix::push_back_red(OneColor & l2) {
 	l1.splice(l1.end(), l2);
 	return;
 }
-void two_lines(CarsData::iterator it_ext, CarsData::iterator it_ext2, OneColor & white, OneColor & blue, OneColor & red) {
+*/
+void two_lines(CarsData::iterator it_ext, CarsData::iterator it_ext2, OneColor_Old & white, OneColor_Old & blue, OneColor_Old & red) {
 		// current row
 		CarsDataIn::iterator it_in				= it_ext->begin();
 		CarsDataIn::iterator it_in_next		= it_in;	++it_in_next;
@@ -171,9 +199,9 @@ void two_lines(CarsData::iterator it_ext, CarsData::iterator it_ext2, OneColor &
 ///*
 void CellMatrix::update_data() {
 	std::cout << "update data " << std::endl;
-	OneColor white;
-	OneColor blue;
-	OneColor red;
+	OneColor_Old white;
+	OneColor_Old blue;
+	OneColor_Old red;
 
 	CarsData::iterator it_ext 			= pvec->cars.begin();
 	CarsData::iterator it_ext_end 	= pvec->cars.end();
@@ -195,9 +223,13 @@ void CellMatrix::update_data() {
 	// last row	
 	two_lines(it_ext,pvec->cars.begin(),white,blue,red);
 	
-	this->push_back_white(white);
-	this->push_back_blue(blue);
-	this->push_back_red(red);
+	one_color_conv(white,pvec->white);
+	one_color_conv(blue,pvec->blue);
+	one_color_conv(red,pvec->red);
+	
+	//this->push_back_white(white);
+	//this->push_back_blue(blue);
+	//this->push_back_red(red);
 	return;
 }
 //*/
