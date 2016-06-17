@@ -20,8 +20,11 @@ class CellTraffic{
 		MatrixType type = None;
 		OwnerData_Old	data_old;
 		OwnerData	data;
+		
 		CellMatrixRows * rmat = nullptr;
 		CellMatrixCols * cmat = nullptr;
+		CellMatrix 		* mat = nullptr;
+		CellMatrix 		* mat_inactive = nullptr;
 	public:
 		CellTraffic();
 		~CellTraffic();

@@ -68,6 +68,7 @@ int main(int argc, char ** argv){
 //*/
 ///*
 
+//	for(std::size_t interval=0; interval<2; ++interval){
 	for(std::size_t interval=0; interval<times.size()-1; ++interval){
 		for(std::size_t timeCount=times[interval]; timeCount<times[interval+1]; ++timeCount){
 			CALL_MEMBER_FN(trd,move)(*pYes,cYes);

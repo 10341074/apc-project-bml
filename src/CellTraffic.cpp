@@ -8,7 +8,7 @@
 
 #define START '0'
 CellTraffic::CellTraffic() :
-	data_old(), data(), rmat(new CellMatrixRows(&data)), cmat(new CellMatrixCols(&data)) {
+	data_old(), data(), rmat(new CellMatrixRows(&data)), cmat(new CellMatrixCols(&data)), mat(rmat), mat_inactive(cmat) {
 }
 CellTraffic::~CellTraffic() {
 	if(rmat != nullptr) {
@@ -38,7 +38,9 @@ std::istream & operator>>(std::istream & is, CellTraffic & traffic){
 	traffic.data.load_data(traffic.data_old);
 	traffic.data_old.empty_data();
 	traffic.rmat->update_data();
-
+	
+	traffic.mat = traffic.cmat;
+	traffic.mat_inactive = traffic.rmat;
 	return is;
 }
 void CellTraffic::tok_push_back(const std::string & line, const std::size_t & rowsCount) {
@@ -91,6 +93,9 @@ void CellTraffic::print() const {
 	return;
 }
 void CellTraffic::move_forward(const MatrixType & t, const Color & cl) {
+	mat->move_forward(cl);
+	std::swap(mat, mat_inactive);
+/*
 	if((t == ByRows) && (rmat != nullptr)) {
 		rmat->move_forward(cl);
 //		std::cout << "move "<<type<<std::endl;
@@ -100,9 +105,13 @@ void CellTraffic::move_forward(const MatrixType & t, const Color & cl) {
 //		std::cout << "move "<<type<<std::endl;
 //		std::cout << *cmat;
 	}
+//*/
 	return;
 }
 void CellTraffic::move_white(const MatrixType & t, const Color & cl) {
+	mat->move_white(cl);
+	std::swap(mat, mat_inactive);
+/*
 	if((t == ByRows) && (rmat != nullptr)) {
 		rmat->move_forward(cl);
 //		std::cout << "move "<<type<<std::endl;
@@ -112,6 +121,7 @@ void CellTraffic::move_white(const MatrixType & t, const Color & cl) {
 //		std::cout << "move "<<type<<std::endl;
 //		std::cout << *cmat;
 	}
+*/
 	return;
 }
 

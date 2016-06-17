@@ -55,7 +55,7 @@ class CellMatrix {
 
 	public:
 		CellMatrix(MatrixType t, OwnerData * d) : type(t), pvec(d) {}
-		~CellMatrix() {}
+		virtual ~CellMatrix() {}
 	
 		void push_back(CarsData & l2, const std::size_t & count);
 		void push_back_white(OneColor & l2);
@@ -63,7 +63,10 @@ class CellMatrix {
 		void push_back_red(OneColor & l2);
 //		void border_columns();
 		void update_data();
-			
+		
+		virtual void move_forward(const Color & cl) { return; }
+		virtual void move_white(const Color & cl) {return; 	}
+
 		friend std::ostream & operator<<(std::ostream & os, CellMatrix & mat);
 };
 
@@ -71,7 +74,7 @@ class CellMatrixRows: public CellMatrix {
 	public:
 	CellMatrixRows() = delete;
 	CellMatrixRows(OwnerData * d) : CellMatrix(ByRows, d) {}
-
+//	virtual ~CellMatrixRows() {}
 	void move_forward(const Color & cl);
 	void move_white(const Color & cl);
 	friend std::ostream & operator<<(std::ostream & os, CellMatrixRows & mat);
@@ -80,7 +83,7 @@ class CellMatrixCols: public CellMatrix {
 	public:
 	CellMatrixCols() = delete;
 	CellMatrixCols(OwnerData * d) : CellMatrix(ByCols, d) {}
-
+//	virtual ~CellMatrixCols() {}
 	void move_forward(const Color & cl);
 	void move_white(const Color & cl);
 	friend std::ostream & operator<<(std::ostream & os, CellMatrixCols & mat);
