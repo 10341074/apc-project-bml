@@ -104,11 +104,11 @@ void CellTraffic::move_forward(const MatrixType & t, const Color & cl) {
 }
 void CellTraffic::move_white(const MatrixType & t, const Color & cl) {
 	if((t == ByRows) && (rmat != nullptr)) {
-		rmat->move_forward(cl);
+		rmat->move_white(cl);
 //		std::cout << "move "<<type<<std::endl;
 //		std::cout << *rmat;
 	} else if((t == ByCols) && (cmat != nullptr)) {
-		cmat->move_forward(cl);
+		cmat->move_white(cl);
 //		std::cout << "move "<<type<<std::endl;
 //		std::cout << *cmat;
 	}

@@ -237,6 +237,7 @@ void CellMatrix::update_data() {
 
 // to be done: mix cycle: two cycle together for each row or better allocate new Onecolor 2 list to swap and update current onelcolor immediately
 void CellMatrixRows::move_forward(const Color & cl) {
+//	std::cout << "move-for-row" << cl <<std::endl;
 	// don't use reference otherwise error cause copy assignement
 	OneColor * ptr_color = & pvec->white;
 	switch(cl) {
@@ -289,6 +290,7 @@ void CellMatrixRows::move_forward(const Color & cl) {
 	return;
 }
 void CellMatrixRows::move_white(const Color & cl) {
+//	std::cout << "move-white-row" << cl <<std::endl;
 	OneColor & color = pvec->white;
 	std::vector<std::size_t> to_be_moved; to_be_moved.reserve(color.size());
 	std::size_t index = 0;
@@ -319,6 +321,7 @@ std::ostream & operator<<(std::ostream & os, CellMatrixRows & mat) {
 	return os;
 }
 void CellMatrixCols::move_forward(const Color & cl) {
+//	std::cout << "move-for-col" << cl <<std::endl;
 	OneColor * ptr_color = & pvec->white;
 	switch(cl) {
 		case(Blue):
@@ -356,6 +359,7 @@ void CellMatrixCols::move_forward(const Color & cl) {
 	return;
 }
 void CellMatrixCols::move_white(const Color & cl) {
+//	std::cout << "move-white-col" << cl <<std::endl;
 	OneColor & color = pvec->white;
 	std::vector<std::size_t> to_be_moved; to_be_moved.reserve(color.size());
 	std::size_t index = 0;
