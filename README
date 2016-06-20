@@ -1,9 +1,9 @@
-this project version (note updated at 20.00 of 16-06-16 ):
+this project version (note updated at 17.20 of 20-06-16 ):
 Cell version with:
 	* VECTOR of vector for matrix
 	* VECTOR for OneColor
 	* use of cells
-
+	* modification in move_forward after profiling
 
 generals:
 non uso di MatrixRow in include/matrix

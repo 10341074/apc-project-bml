@@ -1,3 +1,5 @@
 1 gen 800 800 50 by 6873aa6: using gprof 6.8 seconds
 2	gen 800 800 50 with 50 iterations
 2-l	line by line
+3	same after modification in CellMatrix.cpp move_forward
+3-l	

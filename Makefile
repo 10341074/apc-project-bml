@@ -1,6 +1,6 @@
 CXX = g++
-CXXFLAGS = -pg -g -std=c++11 -Wall -I$(INCLUDE_DIR) -I$(INCLUDE_MATRIX)
-CXXFLAGS += -fprofile-arcs -ftest-coverage -g -pg
+CXXFLAGS = -g -std=c++11 -Wall -I$(INCLUDE_DIR) -I$(INCLUDE_MATRIX)
+# CXXFLAGS += -fprofile-arcs -ftest-coverage -g -pg
 # CXXFLAGS = -O3 -std=c++11 -Wall -Wextra -I$(INCLUDE_DIR) -I$(INCLUDE_MATRIX)
 # CXXFLAGS = -O3 -march=native -std=c++11 -Wall -Wextra -I$(INCLUDE_DIR) -I$(INCLUDE_MATRIX)
 CXXGLAGS_OMP = -fopenmp -openmp
