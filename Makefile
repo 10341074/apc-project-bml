@@ -1,5 +1,6 @@
 CXX = g++
-CXXFLAGS = -g -std=c++11 -Wall -I$(INCLUDE_DIR) -I$(INCLUDE_MATRIX)
+CXXFLAGS = -pg -g -std=c++11 -Wall -I$(INCLUDE_DIR) -I$(INCLUDE_MATRIX)
+CXXFLAGS += -fprofile-arcs -ftest-coverage -g -pg
 # CXXFLAGS = -O3 -std=c++11 -Wall -Wextra -I$(INCLUDE_DIR) -I$(INCLUDE_MATRIX)
 # CXXFLAGS = -O3 -march=native -std=c++11 -Wall -Wextra -I$(INCLUDE_DIR) -I$(INCLUDE_MATRIX)
 CXXGLAGS_OMP = -fopenmp -openmp
@@ -45,6 +46,9 @@ clean:
 	-rm apcbml_* $(OBJ_DIR)/*.o $(OBJ_MATRIX_DIR)/*.o
 	-rm *~ $(INCLUDE_DIR)/*~ $(INCLUDE_MATRIX)/*~ $(SRC_DIR)/*~ $(SRC_MATRIX_DIR)/*~ $(OBJ_DIR)/*~ $(OBJ_MATRIX_DIR)/*~ *.csv
 	-rm generator/main
+	-rm $(OBJ_DIR)/*.gcda $(OBJ_MATRIX_DIR)/*.gcda
+	-rm $(OBJ_DIR)/*.gcno $(OBJ_MATRIX_DIR)/*.gcno
+	-rm *.out
 
 test: obj/matrix/Cell.o obj/matrix/CellMatrix.o
 	g++ -std=c++11 -o apcbml_test src/main-test.cpp $^ -Iinclude/matrix -Iinclude
