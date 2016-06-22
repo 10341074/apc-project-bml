@@ -4,10 +4,10 @@
 #include <stdexcept>
 #include <vector>
 
-// #include "Color.h"
+#include "Color.h"
 using Scalar = int;
 using size_type = const std::size_t;
-const char Separator = ',';
+// const char Separator = ',';
 
 class Matrix{
   protected:
