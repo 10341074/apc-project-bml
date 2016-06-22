@@ -1,6 +1,6 @@
-#include "Cell.h"
+#include "Matrix.h"
 
 int main(int argc, char ** argv) {
-	f();
+	std::cout << "hello\n";
 	return 0;
 }
