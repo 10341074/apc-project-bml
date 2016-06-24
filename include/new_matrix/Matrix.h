@@ -3,10 +3,12 @@
 #include <iostream>
 #include <stdexcept>
 #include <vector>
+#include <list>
 
 #include "Color.h"
-using Scalar = int;
-using size_type = const std::size_t;
+#include "ColumnIt.h"
+// using Scalar = Color;
+// using size_type = const std::size_t;
 // const char Separator = ',';
 
 class Matrix{
@@ -25,6 +27,9 @@ class Matrix{
 
     const std::size_t ext_count() const { return ext_count_; }
     const std::size_t inn_count() const { return inn_count_; }
+    std::vector< Scalar >::const_iterator begin() const { return mat.begin(); }
+    std::vector< Scalar >::const_iterator end() const { return mat.end(); }
+    
 //    std::vector< Scalar >   inn_vec_ref(size_type ind);
     std::vector< Scalar > * inn_vec_copy(size_type ind) const;         // by copy
     std::vector< Scalar > * ext_vec_copy(size_type ind) const;         // by copy
@@ -46,6 +51,9 @@ class Matrix{
 
     virtual void what() const = 0;
     void info() const;
+    
+    void load_same_order(const std::list< std::vector< Scalar > > & m_inp);
+    void load_tran_order(const std::list< std::vector< Scalar > > & m_inp);
 	};//finish class
 
 std::ostream & operator<<(std::ostream & os, const Matrix & m);

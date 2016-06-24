@@ -2,6 +2,7 @@
 #include <stdexcept>
 #include <vector>
 #include <memory>
+
 #include <fstream>
 #include <string>
 #include <sstream>
@@ -24,17 +25,28 @@
 #include "Matrix.h"
 #include "MatrixRow.h"
 #include "MatrixCol.h"
-
+#include "Data.h"
 int main(int argc, char ** argv){
-	std::string if_string(argv[1]);
-	std::ifstream if_stream(if_string);
-	
+  std::string   if_string(argv[1]);
+  std::ifstream if_stream(if_string);
+
 	std::string first_line;
 	std::vector<std::size_t> times(1, 0);
+	
 	if(std::getline(if_stream, first_line))
 		tokenize_first_line(first_line,times);
 	
-	std::cout << times ;
+	std::cout << times;
+	Data data;
+	if_stream >> data;
+	if_stream.close();
+	
+	// choice for all white vs color
+	
+	// send memory base
+	
+	// choice row vs col each thread
+	
 	
   return 0;
 }

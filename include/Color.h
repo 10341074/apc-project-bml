@@ -9,4 +9,7 @@ enum Color{White, Blue, Red};
 
 using size_type = const std::size_t;
 
+using Scalar = Color;
+using size_type = const std::size_t;
+
 #endif

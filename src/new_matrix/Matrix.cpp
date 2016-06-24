@@ -44,4 +44,37 @@ void Matrix::info() const {
 std::ostream & operator<<(std::ostream & os, const Matrix & m){
   m.print_elements(os);	//trick for virtual stream operator
 	return os;}
+void Matrix::load_same_order(const std::list< std::vector< Scalar > > & m_inp) {
+  ext_count_ = m_inp.size();
+  inn_count_ = (* m_inp.begin()).size();
+  mat.resize(ext_count_ * inn_count_);
+  
+  std::vector< Scalar >::iterator it_to = mat.begin();
+  for(std::list< std::vector< Scalar > >::const_iterator it_ext = m_inp.begin(); it_ext != m_inp.end(); ++it_ext) {
+    for(std::vector< Scalar >::const_iterator it_inn = it_ext->begin(); it_inn != it_ext->end(); ++it_inn) {
+      * it_to = * it_inn;
+      ++it_to;
+    }
+  }
+  return;
+}
+void Matrix::load_tran_order(const std::list< std::vector< Scalar > > & m_inp) {
+  inn_count_ = m_inp.size();
+  ext_count_ = (* m_inp.begin()).size();
+  mat.resize(ext_count_ * inn_count_);
+  
+  std::vector< Scalar >::iterator it_to = mat.begin();
+  
+  // behaviour: Const_ColumnIt as std::vector<const T>
+  Const_ColumnIt column(m_inp);
+
+  for(std::size_t it_ext = 0; it_ext < ext_count_; ++it_ext) {
+    for(Const_ColumnIt::const_iterator it_inn = column.begin(); it_inn != column.end(); ++it_inn) {
+      * it_to = * it_inn; // unmodified
+      ++it_to;
+    }
+    ++column;
+  }
+  return;
+}
 
