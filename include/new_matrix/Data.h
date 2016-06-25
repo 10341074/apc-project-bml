@@ -11,12 +11,22 @@
 #include "MatrixRow.h"
 #include "MatrixCol.h"
 
-enum MatrixType{ByRows, ByCols, None};
-using OneColor = std::vector<std::size_t>;
+struct Coordinates {
+  std::size_t i_ = 0;
+  std::size_t j_ = 0;
+  Coordinates() {}
+  Coordinates(const std::size_t & i, const std::size_t & j) : i_(i), j_(j) {}
+};
+
+
+enum MatrixType{ByRows, ByCols, None, CSR, CSC};
+// using OneColor = std::vector<std::size_t>;
+using OneColor = std::vector< Coordinates >;
 using MatrixInp = std::list< std::vector< Scalar > >;
 
 class Data {
   private:
+    MatrixType    t_;
     MatrixInp     * m_inp = nullptr;
     Matrix        * m_lin = nullptr;
 /*
@@ -37,13 +47,21 @@ class Data {
     void load_input(std::istream & is);
     void update_statistics();
     void load_matrix();
-    void load_colors();
+    void load_colors_byrows(const Matrix * ptr);
+    void load_colors_bycols(const Matrix * ptr);
     void tok_push_back(const std::string & line);
   public:
-    Data();
+    Data(MatrixType t);
     ~Data();
+    
+    std::size_t rows() const { return rows_; }
+    std::size_t cols() const { return cols_; }
+    MatrixType type() const { return t_; }
+    
     friend std::istream & operator>>(std::istream & is, Data & d);
     friend std::ostream & operator>>(std::ostream & os, Data & d);
     
+    void print() const {if(m_lin!=nullptr) std::cout << * m_lin << std::endl; return;}
+    
 }; // finish class
-#endif
+#endif  

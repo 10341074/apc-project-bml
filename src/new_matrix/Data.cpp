@@ -1,7 +1,21 @@
 #include "Data.h"
 
 #define START '0'
-Data::Data() : m_inp(new MatrixInp) {}
+Data::Data(MatrixType t) : t_(t) {
+  switch(t) {
+    case(None) :
+      m_inp = new MatrixInp;
+      break;
+    case(ByRows) :
+      m_lin = new MatrixRow;
+      break;
+    case(ByCols) :
+      m_lin = new MatrixCol;
+      break;
+    default:
+      break;
+  }
+}
 Data::~Data() {
   if(m_inp != nullptr) {
     delete m_inp;
@@ -27,7 +41,6 @@ Data::~Data() {
 std::istream & operator>>(std::istream & is, Data & d){
   d.load_input(is);
   d.load_matrix();
-  d.load_colors();
   d.update_statistics();
   return is;
 }
@@ -40,34 +53,137 @@ void Data::load_input(std::istream & is) {
 }
 void Data::load_matrix() {
   if(cols_ <= rows_) {
+    if(m_lin != nullptr) {
+     delete m_lin;
+    }
+    
     m_lin = new MatrixRow(rows_, cols_);
     m_lin->load_same_order(* m_inp);
-    delete m_inp;
-    } else {
+    
+    if(m_inp != nullptr) {
+      delete m_inp;
+      m_inp = nullptr;
+    }
+    load_colors_byrows(m_lin);
+  } else {
+    if(m_lin != nullptr) {
+     delete m_lin;
+    }
+
     m_lin = new MatrixCol(rows_, cols_);
     m_lin->load_tran_order(* m_inp);
-    delete m_inp;
-    }
-  return;
-}
-void Data::load_colors() {
-  return;
-}
 
+    if(m_inp != nullptr) {
+      delete m_inp;
+      m_inp = nullptr;
+    }
+    load_colors_bycols(m_lin);
+  }
+  return;
+}
+void Data::load_colors_byrows(const Matrix * ptr) {
+  if(ptr == nullptr) {
+    throw std::logic_error("Data::load_colors from nullptr");
+  }
+  if(white == nullptr) {
+    white = new OneColor;
+  } else {
+    
+  }
+  if(white != nullptr) {
+    delete white;
+    white = new OneColor;
+    }
+  if(blue != nullptr) {
+    delete blue;
+    blue = new OneColor;
+    }
+  if(red != nullptr) {
+    delete red;
+    red = new OneColor;
+    }
+  std::vector< Scalar >::const_iterator it_from = ptr->begin();
+  rows_ = ptr->rows_count();
+  cols_ = ptr->cols_count();
+  for(std::size_t i = 0; i < cols_; ++i) {
+    for(std::size_t j = 0; j < rows_; ++j) {
+      switch( * it_from ) {
+        case(White):
+          white->push_back( Coordinates(i,j) );
+          break;
+        case(Blue):
+          blue->push_back( Coordinates(i,j) );
+          break;
+        case(Red):
+          red->push_back( Coordinates(i,j) );
+          break;
+        default:
+          break;
+      }
+    ++it_from;
+    }
+  }
+  white_count_ = white->size();
+  blue_count_ = blue->size();
+  red_count_ = red->size();
+  return;
+}
+void Data::load_colors_bycols(const Matrix * ptr) {
+  if(ptr == nullptr) {
+    throw std::logic_error("Data::load_colors from nullptr");
+  }
+  if(white != nullptr) {
+    delete white;
+    white = new OneColor;
+    }
+  if(blue != nullptr) {
+    delete blue;
+    blue = new OneColor;
+    }
+  if(red != nullptr) {
+    delete red;
+    red = new OneColor;
+    }
+  std::vector< Scalar >::const_iterator it_from = ptr->begin();
+  rows_ = ptr->rows_count();
+  cols_ = ptr->cols_count();
+  for(std::size_t j = 0; j < cols_; ++j) {
+    for(std::size_t i = 0; i < rows_; ++i) {
+      switch( * it_from ) {
+        case(White):
+          white->push_back( Coordinates(i,j) );
+          break;
+        case(Blue):
+          blue->push_back( Coordinates(i,j) );
+          break;
+        case(Red):
+          red->push_back( Coordinates(i,j) );
+          break;
+        default:
+          break;
+      }
+    ++it_from;
+    }
+  }
+  white_count_ = white->size();
+  blue_count_ = blue->size();
+  red_count_ = red->size();
+  return;
+}
 void Data::update_statistics() {
-  if(rows_ != m_lin->rows_count()) {
+  if(m_lin != nullptr && rows_ != m_lin->rows_count()) {
     throw std::logic_error("Data::update_statistics rows error");
   }
-  if(cols_ != m_lin->cols_count()) {
+  if(m_lin != nullptr && cols_ != m_lin->cols_count()) {
     throw std::logic_error("Data::update_statistics cols error");
   }
-  if(white_count_ != white->size()) {
+  if(white != nullptr && white_count_ != white->size()) {
     throw std::logic_error("Data::update_statistics white error");
   }
-  if(blue_count_ != blue->size()) {
+  if(blue != nullptr && blue_count_ != blue->size()) {
     throw std::logic_error("Data::update_statistics blue error");
   }
-  if(red_count_ != red->size()) {
+  if(red != nullptr && red_count_ != red->size()) {
     throw std::logic_error("Data::update_statistics red error");
   }
   return;

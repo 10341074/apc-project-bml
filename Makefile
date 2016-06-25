@@ -1,4 +1,5 @@
-CXX = g++
+#CXX = g++
+CXX = mpic++
 CXXFLAGS = -g -std=c++11 -Wall -I$(INCLUDE_DIR) -I$(INCLUDE_MATRIX)
 CXXFLAGS_NEW = -g -std=c++11 -Wall -I$(INCLUDE_DIR) -I$(INCLUDE_NEW_MATRIX)
 # CXXFLAGS += -fprofile-arcs -ftest-coverage -g -pg
@@ -63,10 +64,13 @@ clean:
 
 $(OBJ_NEW_MATRIX_DIR)/%.o : $(SRC_NEW_MATRIX_DIR)/%.cpp $(DEPS_NEW)
 	$(CXX) $(CXXFLAGS_NEW) -c -o $@ $<
-apcbml_st_new: $(OBJ_NEW)
-	$(CXX) $(CXXFLAGS_NEW) -o $@ $^ src/main_new.cpp
+apcbml_st_new: $(OBJ_NEW) src/main_new.cpp
+	$(CXX) $(CXXFLAGS_NEW) -o $@ $^
 run_new:
 	./apcbml_st_new data/problem.csv
+run_mpi_new:
+	mpiexec -n 2 ./apcbml_st_new data/problem.csv
+
 test: $(OBJ_NEW) $(DEPS_NEW)
 	g++ -std=c++11 -o apcbml_test src/main_new.cpp $^ -Iinclude/new_matrix -Iinclude
 gen:

@@ -27,6 +27,7 @@ class Matrix{
 
     const std::size_t ext_count() const { return ext_count_; }
     const std::size_t inn_count() const { return inn_count_; }
+    const std::size_t size()      const { return mat.size(); }
     std::vector< Scalar >::const_iterator begin() const { return mat.begin(); }
     std::vector< Scalar >::const_iterator end() const { return mat.end(); }
     
@@ -50,6 +51,7 @@ class Matrix{
     virtual const Scalar & operator()(size_type i,size_type j) const = 0;
 
     virtual void what() const = 0;
+
     void info() const;
     
     void load_same_order(const std::list< std::vector< Scalar > > & m_inp);
