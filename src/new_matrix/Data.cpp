@@ -4,6 +4,8 @@
 Data::Data(MatrixType t) : t_(t) {
   switch(t) {
     case(None) :
+      break;
+    case(Input) :
       m_inp = new MatrixInp;
       break;
     case(ByRows) :
@@ -41,7 +43,7 @@ Data::~Data() {
 std::istream & operator>>(std::istream & is, Data & d){
   d.load_input(is);
   d.load_matrix();
-  d.update_statistics();
+//  d.update_statistics();
   return is;
 }
 void Data::load_input(std::istream & is) {
@@ -85,23 +87,18 @@ void Data::load_colors_byrows(const Matrix * ptr) {
   if(ptr == nullptr) {
     throw std::logic_error("Data::load_colors from nullptr");
   }
-  if(white == nullptr) {
-    white = new OneColor;
-  } else {
-    
-  }
   if(white != nullptr) {
     delete white;
-    white = new OneColor;
     }
   if(blue != nullptr) {
     delete blue;
-    blue = new OneColor;
     }
   if(red != nullptr) {
     delete red;
-    red = new OneColor;
     }
+  white = new OneColor;
+  blue = new OneColor;
+  red = new OneColor;
   std::vector< Scalar >::const_iterator it_from = ptr->begin();
   rows_ = ptr->rows_count();
   cols_ = ptr->cols_count();
@@ -134,16 +131,16 @@ void Data::load_colors_bycols(const Matrix * ptr) {
   }
   if(white != nullptr) {
     delete white;
-    white = new OneColor;
     }
   if(blue != nullptr) {
     delete blue;
-    blue = new OneColor;
     }
   if(red != nullptr) {
     delete red;
-    red = new OneColor;
     }
+  white = new OneColor;
+  blue = new OneColor;
+  red = new OneColor;
   std::vector< Scalar >::const_iterator it_from = ptr->begin();
   rows_ = ptr->rows_count();
   cols_ = ptr->cols_count();

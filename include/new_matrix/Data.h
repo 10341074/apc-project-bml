@@ -19,7 +19,7 @@ struct Coordinates {
 };
 
 
-enum MatrixType{ByRows, ByCols, None, CSR, CSC};
+enum MatrixType{None, Input, ByRows, ByCols, ByCSR, ByCSC};
 // using OneColor = std::vector<std::size_t>;
 using OneColor = std::vector< Coordinates >;
 using MatrixInp = std::list< std::vector< Scalar > >;
@@ -62,6 +62,13 @@ class Data {
     friend std::ostream & operator>>(std::ostream & os, Data & d);
     
     void print() const {if(m_lin!=nullptr) std::cout << * m_lin << std::endl; return;}
-    
+    std::vector< Scalar >::const_iterator begin() const { if(m_lin == nullptr) throw std::logic_error("Data::begin : nullptr pointer"); return m_lin->begin(); }
+    std::vector< Scalar >::iterator       begin()       { if(m_lin == nullptr) throw std::logic_error("Data::begin : nullptr pointer"); return m_lin->begin(); }
+          Scalar & operator[](size_type k)       { if(m_lin == nullptr)   throw std::logic_error("Data::begin : nullptr pointer");
+                                                   if(k >= m_lin->size()) throw std::out_of_range("Matrix::operator[] : out of range");
+                                                   return (* m_lin)[k]; }
+    const Scalar & operator[](size_type k) const { if(m_lin == nullptr)   throw std::logic_error("Data::begin : nullptr pointer");
+                                                   if(k >= m_lin->size()) throw std::out_of_range("Matrix::operator[] : out of range");
+                                                   return (* m_lin)[k]; }
 }; // finish class
 #endif  

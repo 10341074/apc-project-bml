@@ -34,7 +34,7 @@ std::vector< Scalar > * Matrix::ext_vec_copy(size_type ind) const {
   }
   return ptr;
 }
-		
+	
 void Matrix::info() const {
   std::cout << "number of rows = " << rows_count() << std::endl;
   std::cout << "number of cols = " << cols_count() << std::endl;

@@ -10,13 +10,14 @@ MatrixRow::~MatrixRow() {}
 Vector<Scalar> * MatrixRow::row_vector(size_type ind) {return this->first_vec_vector(ind);}	//exceptions in base member
 Vector<Scalar> * MatrixRow::column_vector(size_type ind) {throw std::logic_error("Function not defined for MatrixRow"); return nullptr;}
 */
+/*
 std::vector< Scalar > * MatrixRow::row_copy(size_type ind) const {
   return inn_vec_copy(ind);
 }
 std::vector< Scalar > * MatrixRow::col_copy(size_type ind) const {
   return ext_vec_copy(ind);
 }
-
+*/
 void MatrixRow::print_matrix() const {
   std::size_t m = ext_count_;
   std::size_t n = inn_count_;
