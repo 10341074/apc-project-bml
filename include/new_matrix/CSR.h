@@ -32,4 +32,8 @@ class CSR: public Matrix{
     void what() const override { std::cout << "I'm a CSR" << std::endl; }
 };//finish class
 
+class CSC : public Matrix {
+
+};
+
 #endif

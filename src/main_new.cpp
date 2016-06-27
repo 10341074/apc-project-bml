@@ -1,7 +1,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <vector>
-#include <memory>
+//#include <memory>
 
 #include <fstream>
 #include <string>
@@ -22,6 +22,7 @@
 #include "Tokenize.h"
 #include "Template.h"
 
+#include "Color.h"
 #include "Matrix.h"
 #include "MatrixRow.h"
 #include "MatrixCol.h"
@@ -31,7 +32,7 @@
 #include "mpi.h"
 
 void read_from_file(std::string if_string, Data & data_global, std::vector< std::size_t > & times);
-void initialization_local(std::size_t & global_count, std::size_t & single_count, std::size_t & local_count, std::size_t & global_remain, std::vector< std::size_t > & indices, MatrixType & type_local, std::size_t rows_global,	std::size_t cols_global, MatrixType type_global, int comm_sz, int my_rank);
+void initialization_local(std::size_t & global_count, std::size_t & inn_size, std::size_t & single_count, std::size_t & local_count, std::size_t & global_remain, std::vector< std::size_t > & indices, MatrixType & type_local, std::size_t rows_global,	std::size_t cols_global, MatrixType type_global, int comm_sz, int my_rank);
 int main(int argc, char ** argv){
   MPI_Init(&argc, &argv);
   int comm_sz;
@@ -60,22 +61,30 @@ int main(int argc, char ** argv){
   MPI_Bcast(&type_global, 1, MPI_INT, 0, MPI_COMM_WORLD);
   //////////////////////////////////////////////////////////////////
   std::size_t global_count = 0;
+  std::size_t inn_size = 0;
   std::size_t single_count = 0;
   std::size_t local_count = 0;
   std::size_t global_remain = 0;
   std::vector< std::size_t > indices;
   MatrixType type_local;
-
-  initialization_local(global_count, single_count, local_count, global_remain, indices, type_local, rows_global, cols_global, type_global, comm_sz, my_rank);
+  
+  initialization_local(global_count, inn_size, single_count, local_count, global_remain, indices, type_local, rows_global, cols_global, type_global, comm_sz, my_rank);
 
   // if_comm _sz < global -> serial
    
-  Data data_local(type_local);
-  
-  std::vector< int > sendcnts;
-  std::vector< int > displs;
+  Data data_local(None);
+  data_local.build_comp(type_local, rows_global, cols_global, indices);                                                                                 // +1  
+  // verify indices = local_count +1
+  std::vector< int > sendcnts(comm_sz, single_count * inn_size); sendcnts[0] = (single_count + global_remain) * inn_size;
+  std::vector< int > displs(comm_sz); for(int k = 0; k < comm_sz; ++k) displs[k] = (single_count * k + global_remain) * inn_size; displs[0] = 0;
 //  MPI_Scatterv( & * data_global.begin(), &sendcnts[0], &displs[0], MPI_INT, & * data_local.begin(), remain + local_count, MPI_INT, 0, MPI_COMM_WORLD);
-  MPI_Scatterv( & data_global[0], &sendcnts[0], &displs[0], MPI_INT, & data_local[0], local_count, MPI_INT, 0, MPI_COMM_WORLD);
+  Scalar temp;
+  void * sendbuf = & temp;
+  if(my_rank == 0) sendbuf = & data_global[0];
+  
+//  std::cout << "rank "<< my_rank << sendcnts <<std::endl;
+//  std::vector<Scalar> v(local_count*5);
+  MPI_Scatterv(sendbuf, &sendcnts[0], &displs[0], MPI_INT, & data_local[inn_size], local_count * inn_size, MPI_INT, 0, MPI_COMM_WORLD);                                 // recv: + local
   // print size to verify 
   
   // choice for all white vs color
@@ -86,9 +95,50 @@ int main(int argc, char ** argv){
     std::vector< std::size_t > index_local;
   // send memory base
 	// choice row vs col each thread
+/*  
+if(my_rank == 0) {data_global.print();
+  Scalar * send =& data_global[0];
+  for(std::size_t l = 0; l< rows_global*cols_global; ++l) {
+  std::cout << *send;
+  ++send;
+  }
+  std::cout << '\n';
+}
+  std::cout << "locl" <<std::endl;
+  Scalar * send =& v[0];
+  for(std::size_t l = 0; l< (local_count)*5; ++l) {
+  std::cout << *send;
+  ++send;
+  }
+  std::cout << '\n';
+*/
+  data_local.print();
+  
+/*
+  if(trd.choose_white()) {
+    move = & CellTraffic::move_white;
+    std::cout << "Choosen white\n";
+  } else {
+    std::cout << "Choosen coloured\n";
+  }
 
-//  	data_global.print();
+  for(std::size_t interval=0; interval<times.size()-1; ++interval){
+    for(std::size_t timeCount=times[interval]; timeCount<times[interval+1]; ++timeCount){
+      CALL_MEMBER_FN(trd,move)(*pYes,cYes);
+//			(trd).*(move(*pYes, cYes));
+      std::swap(pYes,pNo);
+      std::swap(cYes,cNo);
+    }
+    std::stringstream convert;
+    convert << times[interval+1];
+    std::string ofname=convert.str();
+    ofname.append(".csv");
+    std::ofstream of(ofname);
 
+    of << trd ;
+    of.close();
+  }
+*/
 	MPI_Finalize();
   return 0;
 }
@@ -103,21 +153,28 @@ void read_from_file(std::string if_string, Data & data_global, std::vector< std:
 
   if_stream >> data_global;
   if_stream.close();
+  
   return;
 }
-void initialization_local(std::size_t & global_count, std::size_t & single_count, std::size_t & local_count, std::size_t & global_remain, std::vector< std::size_t > & indices, MatrixType & type_local, std::size_t rows_global, std::size_t cols_global, MatrixType type_global, int comm_sz, int my_rank) {
+void initialization_local(std::size_t & global_count, std::size_t & inn_size, std::size_t & single_count, std::size_t & local_count, std::size_t & global_remain, std::vector< std::size_t > & indices, MatrixType & type_local, std::size_t rows_global, std::size_t cols_global, MatrixType type_global, int comm_sz, int my_rank) {
   switch(type_global) {
     case(ByRows) :
       type_local = ByCSR;
       global_count = rows_global;
+      inn_size = cols_global;
       break;
     case(ByCols) :
       type_local = ByCSC;
       global_count = cols_global;
+      inn_size = rows_global;
       break;
     default:
       break;
   }
+        type_local = ByCSR;
+      global_count = rows_global;
+      inn_size = cols_global;
+
   global_remain = global_count % comm_sz;
   single_count = global_count / comm_sz;
 

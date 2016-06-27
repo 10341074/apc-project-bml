@@ -7,9 +7,11 @@
 #include <list>
 
 #include "Color.h"
+
 #include "Matrix.h"
 #include "MatrixRow.h"
 #include "MatrixCol.h"
+#include "CSR.h"
 
 struct Coordinates {
   std::size_t i_ = 0;
@@ -53,6 +55,8 @@ class Data {
   public:
     Data(MatrixType t);
     ~Data();
+    void build_full(MatrixType t, std::size_t m, std::size_t n);
+    void build_comp(MatrixType t, std::size_t r, std::size_t c, const std::vector< std::size_t > & indices);
     
     std::size_t rows() const { return rows_; }
     std::size_t cols() const { return cols_; }
@@ -64,10 +68,10 @@ class Data {
     void print() const {if(m_lin!=nullptr) std::cout << * m_lin << std::endl; return;}
     std::vector< Scalar >::const_iterator begin() const { if(m_lin == nullptr) throw std::logic_error("Data::begin : nullptr pointer"); return m_lin->begin(); }
     std::vector< Scalar >::iterator       begin()       { if(m_lin == nullptr) throw std::logic_error("Data::begin : nullptr pointer"); return m_lin->begin(); }
-          Scalar & operator[](size_type k)       { if(m_lin == nullptr)   throw std::logic_error("Data::begin : nullptr pointer");
+          Scalar & operator[](size_type k)       { if(m_lin == nullptr)   throw std::logic_error("Data::operator[] : nullptr pointer");
                                                    if(k >= m_lin->size()) throw std::out_of_range("Matrix::operator[] : out of range");
                                                    return (* m_lin)[k]; }
-    const Scalar & operator[](size_type k) const { if(m_lin == nullptr)   throw std::logic_error("Data::begin : nullptr pointer");
+    const Scalar & operator[](size_type k) const { if(m_lin == nullptr)   throw std::logic_error("Data::operator[] : nullptr pointer");
                                                    if(k >= m_lin->size()) throw std::out_of_range("Matrix::operator[] : out of range");
                                                    return (* m_lin)[k]; }
 }; // finish class

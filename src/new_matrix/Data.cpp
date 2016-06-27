@@ -8,12 +8,6 @@ Data::Data(MatrixType t) : t_(t) {
     case(Input) :
       m_inp = new MatrixInp;
       break;
-    case(ByRows) :
-      m_lin = new MatrixRow;
-      break;
-    case(ByCols) :
-      m_lin = new MatrixCol;
-      break;
     default:
       break;
   }
@@ -40,6 +34,45 @@ Data::~Data() {
     red = nullptr;
     }
 }
+void Data::build_full(MatrixType t, std::size_t m, std::size_t n) {
+  switch(t) {
+    case(ByRows) :
+      t_  = ByRows;
+      m_lin = new MatrixRow(m, n);
+      rows_ = m;
+      cols_ = n;
+      break;
+    case(ByCols) :
+      t_ = ByCols;
+      m_lin = new MatrixCol(m, n);
+      rows_ = m;
+      cols_ = n;
+      break;
+    default:
+      break;
+  }
+  return;
+}
+void Data::build_comp(MatrixType t, std::size_t r, std::size_t c, const std::vector< std::size_t > & indices) {
+  switch(t) {
+    case(ByCSR) :
+      t_ = ByCSR;
+      m_lin = new CSR(r, c, indices, c);
+      rows_ = r;
+      cols_ = c;
+      break;
+    case(ByCSC) :
+      t_ = ByCSC;
+      rows_ = r;
+      cols_ = c;
+//      m_lin = new CSC(r, c, r, indices);
+      break;
+    default:
+      break;
+  }
+  return;
+}
+
 std::istream & operator>>(std::istream & is, Data & d){
   d.load_input(is);
   d.load_matrix();
@@ -51,10 +84,12 @@ void Data::load_input(std::istream & is) {
   while(getline(is, line)) {
     tok_push_back(line);
   }
+  // updated also rows_ cols_
   return;
 }
 void Data::load_matrix() {
-  if(cols_ <= rows_) {
+//  if(cols_ <= rows_) {
+    t_ = ByRows;
     if(m_lin != nullptr) {
      delete m_lin;
     }
@@ -67,7 +102,8 @@ void Data::load_matrix() {
       m_inp = nullptr;
     }
     load_colors_byrows(m_lin);
-  } else {
+/*  } else {
+    t_ = ByCols;
     if(m_lin != nullptr) {
      delete m_lin;
     }
@@ -80,7 +116,7 @@ void Data::load_matrix() {
       m_inp = nullptr;
     }
     load_colors_bycols(m_lin);
-  }
+  }*/
   return;
 }
 void Data::load_colors_byrows(const Matrix * ptr) {
