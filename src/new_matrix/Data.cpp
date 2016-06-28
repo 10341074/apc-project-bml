@@ -33,6 +33,26 @@ Data::~Data() {
     delete red;
     red = nullptr;
     }
+  if(first != nullptr) {
+    delete first;
+    first = nullptr;
+    }
+  if(last != nullptr) {
+    delete last;
+    last = nullptr;
+    }
+  if(data_white != nullptr) {
+    delete data_white;
+    data_white = nullptr;
+    }
+  if(data_blue != nullptr) {
+    delete data_blue;
+    data_blue = nullptr;
+    }
+  if(data_red != nullptr) {
+    delete data_red;
+    data_red = nullptr;
+    }
 }
 void Data::build_full(MatrixType t, std::size_t m, std::size_t n) {
   switch(t) {
@@ -65,9 +85,61 @@ void Data::build_comp(MatrixType t, std::size_t r, std::size_t c, const std::vec
       t_ = ByCSC;
       rows_ = r;
       cols_ = c;
-//      m_lin = new CSC(r, c, r, indices);
+      m_lin = new CSC(r, c, r, indices);
       break;
     default:
+      break;
+  }
+  return;
+}
+void Data::load_colors_comp(const std::vector< std::size_t > & indices) {
+  if(m_lin == nullptr) {
+    throw std::logic_error("Data::load_colors_comp : nullptr");
+  }
+  switch(t_) {
+    case(ByCSR) :
+      load_colors_byCSR(m_lin, indices);
+      break;
+    case(ByCSC) :
+      load_colors_byCSC(m_lin, indices);
+      break;
+    default:
+    throw std::logic_error("Data::load_colors_comp : not compact matrix");
+      break;
+  }
+  return;
+}
+void Data::load_moving_colors_comp(const std::vector< std::size_t > & indices) {
+  if(m_lin == nullptr) {
+    throw std::logic_error("Data::load_mov_colors_comp : nullptr");
+  }
+  switch(t_) {
+    case(ByCSR) :
+      load_moving_colors_byCSR(m_lin, indices);
+      break;
+    case(ByCSC) :
+      load_moving_colors_byCSC(m_lin, indices);
+      break;
+    default:
+    throw std::logic_error("Data::load_mov_colors_comp : not compact matrix");
+      break;
+  }
+  return;
+}
+void Data::unload_moving_colors_comp(MoveType move_type) {
+  switch(move_type) {
+    case(MoveColor) :
+      delete data_white;
+      data_white = nullptr;
+      break;
+    case(MoveWhite) :
+      delete data_blue;
+      data_blue = nullptr;
+      delete data_red;
+      data_red = nullptr;
+      break;
+    default:
+    throw std::logic_error("Data::load_mov_colors_comp : not moving type");
       break;
   }
   return;
@@ -88,7 +160,7 @@ void Data::load_input(std::istream & is) {
   return;
 }
 void Data::load_matrix() {
-//  if(cols_ <= rows_) {
+  if(cols_ <= rows_) {
     t_ = ByRows;
     if(m_lin != nullptr) {
      delete m_lin;
@@ -102,7 +174,7 @@ void Data::load_matrix() {
       m_inp = nullptr;
     }
     load_colors_byrows(m_lin);
-/*  } else {
+  } else {
     t_ = ByCols;
     if(m_lin != nullptr) {
      delete m_lin;
@@ -116,7 +188,7 @@ void Data::load_matrix() {
       m_inp = nullptr;
     }
     load_colors_bycols(m_lin);
-  }*/
+  }
   return;
 }
 void Data::load_colors_byrows(const Matrix * ptr) {
@@ -138,8 +210,8 @@ void Data::load_colors_byrows(const Matrix * ptr) {
   std::vector< Scalar >::const_iterator it_from = ptr->begin();
   rows_ = ptr->rows_count();
   cols_ = ptr->cols_count();
-  for(std::size_t i = 0; i < cols_; ++i) {
-    for(std::size_t j = 0; j < rows_; ++j) {
+  for(std::size_t i = 0; i < rows_; ++i) {
+    for(std::size_t j = 0; j < cols_; ++j) {
       switch( * it_from ) {
         case(White):
           white->push_back( Coordinates(i,j) );
@@ -203,6 +275,245 @@ void Data::load_colors_bycols(const Matrix * ptr) {
   red_count_ = red->size();
   return;
 }
+OneColor & switch_color(const Scalar & s, OneColor & white, OneColor & blue, OneColor & red) {
+      switch( s ) {
+        case(White):
+          return white;
+          break;
+        case(Blue):
+          return blue;
+          break;
+        case(Red):
+          return red;
+          break;
+        default:
+          throw std::logic_error("switch_color exception");
+          break;
+      }
+}
+DataColor & switch_moving_color(const Scalar & s, DataColor & white, DataColor & blue, DataColor & red) {
+      switch( s ) {
+        case(White):
+          return white;
+          break;
+        case(Blue):
+          return blue;
+          break;
+        case(Red):
+          return red;
+          break;
+        default:
+          throw std::logic_error("switch_moving_color exception");
+          break;
+      }
+}
+
+void Data::load_colors_byCSR(const Matrix * ptr, const std::vector< std::size_t > & indices) {
+  if(ptr == nullptr) {
+    throw std::logic_error("Data::load_colors_byCSR from nullptr");
+  }
+  if(indices.empty()) {
+    throw std::logic_error("Data::load_colors_byCSR with empty indices");
+    }
+  if(white != nullptr) {
+    delete white;
+    }
+  if(blue != nullptr) {
+    delete blue;
+    }
+  if(red != nullptr) {
+    delete red;
+    }
+  if(first != nullptr) {
+    delete first;
+    }
+  if(last != nullptr) {
+    delete last;
+    }
+  white = new OneColor;
+  blue = new OneColor;
+  red = new OneColor;
+  first = new ThreeColor;
+  last = new ThreeColor;
+  
+  std::vector< Scalar >::const_iterator it_from = ptr->begin();
+
+  rows_ = ptr->rows_count();
+  cols_ = ptr->cols_count();
+  for(std::size_t j = 0; j < cols_; j++) {
+    switch_color(* it_from, first->white, first->blue, first->red).push_back(Coordinates(indices[0], j));
+    ++it_from;
+  }
+  for(std::size_t i = 1; i < indices.size() - 1 ; ++i) {
+    for(std::size_t j = 0; j < cols_; ++j) {
+    switch_color(* it_from, * white, * blue, * red).push_back(Coordinates(indices[i], j));
+    ++it_from;
+    }
+  }
+  for(std::size_t j = 0; j < cols_; j++) {
+    switch_color(* it_from, last->white, last->blue, last->red).push_back(Coordinates(indices[ indices.size() - 1 ], j));
+    ++it_from;
+  }
+
+  white_count_  = white->size() + last->white.size();
+  blue_count_   = blue->size()  + last->blue.size();
+  red_count_    = red->size()   + last->red.size();
+  return;
+}
+void Data::load_colors_byCSC(const Matrix * ptr, const std::vector< std::size_t > & indices) {
+  if(ptr == nullptr) {
+    throw std::logic_error("Data::load_colors_byCSC from nullptr");
+  }
+  if(indices.empty()) {
+    throw std::logic_error("Data::load_colors_byCSC with empty indices");
+    }
+  if(white != nullptr) {
+    delete white;
+    }
+  if(blue != nullptr) {
+    delete blue;
+    }
+  if(red != nullptr) {
+    delete red;
+    }
+  if(first != nullptr) {
+    delete first;
+    }
+  if(last != nullptr) {
+    delete last;
+    }
+  white = new OneColor;
+  blue = new OneColor;
+  red = new OneColor;
+  first = new ThreeColor;
+  last = new ThreeColor;
+  
+  std::vector< Scalar >::const_iterator it_from = ptr->begin();
+
+  rows_ = ptr->rows_count();
+  cols_ = ptr->cols_count();
+  for(std::size_t i = 0; i < rows_; i++) {
+    switch_color(* it_from, first->white, first->blue, first->red).push_back(Coordinates(i, indices[0]));
+    ++it_from;
+  }
+  for(std::size_t j = 1; j < indices.size() - 1 ; ++j) {
+    for(std::size_t i = 0; i < rows_; ++i) {
+    switch_color(* it_from, * white, * blue, * red).push_back(Coordinates(i, indices[j]));
+    ++it_from;
+    }
+  }
+  for(std::size_t i = 0; i < rows_; i++) {
+    switch_color(* it_from, last->white, last->blue, last->red).push_back(Coordinates(i, indices[ indices.size() - 1 ]));
+    ++it_from;
+  }
+
+  white_count_  = white->size() + last->white.size();
+  blue_count_   = blue->size()  + last->blue.size();
+  red_count_    = red->size()   + last->red.size();
+  return;
+}
+void Data::load_moving_colors_byCSR(const Matrix * ptr, const std::vector< std::size_t > & indices) {
+  if(ptr == nullptr) {
+    throw std::logic_error("Data::load_colors_byCSR from nullptr");
+  }
+  if(indices.empty()) {
+    throw std::logic_error("Data::load_colors_byCSR with empty indices");
+    }
+  if(data_white != nullptr) {
+    delete data_white;
+  }
+  if(data_blue != nullptr) {
+    delete data_blue;
+  }
+  if(data_red != nullptr) {
+    delete data_red;
+  }
+  std::size_t inn_count = m_lin->inn_count();
+  std::size_t ext_count = m_lin->ext_count();
+
+  data_white = new DataColor(ext_count, inn_count);
+  data_blue = new DataColor(ext_count, inn_count);
+  data_red =  new DataColor(ext_count, inn_count);
+  
+  std::vector< Scalar >::const_iterator it_from = ptr->begin();
+
+  rows_ = ptr->rows_count();
+  cols_ = ptr->cols_count();
+  for(std::size_t j = 0; j < cols_; j++) {
+    DataColor & c = switch_moving_color(* it_from, * data_white, * data_blue, * data_red);
+    c.first.push_back(j);
+    ++it_from;
+  }
+  for(std::size_t i = 1; i < indices.size() - 1 ; ++i) {
+    for(std::size_t j = 0; j < cols_; ++j) {
+    DataColor & c = switch_moving_color(* it_from, * data_white, * data_blue, * data_red);
+    c.inside.push_back(Coordinates(indices[i], j));
+    ++it_from;
+    }
+  }
+  for(std::size_t j = 0; j < cols_; j++) {
+    DataColor & c = switch_moving_color(* it_from, * data_white, * data_blue, * data_red);
+    c.last.push_back(j);
+    ++it_from;
+  }
+
+  white_count_  = data_white->inside.size() + data_white->last.size();
+  blue_count_  = data_blue->inside.size() + data_blue->last.size();
+  red_count_  = data_red->inside.size() + data_red->last.size();
+  return;
+}
+void Data::load_moving_colors_byCSC(const Matrix * ptr, const std::vector< std::size_t > & indices) {
+  if(ptr == nullptr) {
+    throw std::logic_error("Data::load_colors_byCSR from nullptr");
+  }
+  if(indices.empty()) {
+    throw std::logic_error("Data::load_colors_byCSR with empty indices");
+    }
+  if(data_white != nullptr) {
+    delete data_white;
+  }
+  if(data_blue != nullptr) {
+    delete data_blue;
+  }
+  if(data_red != nullptr) {
+    delete data_red;
+  }
+  
+  std::size_t inn_count = m_lin->inn_count();
+  std::size_t ext_count = m_lin->ext_count();
+
+  data_white = new DataColor(ext_count, inn_count);
+  data_blue = new DataColor(ext_count, inn_count);
+  data_red =  new DataColor(ext_count, inn_count);
+  
+  std::vector< Scalar >::const_iterator it_from = ptr->begin();
+
+  rows_ = ptr->rows_count();
+  cols_ = ptr->cols_count();
+  for(std::size_t i = 0; i < rows_; i++) {
+    DataColor & c = switch_moving_color(* it_from, * data_white, * data_blue, *data_red);
+    c.first.push_back(i);
+    ++it_from;
+  }
+  for(std::size_t j = 1; j < indices.size() - 1 ; ++j) {
+    for(std::size_t i = 0; i < rows_; ++i) {
+    DataColor & c = switch_moving_color(* it_from, * data_white, * data_blue, * data_red);
+    c.inside.push_back(Coordinates(i, indices[j]));
+    ++it_from;
+    }
+  }
+  for(std::size_t i = 0; i < rows_; i++) {
+    DataColor & c = switch_moving_color(* it_from, * data_white, * data_blue, * data_red);
+    c.last.push_back(i);
+    ++it_from;
+  }
+
+  white_count_  = data_white->inside.size() + data_white->last.size();
+  blue_count_  = data_blue->inside.size() + data_blue->last.size();
+  red_count_  = data_red->inside.size() + data_red->last.size();
+  return;
+}
+
 void Data::update_statistics() {
   if(m_lin != nullptr && rows_ != m_lin->rows_count()) {
     throw std::logic_error("Data::update_statistics rows error");
@@ -245,104 +556,4 @@ void Data::tok_push_back(const std::string & line) {
   }
   return;
 }
-/*
-void two_lines_old(CarsData_Old::iterator it_ext, CarsData_Old::iterator it_ext2, OneColor_Old & white, OneColor_Old & blue, OneColor_Old & red) {
-		// current row
-		CarsDataIn_Old::iterator it_in				= it_ext->begin();
-		CarsDataIn_Old::iterator it_in_next		= it_in;	++it_in_next;
-		CarsDataIn_Old::iterator it_in_end		= it_ext->end();
-		// next row
-		CarsDataIn_Old::iterator it_in2			= it_ext2->begin();
-//		CarsDataIn::iterator it_in2_next		= it_in2; ++it_in2_next;
-//		CarsDataIn::iterator it_in2_end		= it2_ext->end();
-
-		Cell * first = &*it_in;	// save for after
-		for( ; it_in_next != it_in_end; ++it_in_next) { // loop on columns along 1 row
-			// 1 interface with next along row
-			it_in->update_r(&*it_in_next);
-			it_in_next->update_l(&*it_in);
-			
-			// 2 interface with next along col
-			it_in->update_d(&*it_in2);
-			it_in2->update_u(&*it_in);
-			
-			// 3 save color
-			switch( it_in->get_color() ) {
-				case(White):
-					white.push_back(&*it_in);
-					break;
-				case(Blue):
-					blue.push_back(&*it_in);
-					break;
-				case(Red):
-					red.push_back(&*it_in);
-					break;
-//				default:
-//					break;
-			}
-			// advance 3 iterator
-			++it_in;
-			++it_in2;
-			}
-		
-		// it_in points to last
-		// 1 interface with next along row
-		it_in->update_r(first);
-		first->update_l(&*it_in);
-		// 2 interface with next along col
-		it_in->update_d(&*it_in2);
-		it_in2->update_u(&*it_in);
-		// 3 save color
-		switch( it_in->get_color() ) {
-			case(White):
-		white.push_back(&*it_in);
-				break;
-			case(Blue):
-				blue.push_back(&*it_in);
-				break;
-			case(Red):
-				red.push_back(&*it_in);
-				break;
-//			default:
-//				break;
-		}
-	return;
-}
-///*
-void Data::update_data() {
-	std::cout << "update data traffic" << std::endl;
-	OneColor_Old white;
-	OneColor_Old blue;
-	OneColor_Old red;
-
-	CarsData_Old::iterator it_ext 			= data_old.cars.begin();
-	CarsData_Old::iterator it_ext_end 	= data_old.cars.end();
-	if(it_ext == it_ext_end) {			// empty matrix
-		return;
-	}
-	if(it_ext->begin() == it_ext->end()){ // length zero row (check only first row)
-		return;
-	}
-	
-	CarsData_Old::iterator it_ext2 = it_ext; ++it_ext2;		// to next row
-	for( ; it_ext2 != it_ext_end; ++it_ext2) {	// loop on rows, without last				
-		two_lines_old(it_ext,it_ext2,white,blue,red);
-		
-		// advance 2 iterators
-		++it_ext;	// advance current row with it_ext2 (next row)
-	}
-	// it_ext points to last
-	// last row	
-	two_lines_old(it_ext,data_old.cars.begin(),white,blue,red);
-	
-	OneColor_Old & lw = data_old.white;
-	lw.splice(lw.end(), white);
-	OneColor_Old & lb = data_old.blue;
-	lb.splice(lb.end(), blue);
-	OneColor_Old & lr = data_old.red;
-	lr.splice(lr.end(), red);
-
-	return;
-}
-*/
 
