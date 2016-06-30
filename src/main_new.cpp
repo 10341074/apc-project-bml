@@ -29,6 +29,8 @@
 #include "CSR.h"
 #include "CSC.h"
 #include "Data.h"
+#include "DataLocal.h"
+#include "Move.h"
 
 #include "mpi.h"
 
@@ -114,7 +116,9 @@ int main(int argc, char ** argv){
   void (* pmove) (Data &);
   MoveType move_type_global = choose_move_type(white_count_g, blue_count_g, red_count_g);
   data_local.unload_moving_colors_comp(move_type_global);
-
+  
+  Move m(type_local, move_type_global, Vertical, Horizontal, data_local);
+  
 /*
   for(std::size_t interval=0; interval<times.size()-1; ++interval){
     for(std::size_t timeCount=times[interval]; timeCount<times[interval+1]; ++timeCount){
@@ -133,6 +137,11 @@ int main(int argc, char ** argv){
     of.close();
   }
 */
+  std::vector< Scalar >  mat = {White, Red, Red, White, Blue, Red, White, Red, Red, White, Blue, Red};
+  DataLocalColor d(2,6);
+  d.first = {2,5};
+//  move_parall(mat,d, White,1);
+  std::cout << mat;
 	MPI_Finalize();
   return 0;
 }
@@ -201,8 +210,8 @@ MoveType choose_move_type(std::size_t white_count_g, std::size_t blue_count_g, s
   }
 }
 
-void move_inside(Data & data_local, const std::vector< std::size_t > & indices);
-void move_across();
+//void move_inside(Data & data_local, const std::vector< std::size_t > & indices);
+//void move_across();
 
 /*
 int MPI_Scatterv (

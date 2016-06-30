@@ -25,6 +25,7 @@ struct Coordinates {
 
 enum MatrixType{None, Input, ByRows, ByCols, ByCSR, ByCSC};
 enum MoveType{MoveColor, MoveWhite};
+enum MoveTypeDirection{Horizontal, Vertical};
 // using OneColor = std::vector<std::size_t>;
 using OneColor = std::vector< Coordinates >;
 using MatrixInp = std::list< std::vector< Scalar > >;
@@ -37,6 +38,8 @@ struct ThreeColor {
 
 struct DataColor {
   OneColor                      inside;
+  std::size_t                   first_ind = 0;
+  std::size_t                   last_ind = 0;
   std::vector< std::size_t >    first;
   std::vector< std::size_t >    last;
   std::vector< std::size_t >    first_new;
@@ -114,5 +117,6 @@ class Data {
     const Scalar & operator[](size_type k) const { if(m_lin == nullptr)   throw std::logic_error("Data::operator[] : nullptr pointer");
                                                    if(k >= m_lin->size()) throw std::out_of_range("Matrix::operator[] : out of range");
                                                    return (* m_lin)[k]; }
+   friend class Move;
 }; // finish class
 #endif  

@@ -16,7 +16,7 @@ _DEPS = Template.h Color.h Car.h Tokenize.h Traffic.h Coordinates.h CellTraffic.
 _DEPS_MATRIX = Row.h DynRow.h VecVector.h Col.h DynRowDeque.h
 _DEPS_MATRIX += VecVectorS.h VecVectorD.h Cell.h CellMatrix.h CellData.h
 
-_DEPS_NEW_MATRIX = Matrix.h MatrixRow.h MatrixCol.h Data.h ColumnIt.h CSR.h CSC.h
+_DEPS_NEW_MATRIX = Matrix.h MatrixRow.h MatrixCol.h Data.h ColumnIt.h CSR.h CSC.h Move.h DataLocal.h
 
 DEPS = $(patsubst %, $(INCLUDE_DIR)/%,  $(_DEPS)) $(patsubst %, $(INCLUDE_MATRIX)/%, $(_DEPS_MATRIX))
 DEPS_NEW = $(patsubst %, $(INCLUDE_DIR)/%,  $(_DEPS)) $(patsubst %, $(INCLUDE_NEW_MATRIX)/%, $(_DEPS_NEW_MATRIX))
@@ -34,7 +34,7 @@ _OBJ_MATRIX = Row.o DynRow.o VecVector.o Col.o DynRowDeque.o
 _OBJ_MATRIX += VecVectorS.o VecVectorD.o Cell.o CellMatrix.o CellData.o
 
 _OBJ_NEW = Tokenize.o
-_OBJ_NEW_MATRIX = Matrix.o MatrixRow.o MatrixCol.o Data.o ColumnIt.o CSR.o CSC.o
+_OBJ_NEW_MATRIX = Matrix.o MatrixRow.o MatrixCol.o Data.o ColumnIt.o CSR.o CSC.o Move.o
 
 OBJ = $(patsubst %, $(OBJ_DIR)/%, $(_OBJ)) $(patsubst %, $(OBJ_MATRIX_DIR)/%, $(_OBJ_MATRIX))
 OBJ_NEW = $(patsubst %, $(OBJ_DIR)/%, $(_OBJ_NEW)) $(patsubst %, $(OBJ_NEW_MATRIX_DIR)/%, $(_OBJ_NEW_MATRIX))
