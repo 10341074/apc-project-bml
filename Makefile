@@ -34,7 +34,7 @@ _OBJ_MATRIX = Row.o DynRow.o VecVector.o Col.o DynRowDeque.o
 _OBJ_MATRIX += VecVectorS.o VecVectorD.o Cell.o CellMatrix.o CellData.o
 
 _OBJ_NEW = Tokenize.o
-_OBJ_NEW_MATRIX = Matrix.o MatrixRow.o MatrixCol.o Data.o ColumnIt.o CSR.o CSC.o Move.o
+_OBJ_NEW_MATRIX = Matrix.o MatrixRow.o MatrixCol.o Data.o ColumnIt.o CSR.o CSC.o Move.o DataLocal.o
 
 OBJ = $(patsubst %, $(OBJ_DIR)/%, $(_OBJ)) $(patsubst %, $(OBJ_MATRIX_DIR)/%, $(_OBJ_MATRIX))
 OBJ_NEW = $(patsubst %, $(OBJ_DIR)/%, $(_OBJ_NEW)) $(patsubst %, $(OBJ_NEW_MATRIX_DIR)/%, $(_OBJ_NEW_MATRIX))

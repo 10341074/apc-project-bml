@@ -31,6 +31,10 @@ class Matrix{
     std::vector< Scalar >::const_iterator begin() const { return mat.begin(); }
     std::vector< Scalar >::iterator       begin()       { return mat.begin(); }
     std::vector< Scalar >::const_iterator end() const { return mat.end(); }
+
+    std::vector< Scalar > & matrix() { return mat; }
+    const std::vector< Scalar > & matrix() const { return mat; }
+
     
 //    std::vector< Scalar >   inn_vec_ref(size_type ind);
     std::vector< Scalar > * inn_vec_copy(size_type ind) const;         // by copy

@@ -5,6 +5,45 @@
 void move_parall(std::vector< Scalar > & mat, DataLocalColor & data_color, Scalar second_color, int increment, std::vector< std::size_t > & border_move, std::size_t border_no_move, std::vector< std::size_t > & out_border, std::vector< std::size_t > & on_border);
 void move_across(std::vector< Scalar > & mat, DataLocalColor & data_color, Scalar second_color, int increment, std::vector< std::size_t > & border_move, std::size_t border_no_move, std::vector< std::size_t > & out_border, std::vector< std::size_t > & on_border);
 
+struct Parameters {
+  DataLocalColor  * data_color_ = nullptr;
+  Scalar          first_color_;
+  Scalar          second_color_;
+  int             increment_;
+  std::vector< std::size_t > *    border_move_p_ = nullptr;
+  std::size_t                     border_no_move_;
+  Parameters() {}
+  Parameters(DataLocalColor * data_color, Scalar first_color, Scalar second_color, int increment, std::vector< std::size_t > * border_move_p, std::size_t border_no_move) : data_color_(data_color), first_color_(first_color), second_color_(second_color), increment_(increment), border_move_p_(border_move_p), border_no_move_(border_no_move) {}
+//  Parameters(const DataLocalColor & data_color, Scalar first_color, Scalar second_color, int increment, std::vector< std::size_t > * border_move_p, std::size_t border_no_move) : data_color_(data_color), first_color_(first_color), second_color_(second_color), increment_(increment), border_move_p_(border_move_p), border_no_move_(border_no_move) {}
+//  void build(const DataLocalColor & data_color, Scalar first_color, Scalar second_color, int increment, std::vector< std::size_t > * border_move_p, std::size_t border_no_move) { data_color_= data_color; first_color_ = first_color; second_color_ = second_color; increment_  = increment; border_move_p_ = border_move_p; border_no_move_ = border_no_move;}
+};
+class Move {
+ //   std::vector< Scalar > & mat;
+    void (* move)(std::vector< Scalar > & mat, DataLocalColor & data_color, Scalar second_color, int increment, std::vector< std::size_t > & border_move, std::size_t border_no_move, std::vector< std::size_t > & out_border, std::vector< std::size_t > & on_border);
+    MatrixType  matrix_type_;
+    MoveType    move_type_;
+
+    // move_type
+    Parameters blue_;
+    Parameters red_;
+    std::vector< std::size_t > out_border;
+    std::vector< std::size_t > on_border;
+    
+    Parameters * current_ = & blue_;
+  public:
+    Move() {}
+    Move(MatrixType matrix_type, MoveType move_type, Data & data_local);
+    Move(MatrixType matrix_type, MoveType move_type, DataLocalColor & data_white, DataLocalColor & data_blue, DataLocalColor & data_red);
+    void call_to_move(std::vector< Scalar > & mat) { move(mat, * (current_->data_color_), current_->second_color_, current_->increment_, * (current_->border_move_p_), current_->border_no_move_, out_border, on_border); return;} // if no nullptr, or check 1 for all
+};
+
+
+
+
+
+
+
+/*
 class Move {
         //matrix_type
     // pointer to function
@@ -35,4 +74,5 @@ class MoveWhiteClass: public Move {
   void par() { std::cout << "son\n";}
   void ort() {}
 };
+*/
 #endif

@@ -117,8 +117,6 @@ int main(int argc, char ** argv){
   MoveType move_type_global = choose_move_type(white_count_g, blue_count_g, red_count_g);
   data_local.unload_moving_colors_comp(move_type_global);
   
-  Move m(type_local, move_type_global, Vertical, Horizontal, data_local);
-  
 /*
   for(std::size_t interval=0; interval<times.size()-1; ++interval){
     for(std::size_t timeCount=times[interval]; timeCount<times[interval+1]; ++timeCount){
@@ -137,11 +135,12 @@ int main(int argc, char ** argv){
     of.close();
   }
 */
+/*
   std::vector< Scalar >  mat = {White, Red, Red, White, Blue, Red, White, Red, Red, White, Blue, Red};
   DataLocalColor d(2,6);
   d.first = {2,5};
 //  move_parall(mat,d, White,1);
-  std::cout << mat;
+  std::cout << mat;*/
 	MPI_Finalize();
   return 0;
 }

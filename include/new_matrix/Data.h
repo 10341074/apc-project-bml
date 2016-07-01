@@ -105,6 +105,10 @@ class Data {
     std::size_t red_count() const { return red_count_; }
     MatrixType type() const { return t_; }
     
+    std::vector< Scalar > & matrix() { if(m_lin == nullptr) throw std::logic_error("Data::matrix : nullptr pointer"); return m_lin->matrix(); } 
+    const std::vector< Scalar > & matrix() const { if(m_lin == nullptr) throw std::logic_error("Data::matrix : nullptr pointer"); return m_lin->matrix(); }
+
+    
     friend std::istream & operator>>(std::istream & is, Data & d);
     friend std::ostream & operator>>(std::ostream & os, Data & d);
     
