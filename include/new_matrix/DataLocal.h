@@ -7,9 +7,9 @@
 struct DataLocalColor {
   std::size_t                   ext_count_ = 0;
   std::size_t                   inn_count_ = 0;
-  std::vector< std::size_t >    inside;
 //  std.:size_t                   first_ind = 0;
 //  std.:size_t                   last_ind = 0;
+  std::vector< std::size_t >    inside;
   std::vector< std::size_t >    first;
   std::vector< std::size_t >    last;
 //  std::vector< std::size_t >    first_new;

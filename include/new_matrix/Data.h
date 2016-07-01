@@ -107,6 +107,7 @@ class Data {
     
     std::vector< Scalar > & matrix() { if(m_lin == nullptr) throw std::logic_error("Data::matrix : nullptr pointer"); return m_lin->matrix(); } 
     const std::vector< Scalar > & matrix() const { if(m_lin == nullptr) throw std::logic_error("Data::matrix : nullptr pointer"); return m_lin->matrix(); }
+    Matrix * matrix_pointer() const { if(m_lin == nullptr) throw std::logic_error("Data::matrix_pointer : nullptr pointer"); return m_lin; }
 
     
     friend std::istream & operator>>(std::istream & is, Data & d);

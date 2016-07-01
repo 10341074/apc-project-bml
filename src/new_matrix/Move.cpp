@@ -1,14 +1,22 @@
 #include "Move.h"
-#include <algorithm>
+#include "mpi.h"
 void swap(Scalar & s1, Scalar & s2) {
   Scalar s3 = s1;
   s1 = s2;
   s2 = s3;
   return;
 }
-void move_parall(std::vector< Scalar > & mat, DataLocalColor & data_color, Scalar second_color, int increment, std::vector< std::size_t > & border_move, std::size_t border_no_move, std::vector< std::size_t > & out_border, std::vector< std::size_t > & on_border) {
-//  std::size_t & ext_count             = data_color.ext_count_;
-  std::size_t & inn_count             = data_color.inn_count_;
+void ngbd(int & out_ngbd, int & on_ngbd, int increment) {
+  int comm_sz;
+  int my_rank;
+  MPI_Comm_size(MPI_COMM_WORLD, &comm_sz);
+  MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
+  on_ngbd =(my_rank + increment + comm_sz) % comm_sz;
+  out_ngbd =(my_rank - increment + comm_sz) % comm_sz;
+  return;
+}
+void move_parall(std::vector< Scalar > & mat, DataLocalColor & data_color, Scalar first_color, Scalar second_color, int increment, std::vector< std::size_t > & border_move, std::size_t border_no_move, std::vector< std::size_t > & out_border, std::vector< std::size_t > & on_border) {
+  std::size_t inn_count               = data_color.inn_count_;
   std::vector< std::size_t > & first  = data_color.first;
   std::vector< std::size_t > & last   = data_color.last;
   std::vector< std::size_t > & inside  = data_color.inside;
@@ -50,50 +58,95 @@ void move_parall(std::vector< Scalar > & mat, DataLocalColor & data_color, Scala
   temp.clear();
   return;
 }
-void move_across(std::vector< Scalar > & mat, DataLocalColor & data_color, Scalar second_color, int increment, std::vector< std::size_t > & border_move, std::size_t border_no_move, std::vector< std::size_t > & out_border, std::vector< std::size_t > & on_border) {
-//  std::size_t & ext_count             = data_color.ext_count_;
-  std::size_t & inn_count             = data_color.inn_count_;
-  std::vector< std::size_t > & inside  = data_color.inside;
+void move_across(std::vector< Scalar > & mat, DataLocalColor & data_color, Scalar first_color, Scalar second_color, int increment, std::vector< std::size_t > & border_move, std::size_t border_no_move, std::vector< std::size_t > & out_border, std::vector< std::size_t > & on_border) {
+  std::size_t inn_count               = data_color.inn_count_;
+  std::size_t ext_count               = data_color.ext_count_;
+  std::vector< std::size_t > & inside   = data_color.inside;
   
-  std::vector< std::size_t > temp;  temp.reserve(border_move.size() + inside.size());
+  std::vector< std::size_t > temp;
+  temp.reserve(border_move.size() + inside.size());
 
   // incremenr +1 or -1
-  increment *= inn_count;
+  std::size_t increment_big = inn_count * increment;
   out_border.clear();
   on_border.clear();
-
+  out_border.push_back(0);    // size record
+  on_border.push_back(0);     // size record
   // border
   for(std::size_t & i : border_move) {
-    if(mat[i + increment] == second_color) {
+    if(mat[i + increment_big] == second_color) {
       temp.push_back(i);
+      inside.push_back(i + increment_big);
       out_border.push_back(i % inn_count);
-      i = i + increment;
     }
   }
+  std::vector< std::size_t > inside_temp;
+  inside_temp.reserve(inside.size());
   // inside
   for(std::size_t & i : inside) {
-    if(mat[i + increment] == second_color) {
-      if((i + increment) / inn_count == border_no_move) {
-        on_border.push_back((i + increment) % inn_count);
+    if(mat[i + increment_big] == second_color) {
+      if((i + increment_big) / inn_count == border_no_move) {
+        temp.push_back(i);
+        on_border.push_back((i + increment_big) % inn_count);
+      } else {
+        temp.push_back(i);
+        inside_temp.push_back(i + increment_big);
       }
-      temp.push_back(i);
-      i = i + increment;
+    }
+  }
+  inside_temp.swap(inside); // it will be destroyed
+
+  for(std::size_t i : temp) {
+    swap(mat[i],mat[i + increment_big]);
+  }
+  
+  out_border[0] = out_border.size() - 1;
+  on_border[0] = on_border.size() - 1;
+  int out_ngbd = 0, on_ngbd = 0;
+  ngbd(out_ngbd, on_ngbd, increment);
+
+//  MPI_Sendrecv on
+  std::vector< std::size_t > out_from_on(inn_count); // add on out_border
+  MPI_Sendrecv(& on_border[0], on_border[0] + 1, MPI_UNSIGNED_LONG_LONG, on_ngbd, 0, & out_from_on[0], inn_count, MPI_UNSIGNED_LONG_LONG, out_ngbd, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+//  MPI_Sendrecv out
+  std::vector< std::size_t > on_from_out(inn_count); // rm from on_border
+  MPI_Sendrecv(& out_border[0], out_border[0] + 1, MPI_UNSIGNED_LONG_LONG, out_ngbd, 0, & on_from_out[0], inn_count, MPI_UNSIGNED_LONG_LONG, on_ngbd, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+  
+  std::size_t out_index = data_color.ext_count_ - border_no_move;
+  std::size_t on_index = border_no_move;
+  for(std::size_t k = 1; k < out_from_on[0]; ++k) {
+    mat[out_index * inn_count + out_from_on[k]] = first_color;
+  }
+  for(std::size_t k = 1; k < on_from_out[0]; ++k) {
+    mat[on_index * inn_count + on_from_out[k]] = second_color;
+  }
+  
+  data_color.first.clear();
+  data_color.last.clear();
+  // first last update
+  for(std::size_t k = 0 ; k < inn_count; ++k) {
+    if(mat[k] == first_color) {
+      data_color.first.push_back(k);
     }
   }
   
-  for(std::size_t i : temp) {
-    swap(mat[i],mat[i + increment]);
+  for(std::size_t k = (ext_count - 1) * inn_count ; k < ext_count * inn_count; ++k) {
+    if(mat[k] == first_color) {
+      data_color.last.push_back(k);
+    }
   }
 
+  out_border.clear();
+  on_border.clear();
   return;
 }
 Move::Move(MatrixType matrix_type, MoveType move_type, Data & data_local) : matrix_type_(matrix_type), move_type_(move_type) {
   switch(matrix_type) {
   case(ByCSR) :
-    move = move_across;
+    move_active = move_across;
     break;
   case(ByCSC) :
-    move = move_parall;
+    move_active = move_parall;
     break;
   default:
     throw std::logic_error("Move::Move not compact matrix_type");
@@ -107,17 +160,6 @@ Move::Move(MatrixType matrix_type, MoveType move_type, Data & data_local) : matr
   }
 }
 Move::Move(MatrixType matrix_type, MoveType move_type, DataLocalColor & data_white, DataLocalColor & data_blue, DataLocalColor & data_red) : matrix_type_(matrix_type), move_type_(move_type) {
-  switch(matrix_type) {
-  case(ByCSR) :
-    move = move_across;
-    break;
-  case(ByCSC) :
-    move = move_parall;
-    break;
-  default:
-    throw std::logic_error("Move::Move not compact matrix_type");
-    break;
-  }
   switch(move_type) {
     case(MoveColor) :
       data_white = DataLocalColor();
@@ -125,14 +167,16 @@ Move::Move(MatrixType matrix_type, MoveType move_type, DataLocalColor & data_whi
       red_  = Parameters(& data_red,  Red,  White, 1, & data_red.first,  data_red.ext_count_ - 1);
       switch(matrix_type) {
         case(ByCSR) :
-          move = move_across;
+          move_active = move_across;
+          move_inactive = move_parall;
           out_border.reserve(data_blue.inn_count_);
           out_border.clear();
           on_border.reserve(data_blue.inn_count_);
           on_border.clear();
           break;
         case(ByCSC) :
-          move = move_parall;
+          move_active = move_parall;
+          move_inactive = move_across;
           out_border.reserve(data_red.inn_count_);
           out_border.clear();
           on_border.reserve(data_red.inn_count_);
@@ -150,14 +194,16 @@ Move::Move(MatrixType matrix_type, MoveType move_type, DataLocalColor & data_whi
       red_  = Parameters(& data_white, White, Red,  -1, & data_white.last, 0);
       switch(matrix_type) {
         case(ByCSR) :
-          move = move_across;
+          move_active = move_across;
+          move_inactive = move_parall;
           out_border.reserve(data_white.inn_count_);
           out_border.clear();
           on_border.reserve(data_white.inn_count_);
           on_border.clear();
           break;
         case(ByCSC) :
-          move = move_parall;
+          move_active = move_parall;
+          move_inactive = move_across;
           out_border.reserve(data_white.inn_count_);
           out_border.clear();
           on_border.reserve(data_white.inn_count_);
@@ -169,6 +215,20 @@ Move::Move(MatrixType matrix_type, MoveType move_type, DataLocalColor & data_whi
       }
       break;
   }
+}
+void odd_move(std::vector< Scalar > & mat, Move & m) {
+  Parameters * current = & m.blue_; 
+  m.move_active(mat, * (current->data_color_), current->first_color_, current->second_color_, current->increment_, * (current->border_move_p_), current->border_no_move_, m.out_border, m.on_border);
+
+  std::swap(m.move_active, m.move_inactive);
+  return;
+}
+void even_move(std::vector< Scalar > & mat, Move & m) {
+  Parameters * current = & m.red_; 
+  m.move_active(mat, * (current->data_color_), current->first_color_, current->second_color_, current->increment_, * (current->border_move_p_), current->border_no_move_, m.out_border, m.on_border);
+
+  std::swap(m.move_active, m.move_inactive);
+  return;
 }
 
 /*

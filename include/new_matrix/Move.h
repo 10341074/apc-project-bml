@@ -19,7 +19,9 @@ struct Parameters {
 };
 class Move {
  //   std::vector< Scalar > & mat;
-    void (* move)(std::vector< Scalar > & mat, DataLocalColor & data_color, Scalar second_color, int increment, std::vector< std::size_t > & border_move, std::size_t border_no_move, std::vector< std::size_t > & out_border, std::vector< std::size_t > & on_border);
+    void (* move_active)(std::vector< Scalar > & mat, DataLocalColor & data_color, Scalar first_color, Scalar second_color, int increment, std::vector< std::size_t > & border_move, std::size_t border_no_move, std::vector< std::size_t > & out_border, std::vector< std::size_t > & on_border);
+    void (* move_inactive)(std::vector< Scalar > & mat, DataLocalColor & data_color, Scalar first_color, Scalar second_color, int increment, std::vector< std::size_t > & border_move, std::size_t border_no_move, std::vector< std::size_t > & out_border, std::vector< std::size_t > & on_border);
+
     MatrixType  matrix_type_;
     MoveType    move_type_;
 
@@ -29,15 +31,20 @@ class Move {
     std::vector< std::size_t > out_border;
     std::vector< std::size_t > on_border;
     
-    Parameters * current_ = & blue_;
+//    Parameters * current = & blue_;
+//    Parameters * pausing = & red_
   public:
     Move() {}
     Move(MatrixType matrix_type, MoveType move_type, Data & data_local);
     Move(MatrixType matrix_type, MoveType move_type, DataLocalColor & data_white, DataLocalColor & data_blue, DataLocalColor & data_red);
-    void call_to_move(std::vector< Scalar > & mat) { move(mat, * (current_->data_color_), current_->second_color_, current_->increment_, * (current_->border_move_p_), current_->border_no_move_, out_border, on_border); return;} // if no nullptr, or check 1 for all
+//    void call_to_move(std::vector< Scalar > & mat) { move(mat, * (current->data_color_), current->second_color_, current->increment_, * (current->border_move_p_), current->border_no_move_, out_border, on_border); return;} // if no nullptr, or check 1 for all
+    friend void odd_move(std::vector< Scalar > & mat, Move & m);
+    friend void even_move(std::vector< Scalar > & mat, Move & m);
+
 };
 
-
+void odd_move(std::vector< Scalar > & mat, Move & m);
+void even_move(std::vector< Scalar > & mat, Move & m);
 
 
 

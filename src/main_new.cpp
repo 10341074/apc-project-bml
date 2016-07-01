@@ -113,10 +113,24 @@ int main(int argc, char ** argv){
     // optimization redifine swap
 //  std::cout << "my_rank " << my_rank << white_count_g << blue_count_g << red_count_g << std::endl;
 
-  void (* pmove) (Data &);
   MoveType move_type_global = choose_move_type(white_count_g, blue_count_g, red_count_g);
   data_local.unload_moving_colors_comp(move_type_global);
-  
+
+//  std::cout << white_count_l << " " << blue_count_l << " " << red_count_l << std::endl;   
+  Matrix * mp = data_local.matrix_pointer();
+  DataLocalColor data_white(mp->ext_count(), mp->inn_count());
+  DataLocalColor data_blue(mp->ext_count(), mp->inn_count());
+  DataLocalColor data_red(mp->ext_count(), mp->inn_count());
+  load_local_colors(mp, data_white, data_blue, data_red, white_count_g, blue_count_g, red_count_g);
+//  std::cout << "new " << white_count_l << " " << blue_count_l << " " << red_count_l << std::endl;   
+//  std::cout << "out " << data_white.inside;
+  Move mm(type_local, move_type_global, data_white, data_blue, data_red);
+//  std::cout << "out " << data_white.inside;
+    
+    void (* current)(std::vector< Scalar > & mat, Move & m);
+    void (* pausing)(std::vector< Scalar > & mat, Move & m);
+    current = odd_move;
+    pausing = even_move;
 /*
   for(std::size_t interval=0; interval<times.size()-1; ++interval){
     for(std::size_t timeCount=times[interval]; timeCount<times[interval+1]; ++timeCount){

@@ -18,7 +18,7 @@ DataLocalColor & switch_local_color(const Scalar & s, DataLocalColor & white, Da
 }
 void load_local_colors(const Matrix * ptr, DataLocalColor & data_local_white, DataLocalColor & data_local_blue, DataLocalColor & data_local_red, std::size_t & white_count, std::size_t & blue_count, std::size_t & red_count) {
   if(ptr == nullptr) {
-    throw std::logic_error("load_local_byCSR from nullptr");
+    throw std::logic_error("load_local from nullptr");
   }
   std::size_t inn_count = ptr->inn_count();
   std::size_t ext_count = ptr->ext_count();
