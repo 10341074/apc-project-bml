@@ -88,7 +88,9 @@ int main(int argc, char ** argv){
   // verify indices = local_count +1
   Scalar temp;
   void * sendbuf = & temp;
-  if(my_rank == 0) sendbuf = & data_global[0];
+  if(my_rank == 0)
+    sendbuf = & data_global[0];
+  
   {
   std::vector< int > sendcnts(comm_sz, single_count * inn_size); sendcnts[0] = (single_count + global_remain) * inn_size;
   std::vector< int > displs(comm_sz); for(int k = 0; k < comm_sz; ++k) displs[k] = (single_count * k + global_remain) * inn_size; displs[0] = 0;
@@ -143,24 +145,34 @@ int main(int argc, char ** argv){
     ofnamem.append("_my.csv");
     std::ofstream ofm(ofnamem);
 
+    std::vector< int > recvcnts(comm_sz, single_count * inn_size); recvcnts[0] = (single_count + global_remain) * inn_size;
+    std::vector< int > displs(comm_sz); for(int k = 0; k < comm_sz; ++k) displs[k] = (single_count * k + global_remain) * inn_size; displs[0] = 0;
+    void * recvbuf = sendbuf;
+
 //  for(std::size_t interval=0; interval<2; ++interval){
   for(std::size_t interval=0; interval<times.size()-1; ++interval){
-    for(std::size_t timeCount=times[interval]; timeCount<times[interval+1]; ++timeCount){
+    for(std::size_t timeCount=times[interval]; timeCount<times[interval+1]; ++timeCount) {
 //    for(std::size_t timeCount=0; timeCount<4; ++timeCount){
       current(data_local.matrix(), mm);
       std::swap(current, pausing);
 //          ofm << "time " << timeCount << " rank  " << my_rank <<std::endl;
 //          ofm << data_local;
     }
-    std::stringstream convert;
-    convert << times[interval+1];
-    std::string ofname=convert.str();
-    ofname.append(".csv");
-    std::ofstream of(ofname);
-    data_local.print();
+    
+    MPI_Gatherv( & data_local[inn_size], local_count * inn_size, MPI_INT, recvbuf, & recvcnts[0],  & displs[0], MPI_INT, 0, MPI_COMM_WORLD);
+    
+    if(my_rank == 0) {
+      std::stringstream convert;
+      convert << times[interval+1];
+      std::string ofname=convert.str();
+      ofname.append(".csv");
+      std::ofstream of(ofname);
+//      std::cout << data_global;
+      of << data_global;
+      of.close();
+    }
+//     data_local.print();
 
-//    of << trd ;
-    of.close();
   }
   ofm.close();
   
@@ -252,4 +264,10 @@ int MPI_Scatterv (
                MPI_Datatype recvtype,
                int root,
                MPI_Comm comm )
+
+int MPI_Gatherv ( void *sendbuf, int sendcnt, MPI_Datatype sendtype,
+                         void *recvbuf, int *recvcnts, int *displs,
+                        MPI_Datatype recvtype,
+                         int root, MPI_Comm comm )
+
 */
