@@ -60,7 +60,12 @@ int main(int argc, char ** argv){
   	cols_global = data_global.cols();
   	type_global = data_global.type();
   }
-
+  std::size_t times_size = times.size();
+  MPI_Bcast(&times_size, 1, MPI_UNSIGNED_LONG, 0, MPI_COMM_WORLD);
+  times.resize(times_size);
+  MPI_Bcast(& times[0], times_size, MPI_UNSIGNED_LONG, 0, MPI_COMM_WORLD);
+  
+  std::cout << times;
   MPI_Bcast(&rows_global, 1, MPI_UNSIGNED_LONG, 0, MPI_COMM_WORLD);
   MPI_Bcast(&cols_global, 1, MPI_UNSIGNED_LONG, 0, MPI_COMM_WORLD);
   MPI_Bcast(&type_global, 1, MPI_INT, 0, MPI_COMM_WORLD);
@@ -131,24 +136,34 @@ int main(int argc, char ** argv){
     void (* pausing)(std::vector< Scalar > & mat, Move & m);
     current = odd_move;
     pausing = even_move;
-/*
+
+    std::stringstream convertm;
+    convertm << my_rank;
+    std::string ofnamem=convertm.str();
+    ofnamem.append("_my.csv");
+    std::ofstream ofm(ofnamem);
+
+//  for(std::size_t interval=0; interval<2; ++interval){
   for(std::size_t interval=0; interval<times.size()-1; ++interval){
     for(std::size_t timeCount=times[interval]; timeCount<times[interval+1]; ++timeCount){
-      CALL_MEMBER_FN(trd,move)(*pYes,cYes);
-//			(trd).*(move(*pYes, cYes));
-      std::swap(pYes,pNo);
-      std::swap(cYes,cNo);
+//    for(std::size_t timeCount=0; timeCount<4; ++timeCount){
+      current(data_local.matrix(), mm);
+      std::swap(current, pausing);
+//          ofm << "time " << timeCount << " rank  " << my_rank <<std::endl;
+//          ofm << data_local;
     }
     std::stringstream convert;
     convert << times[interval+1];
     std::string ofname=convert.str();
     ofname.append(".csv");
     std::ofstream of(ofname);
+    data_local.print();
 
-    of << trd ;
+//    of << trd ;
     of.close();
   }
-*/
+  ofm.close();
+  
 /*
   std::vector< Scalar >  mat = {White, Red, Red, White, Blue, Red, White, Red, Red, White, Blue, Red};
   DataLocalColor d(2,6);

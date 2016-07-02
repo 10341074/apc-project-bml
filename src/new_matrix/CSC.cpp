@@ -66,9 +66,9 @@ void CSC::print_elements(std::ostream & os) const {
   std::size_t n = ext_count_;
   for(std::size_t i=0; i < m; ++i) {
     for(std::size_t j=0; j < n; ++j) {
-      std::cout << mat[(j * m) + i] << Separator;
+      os << mat[(j * m) + i] << Separator;
     }
-    std::cout << '\n';
+    os << '\n';
   }
   return;
 }

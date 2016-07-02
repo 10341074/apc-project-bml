@@ -111,7 +111,7 @@ class Data {
 
     
     friend std::istream & operator>>(std::istream & is, Data & d);
-    friend std::ostream & operator>>(std::ostream & os, Data & d);
+    friend std::ostream & operator<<(std::ostream & os, Data & d);
     
     void print() const {if(m_lin!=nullptr) std::cout << * m_lin << std::endl; return;}
     std::vector< Scalar >::const_iterator begin() const { if(m_lin == nullptr) throw std::logic_error("Data::begin : nullptr pointer"); return m_lin->begin(); }

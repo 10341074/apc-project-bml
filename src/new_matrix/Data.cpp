@@ -151,6 +151,12 @@ std::istream & operator>>(std::istream & is, Data & d){
 //  d.update_statistics();
   return is;
 }
+std::ostream & operator<<(std::ostream & os, Data & d) {
+  if(d.m_lin!=nullptr) 
+    os << * d.m_lin << std::endl;
+  return os;
+}
+    
 void Data::load_input(std::istream & is) {
   std::string line;
   while(getline(is, line)) {
