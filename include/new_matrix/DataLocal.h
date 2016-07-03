@@ -22,6 +22,11 @@ struct DataLocalColor {
 //    first_new.reserve( inn_count );
 //    last_new.reserve( inn_count );
   }
+  void print(std::ostream & os) {
+    os << "inside " << inside;
+    os << "first " << first;
+    os << "last " << last;
+  }
 }; // finish class
 
 void load_local_colors(const Matrix * ptr, DataLocalColor & data_local_white, DataLocalColor & data_local_blue, DataLocalColor & data_local_red, std::size_t & white_count, std::size_t & blue_count, std::size_t & red_count);

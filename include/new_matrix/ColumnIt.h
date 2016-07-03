@@ -23,16 +23,6 @@ class Const_ScalarPointer { // non-const pointer to const Scalar // no memory me
     Const_ScalarPointer(std::vector< Scalar >::const_iterator && it) :        scalar_p_(it) {}
     
     Const_ScalarPointer & operator++();
-/*
-    DynColor & operator=(const Row::iterator & it);
-	DynColor & operator=(Row::iterator && it);
-	
-//	up to now only to write
-	DynColor & operator=(const Color & c);
-	DynColor & operator=(Color && c);
-*/
-
-//    friend std::ostream & operator<<(std::ostream & os, const Const_ScalarPointer & s);
 };
 
 class Const_ColumnIt { // non-const column to const Scalar

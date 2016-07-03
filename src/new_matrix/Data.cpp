@@ -1,6 +1,52 @@
 #include "Data.h"
 
 #define START '0'
+void load_same_order(const std::list< std::vector< Scalar > > & m_inp, std::vector< Scalar > & mat, std::size_t & ext_count, std::size_t & inn_count) {
+  ext_count = m_inp.size();
+  if(m_inp.empty())
+    throw std::runtime_error("load_same_order: empty list");
+  inn_count = m_inp.begin()->size();
+  if(inn_count == 0)
+    throw std::runtime_error("load_same_order: list of empty vectors");
+
+  mat.resize(ext_count * inn_count);
+  
+  std::vector< Scalar >::iterator it_to = mat.begin();
+  for(std::list< std::vector< Scalar > >::const_iterator it_ext = m_inp.begin(); it_ext != m_inp.end(); ++it_ext) {
+    for(std::vector< Scalar >::const_iterator it_inn = it_ext->begin(); it_inn != it_ext->end(); ++it_inn) {
+      * it_to = * it_inn;
+      ++it_to;
+    }
+  }
+  return;
+}
+void load_tran_order(const std::list< std::vector< Scalar > > & m_inp, std::vector< Scalar > & mat, std::size_t & ext_count, std::size_t & inn_count) {
+  inn_count = m_inp.size();
+  if(m_inp.empty())
+    throw std::runtime_error("load_tran_order: empty list");
+  ext_count = m_inp.begin()->size();
+  if(ext_count == 0)
+    throw std::runtime_error("load_tran_order: list of empty vectors");
+
+  mat.resize(ext_count * inn_count);
+  
+  std::vector< Scalar >::iterator it_to = mat.begin();
+  
+  // behaviour: Const_ColumnIt as std::vector<const T>
+  Const_ColumnIt column(m_inp);
+
+  for(std::size_t it_ext = 0; it_ext < ext_count; ++it_ext) {
+    for(Const_ColumnIt::const_iterator it_inn = column.begin(); it_inn != column.end(); ++it_inn) {
+      * it_to = * it_inn; // unmodified
+      ++it_to;
+    }
+    ++column;
+  }
+  return;
+}
+
+
+
 Data::Data(MatrixType t) : t_(t) {
   switch(t) {
     case(None) :

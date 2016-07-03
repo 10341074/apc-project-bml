@@ -40,25 +40,25 @@ class Matrix{
     std::vector< Scalar > * inn_vec_copy(size_type ind) const;         // by copy
     std::vector< Scalar > * ext_vec_copy(size_type ind) const;         // by copy
 
-    virtual const std::size_t rows_count() const = 0;
-    virtual const std::size_t cols_count() const = 0;
+    virtual const std::size_t rows_count() const {return 0;} 
+    virtual const std::size_t cols_count() const {return 0;}
 //    virtual std::vector< Scalar > * row_vector(size_type index) = 0;     // unsafe to dealloc
 //    virtual std::vector< Scalar > * col_vector(size_type index) = 0;     // unsafe to dealloc
 
 //    virtual std::vector< Scalar > * row_copy(size_type ind) const = 0;
 //    virtual std::vector< Scalar > * col_copy(size_type ind) const = 0;
-    virtual void print_matrix() const = 0;
-    virtual void print_elements(std::ostream & os) const = 0;	// trick for print matrix using streams
+    virtual void print_matrix() const {return;}
+    virtual void print_elements(std::ostream & os) const{return;}	// trick for print matrix using streams
 
 //    virtual       Scalar * item_add(size_type i,size_type j) = 0;
 //    virtual const Scalar item(size_type i,size_type j) const = 0;
           Scalar & operator[](size_type k)       { if(k >= mat.size()) throw std::out_of_range("Matrix::operator[] : out of range"); return mat[k]; }
     const Scalar & operator[](size_type k) const { if(k >= mat.size()) throw std::out_of_range("Matrix::operator[] : out of range"); return mat[k]; }
 
-    virtual       Scalar & operator()(size_type i,size_type j)       = 0;
-    virtual const Scalar & operator()(size_type i,size_type j) const = 0;
+    virtual       Scalar & operator()(size_type i,size_type j) { return mat[0]; }
+    virtual const Scalar & operator()(size_type i,size_type j) const {return mat[0];}
 
-    virtual void what() const = 0;
+    virtual void what() const {return;}
 
     void info() const;
     

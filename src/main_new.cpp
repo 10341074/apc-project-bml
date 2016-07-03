@@ -34,6 +34,7 @@
 
 #include "mpi.h"
 
+void copy(const std::vector< Scalar > & from, std::vector< Scalar > & to);
 void read_from_file(std::string if_string, Data & data_global, std::vector< std::size_t > & times);
 void initialization_local(std::size_t & global_count, std::size_t & inn_size, std::size_t & single_count, std::size_t & local_count, std::size_t & global_remain, std::vector< std::size_t > & indices, MatrixType & type_local, std::size_t rows_global,	std::size_t cols_global, MatrixType type_global, int comm_sz, int my_rank);
 MoveType choose_move_type(std::size_t white_count_g, std::size_t blue_count_g, std::size_t red_count_g);
@@ -71,95 +72,102 @@ int main(int argc, char ** argv){
   MPI_Bcast(&type_global, 1, MPI_INT, 0, MPI_COMM_WORLD);
   //////////////////////////////////////////////////////////////////
   std::size_t global_count = 0;
-  std::size_t inn_size = 0;
   std::size_t single_count = 0;
   std::size_t local_count = 0;
   std::size_t global_remain = 0;
+  std::size_t inn_size = 0;
+
   std::vector< std::size_t > indices;
   MatrixType type_local;
   
   initialization_local(global_count, inn_size, single_count, local_count, global_remain, indices, type_local, rows_global, cols_global, type_global, comm_sz, my_rank);
 
-  // if_comm _sz < global -> serial
-   
+  //inn_size;
+  std::size_t ext_size = indices.size();
+  Matrix matrix_local(ext_size,inn_size);   
+
   Data data_local(None);
   data_local.build_comp(type_local, rows_global, cols_global, indices);
   
-  // verify indices = local_count +1
   Scalar temp;
   void * sendbuf = & temp;
   if(my_rank == 0)
     sendbuf = & data_global[0];
-  
   {
   std::vector< int > sendcnts(comm_sz, single_count * inn_size); sendcnts[0] = (single_count + global_remain) * inn_size;
   std::vector< int > displs(comm_sz); for(int k = 0; k < comm_sz; ++k) displs[k] = (single_count * k + global_remain) * inn_size; displs[0] = 0;
-  MPI_Scatterv(sendbuf, &sendcnts[0], &displs[0], MPI_INT, & data_local[inn_size], local_count * inn_size, MPI_INT, 0, MPI_COMM_WORLD);
+  MPI_Scatterv(sendbuf, &sendcnts[0], &displs[0], MPI_INT, & matrix_local[inn_size], local_count * inn_size, MPI_INT, 0, MPI_COMM_WORLD);
   }
   {
   std::vector< int > sendcnts(comm_sz, inn_size);
   std::vector< int > displs(comm_sz); for(int k = 0; k < comm_sz; ++k) displs[k] = (single_count * k + global_remain - 1) * inn_size; displs[0] = (global_count - 1) * inn_size;
-  MPI_Scatterv(sendbuf, &sendcnts[0], &displs[0], MPI_INT, & data_local[0], inn_size, MPI_INT, 0, MPI_COMM_WORLD);  
+  MPI_Scatterv(sendbuf, &sendcnts[0], &displs[0], MPI_INT, & matrix_local[0], inn_size, MPI_INT, 0, MPI_COMM_WORLD);  
   }
   // print size to verify 
 	// choice row vs col each thread
   /////////////////////////////////////////////////////////////////////  
   // choice for all white vs color
 //	data_local.load_colors_comp(indices);
-  data_local.load_moving_colors_comp(indices);
+//  data_local.load_moving_colors_comp(indices);
   std::size_t white_count_g = 0;
-  std::size_t blue_count_g = 0;
-  std::size_t red_count_g = 0;
-  std::size_t white_count_l = data_local.white_count();
-  std::size_t blue_count_l  = data_local.blue_count();
-  std::size_t red_count_l   = data_local.red_count();
-  MPI_Allreduce(& white_count_l, & white_count_g, 1, MPI_UNSIGNED_LONG_LONG, MPI_SUM, MPI_COMM_WORLD );
-  MPI_Allreduce(& blue_count_l, & blue_count_g, 1, MPI_UNSIGNED_LONG_LONG, MPI_SUM, MPI_COMM_WORLD );
-  MPI_Allreduce(& red_count_l, & red_count_g, 1, MPI_UNSIGNED_LONG_LONG, MPI_SUM, MPI_COMM_WORLD );
-  data_local.print();
+  std::size_t blue_count_g  = 0;
+  std::size_t red_count_g   = 0;
+  std::size_t white_count_l = 0;
+  std::size_t blue_count_l  = 0;
+  std::size_t red_count_l   = 0;
+
+  DataLocalColor data_white(ext_size, inn_size);
+  DataLocalColor data_blue(ext_size, inn_size);
+  DataLocalColor data_red(ext_size, inn_size);
+
+  load_local_colors(& matrix_local, data_white, data_blue, data_red, white_count_l, blue_count_l, red_count_l);
+
+  MPI_Allreduce(& white_count_l,  & white_count_g,  1, MPI_UNSIGNED_LONG_LONG, MPI_SUM, MPI_COMM_WORLD );
+  MPI_Allreduce(& blue_count_l,   & blue_count_g,   1, MPI_UNSIGNED_LONG_LONG, MPI_SUM, MPI_COMM_WORLD );
+  MPI_Allreduce(& red_count_l,    & red_count_g,    1, MPI_UNSIGNED_LONG_LONG, MPI_SUM, MPI_COMM_WORLD );
     // optimization redifine swap
 //  std::cout << "my_rank " << my_rank << white_count_g << blue_count_g << red_count_g << std::endl;
 
   MoveType move_type_global = choose_move_type(white_count_g, blue_count_g, red_count_g);
-  data_local.unload_moving_colors_comp(move_type_global);
+//  data_local.unload_moving_colors_comp(move_type_global);
 
-//  std::cout << white_count_l << " " << blue_count_l << " " << red_count_l << std::endl;   
-  Matrix * mp = data_local.matrix_pointer();
-  DataLocalColor data_white(mp->ext_count(), mp->inn_count());
-  DataLocalColor data_blue(mp->ext_count(), mp->inn_count());
-  DataLocalColor data_red(mp->ext_count(), mp->inn_count());
-  load_local_colors(mp, data_white, data_blue, data_red, white_count_g, blue_count_g, red_count_g);
-//  std::cout << "new " << white_count_l << " " << blue_count_l << " " << red_count_l << std::endl;   
-//  std::cout << "out " << data_white.inside;
-  Move mm(type_local, move_type_global, data_white, data_blue, data_red);
-//  std::cout << "out " << data_white.inside;
+
+  Move move_object(type_local, move_type_global, data_white, data_blue, data_red);
     
-    void (* current)(std::vector< Scalar > & mat, Move & m);
-    void (* pausing)(std::vector< Scalar > & mat, Move & m);
-    current = odd_move;
-    pausing = even_move;
+  void (* current)(std::vector< Scalar > & mat, Move & m);
+  void (* pausing)(std::vector< Scalar > & mat, Move & m);
+  current = odd_move;
+  pausing = even_move;
 
-    std::stringstream convertm;
-    convertm << my_rank;
-    std::string ofnamem=convertm.str();
-    ofnamem.append("_my.csv");
-    std::ofstream ofm(ofnamem);
+  //////////////////////////////////////////////////////
+  std::stringstream convertm;
+  convertm << my_rank;
+  std::string ofnamem=convertm.str();
+  ofnamem.append("_my.csv");
+  std::ofstream ofm(ofnamem);
 
-    std::vector< int > recvcnts(comm_sz, single_count * inn_size); recvcnts[0] = (single_count + global_remain) * inn_size;
-    std::vector< int > displs(comm_sz); for(int k = 0; k < comm_sz; ++k) displs[k] = (single_count * k + global_remain) * inn_size; displs[0] = 0;
-    void * recvbuf = sendbuf;
+  ofm << matrix_local;
+  ofm << "white\n";  data_white.print(ofm);
+  ofm << "blue\n";  data_blue.print(ofm);
+  ofm << "red\n";  data_red.print(ofm);
+  std::cout << "rank " << my_rank << " " << local_count << std::endl;
+///*  //////////////////////////////////////////////////////
+  std::vector< int > recvcnts(comm_sz, single_count * inn_size); recvcnts[0] = (single_count + global_remain) * inn_size;
+  std::vector< int > displs(comm_sz); for(int k = 0; k < comm_sz; ++k) displs[k] = (single_count * k + global_remain) * inn_size; displs[0] = 0;
+  void * recvbuf = sendbuf;
 
 //  for(std::size_t interval=0; interval<2; ++interval){
   for(std::size_t interval=0; interval<times.size()-1; ++interval){
     for(std::size_t timeCount=times[interval]; timeCount<times[interval+1]; ++timeCount) {
 //    for(std::size_t timeCount=0; timeCount<4; ++timeCount){
-      current(data_local.matrix(), mm);
+      current(matrix_local.matrix(), move_object);
       std::swap(current, pausing);
-//          ofm << "time " << timeCount << " rank  " << my_rank <<std::endl;
-//          ofm << data_local;
+//      ofm << "time " << timeCount << " rank  " << my_rank <<std::endl;
+      copy(matrix_local.matrix(), data_local.matrix());
+      ofm << data_local;
     }
     
-    MPI_Gatherv( & data_local[inn_size], local_count * inn_size, MPI_INT, recvbuf, & recvcnts[0],  & displs[0], MPI_INT, 0, MPI_COMM_WORLD);
+    MPI_Gatherv( & matrix_local[inn_size], local_count * inn_size, MPI_INT, recvbuf, & recvcnts[0],  & displs[0], MPI_INT, 0, MPI_COMM_WORLD);
     
     if(my_rank == 0) {
       std::stringstream convert;
@@ -167,21 +175,15 @@ int main(int argc, char ** argv){
       std::string ofname=convert.str();
       ofname.append(".csv");
       std::ofstream of(ofname);
-//      std::cout << data_global;
       of << data_global;
       of.close();
     }
 //     data_local.print();
 
   }
+//*/  ///////////////////////////////////////////////////////
   ofm.close();
-  
-/*
-  std::vector< Scalar >  mat = {White, Red, Red, White, Blue, Red, White, Red, Red, White, Blue, Red};
-  DataLocalColor d(2,6);
-  d.first = {2,5};
-//  move_parall(mat,d, White,1);
-  std::cout << mat;*/
+
 	MPI_Finalize();
   return 0;
 }
@@ -249,9 +251,23 @@ MoveType choose_move_type(std::size_t white_count_g, std::size_t blue_count_g, s
     return MoveWhite;
   }
 }
-
-//void move_inside(Data & data_local, const std::vector< std::size_t > & indices);
-//void move_across();
+void copy(const std::vector< Scalar > & from, std::vector< Scalar > & to) {
+  if(from.size() != to.size())
+    throw std::logic_error("copy different size vectors");
+  auto i_from = from.begin();
+  for(Scalar & i_to : to) {
+    i_to = * i_from;
+    ++i_from;
+  }
+/*  std::cout << "from\t\t";
+  for(Scalar i : from) std::cout << i << " ";
+  std::cout << std::endl;
+  std::cout << "to\t\t";
+  for(Scalar i : to) std::cout << i << " ";
+  std::cout << std::endl;
+*/
+  return;
+}
 
 /*
 int MPI_Scatterv (

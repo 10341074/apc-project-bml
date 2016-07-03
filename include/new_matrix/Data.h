@@ -7,7 +7,6 @@
 #include <list>
 
 #include "Template.h"
-
 #include "Color.h"
 
 #include "Matrix.h"
@@ -15,6 +14,13 @@
 #include "MatrixCol.h"
 #include "CSR.h"
 #include "CSC.h"
+
+void load_same_order(const std::list< std::vector< Scalar > > & m_inp, std::vector< Scalar > & mat, std::size_t & ext_count, std::size_t & inn_count);
+void load_tran_order(const std::list< std::vector< Scalar > > & m_inp, std::vector< Scalar > & mat, std::size_t & ext_count, std::size_t & inn_count);
+
+
+
+
 struct Coordinates {
   std::size_t i_ = 0;
   std::size_t j_ = 0;
