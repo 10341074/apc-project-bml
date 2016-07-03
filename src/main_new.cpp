@@ -61,12 +61,16 @@ int main(int argc, char ** argv){
   	cols_global = data_global.cols();
   	type_global = data_global.type();
   }
+  if(comm_sz == 0) {
+    
+  }
+  
   std::size_t times_size = times.size();
   MPI_Bcast(&times_size, 1, MPI_UNSIGNED_LONG, 0, MPI_COMM_WORLD);
   times.resize(times_size);
   MPI_Bcast(& times[0], times_size, MPI_UNSIGNED_LONG, 0, MPI_COMM_WORLD);
   
-  std::cout << times;
+//  std::cout << times;
   MPI_Bcast(&rows_global, 1, MPI_UNSIGNED_LONG, 0, MPI_COMM_WORLD);
   MPI_Bcast(&cols_global, 1, MPI_UNSIGNED_LONG, 0, MPI_COMM_WORLD);
   MPI_Bcast(&type_global, 1, MPI_INT, 0, MPI_COMM_WORLD);
@@ -76,15 +80,69 @@ int main(int argc, char ** argv){
   std::size_t local_count = 0;
   std::size_t global_remain = 0;
   std::size_t inn_size = 0;
-
+  std::size_t ext_size = 0;
+  Matrix matrix_local;
+  
   std::vector< std::size_t > indices;
   MatrixType type_local;
-  
+   
   initialization_local(global_count, inn_size, single_count, local_count, global_remain, indices, type_local, rows_global, cols_global, type_global, comm_sz, my_rank);
+  
+//  std::cout << "rank " << my_rank << " global " << global_count << " single " << single_count << " local " << local_count << std::endl;
+  int ext_size_single = indices.size() - 1;
+  if(comm_sz == 1 || (ext_size_single < comm_sz)) {
+    ext_size = ext_size_single;
+    matrix_local = Matrix(ext_size, inn_size);
+    copy(data_global.matrix(), matrix_local.matrix());
+    
+    std::size_t white_count_g = 0;
+    std::size_t blue_count_g  = 0;
+    std::size_t red_count_g   = 0;
+    
+    DataSingleColor data_white(ext_size, inn_size);
+    DataSingleColor data_blue(ext_size, inn_size);
+    DataSingleColor data_red(ext_size, inn_size);
 
+    load_local_colors(& matrix_local, data_white, data_blue, data_red, white_count_g, blue_count_g, red_count_g);
+
+    MoveType move_type_global = choose_move_type(white_count_g, blue_count_g, red_count_g);
+
+    MoveSingle move_object(type_local, move_type_global, data_white, data_blue, data_red);
+    
+    void (* current)(std::vector< Scalar > & mat, MoveSingle & m);
+    void (* pausing)(std::vector< Scalar > & mat, MoveSingle & m);
+    current = odd_move;
+    pausing = even_move;
+    
+    for(std::size_t interval=0; interval<times.size()-1; ++interval){
+      for(std::size_t timeCount=times[interval]; timeCount<times[interval+1]; ++timeCount) {
+        current(matrix_local.matrix(), move_object);
+        std::swap(current, pausing);
+//      ofm << "time " << timeCount << " rank  " << my_rank <<std::endl;
+//        copy(matrix_local.matrix(), data_global.matrix());
+//        std::cout << data_global;
+    }
+    
+    std::stringstream convert;
+    convert << times[interval+1];
+    std::string ofname=convert.str();
+    ofname.append(".csv");
+    std::ofstream of(ofname);
+    of << data_global;
+    of.close();
+    }
+//     data_local.print();
+
+  
+    
+    std::cout << "finish" << std::endl;
+    MPI_Finalize();
+    return 0;
+  }  
+  
   //inn_size;
-  std::size_t ext_size = indices.size();
-  Matrix matrix_local(ext_size,inn_size);   
+  ext_size = indices.size();
+  matrix_local = Matrix(ext_size,inn_size);   
 
   Data data_local(None);
   data_local.build_comp(type_local, rows_global, cols_global, indices);
@@ -202,6 +260,22 @@ void read_from_file(std::string if_string, Data & data_global, std::vector< std:
   return;
 }
 void initialization_local(std::size_t & global_count, std::size_t & inn_size, std::size_t & single_count, std::size_t & local_count, std::size_t & global_remain, std::vector< std::size_t > & indices, MatrixType & type_local, std::size_t rows_global, std::size_t cols_global, MatrixType type_global, int comm_sz, int my_rank) {
+/*
+output
+              std::size_t & global_count,
+              std::size_t & inn_size,
+              std::size_t & single_count,
+              std::size_t & local_count,
+              std::size_t & global_remain,
+              std::vector< std::size_t > & indices, 
+              MatrixType & type_local, 
+input:
+              std::size_t rows_global, 
+              std::size_t cols_global,
+              MatrixType type_global, 
+              int comm_sz, 
+              int my_rank
+*/
   switch(type_global) {
     case(ByRows) :
       type_local = ByCSR;

@@ -8,6 +8,9 @@ void move_across(std::vector< Scalar > & mat, DataLocalColor & data_color, Scala
 void move_parall_bi(std::vector< Scalar > & mat, DataLocalColor & data_color, Scalar first_color, Scalar second_color, int increment, std::vector< std::size_t > & border_move, std::size_t border_no_move, std::vector< std::size_t > & out_border, std::vector< std::size_t > & on_border);
 void move_across_bi(std::vector< Scalar > & mat, DataLocalColor & data_color, Scalar first_color, Scalar second_color, int increment, std::vector< std::size_t > & border_move, std::size_t border_no_move, std::vector< std::size_t > & out_border, std::vector< std::size_t > & on_border);
 
+void move_parall(std::vector< Scalar > & mat, DataSingleColor & data_color, Scalar first_color, Scalar second_color, int increment);
+void move_across(std::vector< Scalar > & mat, DataSingleColor & data_color, Scalar first_color, Scalar second_color, int increment);
+
 struct Parameters {
   DataLocalColor  * data_color_ = nullptr;
   Scalar          first_color_;
@@ -20,6 +23,15 @@ struct Parameters {
 //  Parameters(const DataLocalColor & data_color, Scalar first_color, Scalar second_color, int increment, std::vector< std::size_t > * border_move_p, std::size_t border_no_move) : data_color_(data_color), first_color_(first_color), second_color_(second_color), increment_(increment), border_move_p_(border_move_p), border_no_move_(border_no_move) {}
 //  void build(const DataLocalColor & data_color, Scalar first_color, Scalar second_color, int increment, std::vector< std::size_t > * border_move_p, std::size_t border_no_move) { data_color_= data_color; first_color_ = first_color; second_color_ = second_color; increment_  = increment; border_move_p_ = border_move_p; border_no_move_ = border_no_move;}
 };
+struct ParametersSingle {
+  DataSingleColor  * data_color_ = nullptr;
+  Scalar          first_color_;
+  Scalar          second_color_;
+  int             increment_;
+  ParametersSingle() {}
+  ParametersSingle(DataSingleColor * data_color, Scalar first_color, Scalar second_color, int increment) : data_color_(data_color), first_color_(first_color), second_color_(second_color), increment_(increment) {}
+};
+
 class Move {
  //   std::vector< Scalar > & mat;
     void (* move_active)(std::vector< Scalar > & mat, DataLocalColor & data_color, Scalar first_color, Scalar second_color, int increment, std::vector< std::size_t > & border_move, std::size_t border_no_move, std::vector< std::size_t > & out_border, std::vector< std::size_t > & on_border);
@@ -46,9 +58,31 @@ class Move {
 
 };
 
+class MoveSingle {
+    void (* move_active)(std::vector< Scalar > & mat, DataSingleColor & data_color, Scalar first_color, Scalar second_color, int increment);
+    void (* move_inactive)(std::vector< Scalar > & mat, DataSingleColor & data_color, Scalar first_color, Scalar second_color, int increment);
+
+    MatrixType  matrix_type_;
+    MoveType    move_type_;
+
+    // move_type
+    ParametersSingle blue_;
+    ParametersSingle red_;
+
+  public:
+    MoveSingle() {}
+    MoveSingle(MatrixType matrix_type, MoveType move_type, DataSingleColor & data_white, DataSingleColor & data_blue, DataSingleColor & data_red);
+
+    friend void odd_move(std::vector< Scalar > & mat, MoveSingle & m);
+    friend void even_move(std::vector< Scalar > & mat, MoveSingle & m);
+
+};
+
 void odd_move(std::vector< Scalar > & mat, Move & m);
 void even_move(std::vector< Scalar > & mat, Move & m);
 
+void odd_move(std::vector< Scalar > & mat, MoveSingle & m);
+void even_move(std::vector< Scalar > & mat, MoveSingle & m);
 
 
 
