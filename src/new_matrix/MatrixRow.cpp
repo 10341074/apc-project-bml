@@ -18,26 +18,15 @@ std::vector< Scalar > * MatrixRow::col_copy(size_type ind) const {
   return ext_vec_copy(ind);
 }
 */
-void MatrixRow::print_matrix() const {
-  std::size_t m = ext_count_;
-  std::size_t n = inn_count_;
-  for(std::size_t i=0; i < m; ++i) {
-    for(std::size_t j=0; j < n; ++j) {
-      std::cout << mat[(i * n) + j] << '\t';
-    }
-    std::cout << '\n';
-  }
-  return;
-}
 
-void MatrixRow::print_elements(std::ostream & os) const {
+void MatrixRow::print_matrix(std::ostream & os) const {
   std::size_t m = ext_count_;
   std::size_t n = inn_count_;
   for(std::size_t i=0; i < m; ++i) {
-    for(std::size_t j=0; j < n; ++j) {
+    for(std::size_t j=0; j < n - 1; ++j) {
       os << mat[(i * n) + j] << Separator;
     }
-    os << '\n';
+    os << mat[i * n + n - 1] << std::endl;
   }
   return;
 }

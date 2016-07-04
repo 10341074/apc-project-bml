@@ -21,8 +21,7 @@ class MatrixCol: public Matrix{
 //    std::vector< Scalar > * col_vector(size_type ind) override;   // not implemented
 //    std::vector< Scalar > * row_copy(size_type ind) const override;
 //    std::vector< Scalar > * col_copy(size_type ind) const override;
-    void print_matrix() const override;
-    void print_elements(std::ostream & os) const override; // trick for print matrix using streams + correction 1-based
+    void print_matrix(std::ostream & os) const override; // trick for print matrix using streams + correction 1-based
           Scalar & operator()(size_type i, size_type j)       override;
     const Scalar & operator()(size_type i, size_type j) const override;
     void what() const override { std::cout << "I'm a MatrixCol" << std::endl; }

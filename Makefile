@@ -76,3 +76,8 @@ test: $(OBJ_NEW) $(DEPS_NEW)
 gen:
 	$(CXX) -Wall -std=c++11 -o generator/main generator/main.cpp
 	generator/main 10 10 8 generator/input.csv
+	
+apcbml_compare: $(OBJ_NEW) src/main_compare.cpp
+	$(CXX) $(CXXFLAGS_NEW) -o $@ $^
+run_compare:
+	./apcbml_compare 

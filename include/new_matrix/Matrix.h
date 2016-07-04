@@ -47,8 +47,7 @@ class Matrix{
 
 //    virtual std::vector< Scalar > * row_copy(size_type ind) const = 0;
 //    virtual std::vector< Scalar > * col_copy(size_type ind) const = 0;
-    virtual void print_matrix() const {return;}
-    virtual void print_elements(std::ostream & os) const{return;}	// trick for print matrix using streams
+    virtual void print_matrix(std::ostream & os) const {return;}
 
 //    virtual       Scalar * item_add(size_type i,size_type j) = 0;
 //    virtual const Scalar item(size_type i,size_type j) const = 0;

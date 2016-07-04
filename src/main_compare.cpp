@@ -35,36 +35,44 @@
 #include "mpi.h"
 
 void copy(const std::vector< Scalar > & from, std::vector< Scalar > & to);
-void read_from_file(std::string if_string, Data & data_global, std::vector< std::size_t > & times);
+void compare(const std::vector< Scalar > & v1, const std::vector< Scalar > & v2);
+void read_from_file_results(std::string if_string, Data & data_global);
+
+
+
 void initialization_local(std::size_t & global_count, std::size_t & inn_size, std::size_t & single_count, std::size_t & local_count, std::size_t & global_remain, std::vector< std::size_t > & indices, MatrixType & type_local, std::size_t rows_global,	std::size_t cols_global, MatrixType type_global, int comm_sz, int my_rank);
 MoveType choose_move_type(std::size_t white_count_g, std::size_t blue_count_g, std::size_t red_count_g);
 
 int main(int argc, char ** argv){
+
+  
+  std::string if1_str(argv[1]);
+  std::string if2_str(argv[1]);
+  
+/*  
   MPI_Init(&argc, &argv);
   int comm_sz;
   int my_rank;
   MPI_Comm_size(MPI_COMM_WORLD, &comm_sz);
-  MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
+  MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);*/
   /////////////////////////////////////////////////////////////////
-	std::vector< std::size_t > times(1, 0);  
-  Data data_global(Input);
+  Data data_global1(Input);
+  Data data_global2(Input);
   
   std::size_t rows_global;
 	std::size_t cols_global;
 	MatrixType  type_global;
 
-  if(my_rank == 0) {
-    std::string   if_string(argv[1]);
-    read_from_file(if_string, data_global, times);
-    
-    rows_global = data_global.rows();
-  	cols_global = data_global.cols();
-  	type_global = data_global.type();
-  }
-  if(comm_sz == 0) {
-    
-  }
+  read_from_file_results(if1_str, data_global1);
+  read_from_file_results(if2_str, data_global2);
   
+  std::vector< Scalar > & v1 = data_global1.matrix();
+  std::vector< Scalar > & v2 = data_global2.matrix();
+  
+  compare(v1, v2);
+  
+  
+  /*
   std::size_t times_size = times.size();
   MPI_Bcast(&times_size, 1, MPI_UNSIGNED_LONG, 0, MPI_COMM_WORLD);
   times.resize(times_size);
@@ -72,7 +80,7 @@ int main(int argc, char ** argv){
   
 //  std::cout << times;
   MPI_Bcast(&rows_global, 1, MPI_UNSIGNED_LONG, 0, MPI_COMM_WORLD);
-  MPI_Bcast(&cols_global, 1, MPI_UNSIGNED_LONG, 0, MPI_COMM_WORLD);
+  MPI_Bcast(&cols_global, 1, MPI_UNSIGNED_LONG, 0, MPI_COMM_WORLD);+
   MPI_Bcast(&type_global, 1, MPI_INT, 0, MPI_COMM_WORLD);
   //////////////////////////////////////////////////////////////////
   std::size_t global_count = 0;
@@ -209,7 +217,7 @@ int main(int argc, char ** argv){
   ofm << "blue\n";  data_blue.print(ofm);
   ofm << "red\n";  data_red.print(ofm);
   std::cout << "rank " << my_rank << " " << local_count << std::endl;
-///*  //////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////
   std::vector< int > recvcnts(comm_sz, single_count * inn_size); recvcnts[0] = (single_count + global_remain) * inn_size;
   std::vector< int > displs(comm_sz); for(int k = 0; k < comm_sz; ++k) displs[k] = (single_count * k + global_remain) * inn_size; displs[0] = 0;
   void * recvbuf = sendbuf;
@@ -240,19 +248,14 @@ int main(int argc, char ** argv){
 
   }
 //*/  ///////////////////////////////////////////////////////
-  ofm.close();
+/*  ofm.close();
 
 	MPI_Finalize();
+	*/
   return 0;
 }
-void read_from_file(std::string if_string, Data & data_global, std::vector< std::size_t > & times) {
+void read_from_file_results(std::string if_string, Data & data_global) {
   std::ifstream if_stream(if_string);
-  std::string first_line;
-
-  if(std::getline(if_stream, first_line))
-    tokenize_first_line(first_line,times);
-
-  std::cout << times;
 
   if_stream >> data_global;
   if_stream.close();
@@ -340,6 +343,20 @@ void copy(const std::vector< Scalar > & from, std::vector< Scalar > & to) {
   for(Scalar i : to) std::cout << i << " ";
   std::cout << std::endl;
 */
+  return;
+}
+
+void compare(const std::vector< Scalar > & v1, const std::vector< Scalar > & v2) {
+  auto i1 = v1.begin();
+  auto i2 = v2.begin();
+  std::cout << "v1 size " << v1.size() <<std::endl;
+  std::cout << "v2 size " << v2.size() <<std::endl;
+  for( ; i1 != v1.end(); ++i1, ++i2) {
+    if(* i1 != * i2)
+      std::cout << "error " << i1 - v1.begin() << " " << i2 - v2.begin() << std::endl;
+//    else 
+//      std::cout << "ok " << i1 - v1.begin() << " " << i2 - v2.begin() << std::endl;
+  }
   return;
 }
 

@@ -42,7 +42,7 @@ void Matrix::info() const {
 }
 
 std::ostream & operator<<(std::ostream & os, const Matrix & m) {
-  m.print_elements(os);	//trick for virtual stream operator
+  m.print_matrix(os);	//trick for virtual stream operator
 	return os;}
 	
 void Matrix::load_same_order(const std::list< std::vector< Scalar > > & m_inp) {
