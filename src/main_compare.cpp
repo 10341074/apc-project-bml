@@ -47,7 +47,7 @@ int main(int argc, char ** argv){
 
   
   std::string if1_str(argv[1]);
-  std::string if2_str(argv[1]);
+  std::string if2_str(argv[2]);
   
 /*  
   MPI_Init(&argc, &argv);
@@ -349,13 +349,18 @@ void copy(const std::vector< Scalar > & from, std::vector< Scalar > & to) {
 void compare(const std::vector< Scalar > & v1, const std::vector< Scalar > & v2) {
   auto i1 = v1.begin();
   auto i2 = v2.begin();
-  std::cout << "v1 size " << v1.size() <<std::endl;
-  std::cout << "v2 size " << v2.size() <<std::endl;
-  for( ; i1 != v1.end(); ++i1, ++i2) {
+  std::cout << "v1 sizze " << v1.size() <<std::endl;
+  std::cout << "v2 sizse " << v2.size() <<std::endl;
+  for( ; i1 != v1.end(); ++i1) {
     if(* i1 != * i2)
       std::cout << "error " << i1 - v1.begin() << " " << i2 - v2.begin() << std::endl;
 //    else 
 //      std::cout << "ok " << i1 - v1.begin() << " " << i2 - v2.begin() << std::endl;
+  ++i2;
+  }
+  for(auto i = 0; i <10 ; ++i) {
+    std::cout << v1[i] << " " << v2[i] << std::endl;
+//    if(v1[i]!=v2[i]) 
   }
   return;
 }

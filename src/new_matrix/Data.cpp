@@ -199,12 +199,13 @@ std::istream & operator>>(std::istream & is, Data & d){
 }
 std::ostream & operator<<(std::ostream & os, Data & d) {
   if(d.m_lin!=nullptr) 
-    os << * d.m_lin << std::endl;
+    os << * d.m_lin;
   return os;
 }
     
 void Data::load_input(std::istream & is) {
   std::string line;
+  
   while(getline(is, line)) {
     tok_push_back(line);
   }
@@ -591,7 +592,11 @@ void Data::tok_push_back(const std::string & line) {
   if(m_inp->empty()) {
     cols_ = line_cols;
   } else if(cols_ != line_cols) {
+    std::cout << "line_len " << line_cols << std::endl;
+    std::cout << "cols " << cols_ << std::endl;
+    std::cout << "rows " << rows_ << std::endl;
     throw std::runtime_error("Data::tok_push_back row with different length");
+
     return;
   }
   ++rows_;
