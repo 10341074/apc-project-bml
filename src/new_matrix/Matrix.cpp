@@ -47,7 +47,11 @@ std::ostream & operator<<(std::ostream & os, const Matrix & m) {
 	
 void Matrix::load_same_order(const std::list< std::vector< Scalar > > & m_inp) {
   ext_count_ = m_inp.size();
-  inn_count_ = (* m_inp.begin()).size();
+  if(m_inp.empty())
+    throw std::runtime_error("load_same_order: empty list");
+  inn_count_ = m_inp.begin()->size();
+  if(inn_count_ == 0)
+    throw std::runtime_error("load_same_order: list of empty vectors");
   mat.resize(ext_count_ * inn_count_);
   
   std::vector< Scalar >::iterator it_to = mat.begin();
@@ -61,7 +65,11 @@ void Matrix::load_same_order(const std::list< std::vector< Scalar > > & m_inp) {
 }
 void Matrix::load_tran_order(const std::list< std::vector< Scalar > > & m_inp) {
   inn_count_ = m_inp.size();
-  ext_count_ = (* m_inp.begin()).size();
+  if(m_inp.empty())
+    throw std::runtime_error("load_tran_order: empty list");
+  ext_count_ = m_inp.begin()->size();
+  if(ext_count_ == 0)
+    throw std::runtime_error("load_tran_order: list of empty vectors");
   mat.resize(ext_count_ * inn_count_);
   
   std::vector< Scalar >::iterator it_to = mat.begin();

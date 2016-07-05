@@ -1,6 +1,7 @@
 #include "Data.h"
 
 #define START '0'
+
 void load_same_order(const std::list< std::vector< Scalar > > & m_inp, std::vector< Scalar > & mat, std::size_t & ext_count, std::size_t & inn_count) {
   ext_count = m_inp.size();
   if(m_inp.empty())
@@ -45,16 +46,22 @@ void load_tran_order(const std::list< std::vector< Scalar > > & m_inp, std::vect
   return;
 }
 
-
-
 Data::Data(MatrixType t) : t_(t) {
   switch(t) {
-    case(None) :
-      break;
     case(Input) :
+      if(m_inp != nullptr)
+        delete m_inp;
       m_inp = new MatrixInp;
       break;
+    case(None) :
+      if(m_inp != nullptr)
+        delete m_inp;
+      m_inp = nullptr;
+      break;
     default:
+      if(m_inp != nullptr)
+        delete m_inp;
+      m_inp = nullptr;
       break;
   }
 }
@@ -67,6 +74,7 @@ Data::~Data() {
     delete m_lin;
     m_lin = nullptr;
     }
+/*
   if(white != nullptr) {
     delete white;
     white = nullptr;
@@ -99,7 +107,9 @@ Data::~Data() {
     delete data_red;
     data_red = nullptr;
     }
+*/
 }
+/*
 void Data::build_full(MatrixType t, std::size_t m, std::size_t n) {
   switch(t) {
     case(ByRows) :
@@ -119,6 +129,7 @@ void Data::build_full(MatrixType t, std::size_t m, std::size_t n) {
   }
   return;
 }
+*/
 void Data::build_comp(MatrixType t, std::size_t r, std::size_t c, const std::vector< std::size_t > & indices) {
   switch(t) {
     case(ByCSR) :
@@ -134,10 +145,12 @@ void Data::build_comp(MatrixType t, std::size_t r, std::size_t c, const std::vec
       m_lin = new CSC(r, c, r, indices);
       break;
     default:
+      throw std::logic_error("Data::build_comp with not compact type");
       break;
   }
   return;
 }
+/*
 void Data::load_colors_comp(const std::vector< std::size_t > & indices) {
   if(m_lin == nullptr) {
     throw std::logic_error("Data::load_colors_comp : nullptr");
@@ -190,7 +203,7 @@ void Data::unload_moving_colors_comp(MoveType move_type) {
   }
   return;
 }
-
+*/
 std::istream & operator>>(std::istream & is, Data & d){
   d.load_input(is);
   d.load_matrix();
@@ -213,6 +226,8 @@ void Data::load_input(std::istream & is) {
   return;
 }
 void Data::load_matrix() {
+  if(m_inp == nullptr)
+    throw std::logic_error("Data::load_matrix from null input matrix");
   if(cols_ <= rows_) {
     t_ = ByRows;
     if(m_lin != nullptr) {
@@ -226,7 +241,7 @@ void Data::load_matrix() {
       delete m_inp;
       m_inp = nullptr;
     }
-    load_colors_byrows(m_lin);
+//    load_colors_byrows(m_lin);
   } else {
     t_ = ByCols;
     if(m_lin != nullptr) {
@@ -240,10 +255,49 @@ void Data::load_matrix() {
       delete m_inp;
       m_inp = nullptr;
     }
-    load_colors_bycols(m_lin);
+//    load_colors_bycols(m_lin);
   }
   return;
 }
+void Data::load_matrix(MatrixType t) {
+  if(m_inp == nullptr)
+    throw std::logic_error("Data::load_matrix(type) from null input matrix");
+  switch(t) {
+    case(ByRows) :
+      t_ = ByRows;
+      if(m_lin != nullptr) {
+        delete m_lin;
+      }
+      m_lin = new MatrixRow(rows_, cols_);
+      m_lin->load_same_order(* m_inp);
+      
+      if(m_inp != nullptr) {
+        delete m_inp;
+        m_inp = nullptr;
+      }
+      break;
+    case(ByCols) :
+      t_ = ByCols;
+      if(m_lin != nullptr) {
+        delete m_lin;
+      }
+
+      m_lin = new MatrixCol(rows_, cols_);
+      m_lin->load_tran_order(* m_inp);
+
+      if(m_inp != nullptr) {
+        delete m_inp;
+        m_inp = nullptr;
+      }
+      break;
+    default:
+      throw std::logic_error("Data::load_matrix(type) with not fill type matrix");
+      break;
+  }
+  return;
+}
+
+/*
 void Data::load_colors_byrows(const Matrix * ptr) {
   if(ptr == nullptr) {
     throw std::logic_error("Data::load_colors from nullptr");
@@ -585,7 +639,7 @@ void Data::update_statistics() {
   }
   return;
 }
-
+*/
 void Data::tok_push_back(const std::string & line) {
   const std::size_t line_len = line.length();
   const std::size_t line_cols = (line_len + 1) / 2;
