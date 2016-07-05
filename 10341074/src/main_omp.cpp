@@ -20,6 +20,8 @@
 #include "DataLocal.h"
 #include "MoveSingle.h"
 
+#include "omp.h"
+
 void copy(const std::vector< Scalar > & from, std::vector< Scalar > & to);
 void read_from_file(std::string if_string, Data & data_global, std::vector< std::size_t > & times);
 void initialization_local(std::size_t & global_count, std::size_t & inn_size, MatrixType & type_local, std::size_t rows_global, std::size_t cols_global, MatrixType type_global);
@@ -78,20 +80,24 @@ int main(int argc, char ** argv){
 //      move_type_global = 
       MoveSingle move_object(type_local, move_type_global, data_white, data_blue, data_red);
       std::cout << "MoveSingleobject constructed  with MatriType = " << MatrixTypeStr[type_local] << " and MoveType = " << MoveTypeStr[move_type_global] << std::endl;
-  
+//      #pragma omp parallel default(none) shared(matrix_local, move_object, data_global, times)
+      {
+      
       void (* current)(std::vector< Scalar > & mat, MoveSingle & m);
       void (* pausing)(std::vector< Scalar > & mat, MoveSingle & m);
       current = odd_move;
       pausing = even_move;
       
+      
       for(std::size_t interval=0; interval<times.size()-1; ++interval){
         for(std::size_t timeCount=times[interval]; timeCount<times[interval+1]; ++timeCount) {
           current(matrix_local.matrix(), move_object);
           std::swap(current, pausing);
+          #pragma omp barrier
 //        copy(matrix_local.matrix(), data_global.matrix());
 //        std::cout << data_global;
       }
-      
+    if(omp_get_thread_num() == 0) {
       copy(matrix_local.matrix(), data_global.matrix());
       std::stringstream convert;
       convert << times[interval+1];
@@ -100,6 +106,8 @@ int main(int argc, char ** argv){
       std::ofstream of(ofname);
       of << data_global;
       of.close();
+    }
+      }
       }
   return 0;
 }
