@@ -18,6 +18,7 @@
 
 #include "Data.h"
 #include "DataLocal.h"
+#include "MoveSingle.h"
 #include "Move.h"
 
 #include "mpi.h"

@@ -1,9 +1,0 @@
-this project version (note updated at 20.00 of 16-06-16 ):
-Cell version with:
-	* VECTOR of vector for matrix
-	* VECTOR for OneColor
-	* use of cells
-
-
-generals:
-non uso di MatrixRow in include/matrix
