@@ -80,7 +80,7 @@ int main(int argc, char ** argv){
 //      move_type_global = 
       MoveSingle move_object(type_local, move_type_global, data_white, data_blue, data_red);
       std::cout << "MoveSingleobject constructed  with MatriType = " << MatrixTypeStr[type_local] << " and MoveType = " << MoveTypeStr[move_type_global] << std::endl;
-//      #pragma omp parallel default(none) shared(matrix_local, move_object, data_global, times)
+      #pragma omp parallel default(none) shared(matrix_local, move_object, data_global, times)
       {
       
       void (* current)(std::vector< Scalar > & mat, MoveSingle & m);
@@ -91,8 +91,15 @@ int main(int argc, char ** argv){
       
       for(std::size_t interval=0; interval<times.size()-1; ++interval){
         for(std::size_t timeCount=times[interval]; timeCount<times[interval+1]; ++timeCount) {
+          if(timeCount % 2 == 0)
+            odd_move(matrix_local.matrix(), move_object);
+          else
+            even_move(matrix_local.matrix(), move_object);
+          //*/  
+          /*
           current(matrix_local.matrix(), move_object);
           std::swap(current, pausing);
+          //*/
           #pragma omp barrier
 //        copy(matrix_local.matrix(), data_global.matrix());
 //        std::cout << data_global;

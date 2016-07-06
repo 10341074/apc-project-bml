@@ -17,7 +17,7 @@ void move_parall(std::vector< Scalar > & mat, DataSingleColor & data_color, Scal
   if(omp_get_thread_num() == 0) {
     std::cout << mat;
   }//*/
-  #pragma omp parallel
+//  #pragma omp parallel
   {
   std::vector< std::size_t > temp;
   temp.reserve(inside.size());
@@ -54,7 +54,7 @@ void move_across(std::vector< Scalar > & mat, DataSingleColor & data_color, Scal
 /*  if(omp_get_thread_num() == 0) {
     std::cout << mat;
   }//*/
-  #pragma omp parallel
+//  #pragma omp parallel
   {
   std::vector< std::size_t > temp;
   temp.reserve(inside.size());
@@ -122,15 +122,23 @@ MoveSingle::MoveSingle(MatrixType matrix_type, MoveType move_type, DataSingleCol
   }
 }
 void odd_move(std::vector< Scalar > & mat, MoveSingle & m) {
-  ParametersSingle * current = & m.blue_; 
-  m.move_active(mat, * (current->data_color_), current->first_color_, current->second_color_, current->increment_);
+  ParametersSingle * current = & m.blue_;
+  if(m.matrix_type_ == ByCSC)
+    move_parall(mat, * (current->data_color_), current->first_color_, current->second_color_, current->increment_);
+  else
+    move_across(mat, * (current->data_color_), current->first_color_, current->second_color_, current->increment_);
+//  m.move_active(mat, * (current->data_color_), current->first_color_, current->second_color_, current->increment_);
 
   std::swap(m.move_active, m.move_inactive);
   return;
 }
 void even_move(std::vector< Scalar > & mat, MoveSingle & m) {
   ParametersSingle * current = & m.red_; 
-  m.move_active(mat, * (current->data_color_), current->first_color_, current->second_color_, current->increment_);
+  if(m.matrix_type_ == ByCSC)
+    move_across(mat, * (current->data_color_), current->first_color_, current->second_color_, current->increment_);
+  else
+    move_parall(mat, * (current->data_color_), current->first_color_, current->second_color_, current->increment_);
+//  m.move_active(mat, * (current->data_color_), current->first_color_, current->second_color_, current->increment_);
 
   std::swap(m.move_active, m.move_inactive);
   return;
