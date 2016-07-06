@@ -12,11 +12,6 @@ void move_parall(std::vector< Scalar > & mat, DataSingleColor & data_color, Scal
   std::size_t inn_count               = data_color.inn_count_;
   std::vector< std::size_t > & inside  = data_color.inside;
 
-//  #pragma omp barrier
-/*  #pragma omp critical
-  if(omp_get_thread_num() == 0) {
-    std::cout << mat;
-  }//*/
 //  #pragma omp parallel
   {
   std::vector< std::size_t > temp;
@@ -27,14 +22,9 @@ void move_parall(std::vector< Scalar > & mat, DataSingleColor & data_color, Scal
     std::size_t & i = inside[k];
     if(mat[(i / inn_count) * inn_count + (i + increment + inn_count) % inn_count] == second_color) {
       temp.push_back(i);
-//            std::cout << "i before "<< i <<std::endl;
-
       i = (i / inn_count) * inn_count + (i + increment + inn_count) % inn_count;
- //     std::cout << "i after "<< i <<std::endl;
-
     }
   }
-//    printf("%d size %lu \n", omp_get_thread_num(), temp.size());
 
   for(std::size_t k = 0; k < temp.size(); ++k) {
     std::size_t i = temp[k];
@@ -42,18 +32,12 @@ void move_parall(std::vector< Scalar > & mat, DataSingleColor & data_color, Scal
   }
   temp.clear();
   }
-//    std::cout << "ext " << data_color.ext_count_ << " inn " << data_color.inn_count_ << mat << std::endl;
   return;
 }
 void move_across(std::vector< Scalar > & mat, DataSingleColor & data_color, Scalar first_color, Scalar second_color, int increment) {
   std::size_t inn_count               = data_color.inn_count_;
   std::size_t tot_count = data_color.ext_count_ * inn_count;
   std::vector< std::size_t > & inside   = data_color.inside;
-//  #pragma omp barrier
-//  #pragma omp critical
-/*  if(omp_get_thread_num() == 0) {
-    std::cout << mat;
-  }//*/
 //  #pragma omp parallel
   {
   std::vector< std::size_t > temp;
@@ -128,8 +112,7 @@ void odd_move(std::vector< Scalar > & mat, MoveSingle & m) {
   else
     move_across(mat, * (current->data_color_), current->first_color_, current->second_color_, current->increment_);
 //  m.move_active(mat, * (current->data_color_), current->first_color_, current->second_color_, current->increment_);
-
-  std::swap(m.move_active, m.move_inactive);
+//  std::swap(m.move_active, m.move_inactive);
   return;
 }
 void even_move(std::vector< Scalar > & mat, MoveSingle & m) {
@@ -139,7 +122,6 @@ void even_move(std::vector< Scalar > & mat, MoveSingle & m) {
   else
     move_parall(mat, * (current->data_color_), current->first_color_, current->second_color_, current->increment_);
 //  m.move_active(mat, * (current->data_color_), current->first_color_, current->second_color_, current->increment_);
-
-  std::swap(m.move_active, m.move_inactive);
+//  std::swap(m.move_active, m.move_inactive);
   return;
 }

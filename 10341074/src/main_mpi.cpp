@@ -101,16 +101,23 @@ int main(int argc, char ** argv){
 //      move_type_global = 
       MoveSingle move_object(type_local, move_type_global, data_white, data_blue, data_red);
       std::cout << "MoveSingleobject constructed  with MatriType = " << MatrixTypeStr[type_local] << " and MoveType = " << MoveTypeStr[move_type_global] << std::endl;
-  
+/*  
       void (* current)(std::vector< Scalar > & mat, MoveSingle & m);
       void (* pausing)(std::vector< Scalar > & mat, MoveSingle & m);
       current = odd_move;
       pausing = even_move;
-      
+*/      
       for(std::size_t interval=0; interval<times.size()-1; ++interval){
         for(std::size_t timeCount=times[interval]; timeCount<times[interval+1]; ++timeCount) {
+          if(timeCount % 2 == 0)
+            odd_move(matrix_local.matrix(), move_object);
+          else
+            even_move(matrix_local.matrix(), move_object);
+          //*/  
+          /*
           current(matrix_local.matrix(), move_object);
           std::swap(current, pausing);
+          //*/
 //        copy(matrix_local.matrix(), data_global.matrix());
 //        std::cout << data_global;
       }
@@ -176,17 +183,20 @@ int main(int argc, char ** argv){
 //  move_type_global = MoveColor;
   Move move_object(type_local, move_type_global, data_white, data_blue, data_red);
   std::cout << "Move object constructed  with MatriType = " << MatrixTypeStr[type_local] << " and MoveType = " << MoveTypeStr[move_type_global] << std::endl;
-
+/*
   void (* current)(std::vector< Scalar > & mat, Move & m);
   void (* pausing)(std::vector< Scalar > & mat, Move & m);
   current = odd_move;
   pausing = even_move;
+*/
   /////////////////////////////////////////////////////////////////
+/*
   std::stringstream convert_my;
   convert_my << my_rank;
   std::string ofname_my=convert_my.str();
   ofname_my.append("_my.csv");
   std::ofstream of_my(ofname_my);
+//*/
 /*
   of_my << matrix_local;
   of_my << "white :\n";  data_white.print(of_my);
@@ -202,12 +212,17 @@ int main(int argc, char ** argv){
   std::vector< int > displs(comm_sz); for(int k = 0; k < comm_sz; ++k) displs[k] = (single_count * k + global_remain) * inn_size; displs[0] = 0;
   void * recvbuf = sendbuf;
 
-//  for(std::size_t interval=0; interval<2; ++interval){
   for(std::size_t interval=0; interval<times.size()-1; ++interval){
     for(std::size_t timeCount=times[interval]; timeCount<times[interval+1]; ++timeCount) {
-//    for(std::size_t timeCount=0; timeCount<4; ++timeCount){
+      if(timeCount % 2 == 0)
+        odd_move(matrix_local.matrix(), move_object);
+      else
+        even_move(matrix_local.matrix(), move_object);
+      //*/  
+      /*
       current(matrix_local.matrix(), move_object);
       std::swap(current, pausing);
+      //*/
 //      of_my << "time " << timeCount << " rank  " << my_rank <<std::endl;
 //      copy(matrix_local.matrix(), data_local.matrix());
 //      of_my << data_local;
@@ -229,7 +244,7 @@ int main(int argc, char ** argv){
   }
   /////////////////////////////////////////////////////////////////
 //*/  
-  of_my.close();
+//  of_my.close();
 
 	MPI_Finalize();
   return 0;

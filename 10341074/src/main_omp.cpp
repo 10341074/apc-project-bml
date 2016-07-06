@@ -82,13 +82,12 @@ int main(int argc, char ** argv){
       std::cout << "MoveSingleobject constructed  with MatriType = " << MatrixTypeStr[type_local] << " and MoveType = " << MoveTypeStr[move_type_global] << std::endl;
       #pragma omp parallel default(none) shared(matrix_local, move_object, data_global, times)
       {
-      
+/*      
       void (* current)(std::vector< Scalar > & mat, MoveSingle & m);
       void (* pausing)(std::vector< Scalar > & mat, MoveSingle & m);
       current = odd_move;
       pausing = even_move;
-      
-      
+*/      
       for(std::size_t interval=0; interval<times.size()-1; ++interval){
         for(std::size_t timeCount=times[interval]; timeCount<times[interval+1]; ++timeCount) {
           if(timeCount % 2 == 0)

@@ -15,18 +15,13 @@ void move_parall(std::vector< Scalar > & mat, DataSingleColor & data_color, Scal
   for(std::size_t & i : inside) {
     if(mat[(i / inn_count) * inn_count + (i + increment + inn_count) % inn_count] == second_color) {
       temp.push_back(i);
-//            std::cout << "i before "<< i <<std::endl;
-
       i = (i / inn_count) * inn_count + (i + increment + inn_count) % inn_count;
- //     std::cout << "i after "<< i <<std::endl;
-
     }
   }
   for(std::size_t i : temp) {
     swap(mat[i],mat[(i / inn_count) * inn_count + (i + increment + inn_count) % inn_count]);
   }
   temp.clear();
-//    std::cout << "ext " << data_color.ext_count_ << " inn " << data_color.inn_count_ << mat << std::endl;
   return;
 }
 void move_across(std::vector< Scalar > & mat, DataSingleColor & data_color, Scalar first_color, Scalar second_color, int increment) {
@@ -96,15 +91,21 @@ MoveSingle::MoveSingle(MatrixType matrix_type, MoveType move_type, DataSingleCol
 }
 void odd_move(std::vector< Scalar > & mat, MoveSingle & m) {
   ParametersSingle * current = & m.blue_; 
-  m.move_active(mat, * (current->data_color_), current->first_color_, current->second_color_, current->increment_);
-
-  std::swap(m.move_active, m.move_inactive);
+  if(m.matrix_type_ == ByCSC)
+    move_parall(mat, * (current->data_color_), current->first_color_, current->second_color_, current->increment_);
+  else
+    move_across(mat, * (current->data_color_), current->first_color_, current->second_color_, current->increment_);
+//  m.move_active(mat, * (current->data_color_), current->first_color_, current->second_color_, current->increment_);
+//  std::swap(m.move_active, m.move_inactive);
   return;
 }
 void even_move(std::vector< Scalar > & mat, MoveSingle & m) {
   ParametersSingle * current = & m.red_; 
-  m.move_active(mat, * (current->data_color_), current->first_color_, current->second_color_, current->increment_);
-
-  std::swap(m.move_active, m.move_inactive);
+   if(m.matrix_type_ == ByCSC)
+    move_across(mat, * (current->data_color_), current->first_color_, current->second_color_, current->increment_);
+  else
+    move_parall(mat, * (current->data_color_), current->first_color_, current->second_color_, current->increment_);
+//  m.move_active(mat, * (current->data_color_), current->first_color_, current->second_color_, current->increment_);
+//  std::swap(m.move_active, m.move_inactive);
   return;
 }

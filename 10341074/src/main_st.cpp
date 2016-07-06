@@ -78,16 +78,24 @@ int main(int argc, char ** argv){
 //      move_type_global = 
       MoveSingle move_object(type_local, move_type_global, data_white, data_blue, data_red);
       std::cout << "MoveSingleobject constructed  with MatriType = " << MatrixTypeStr[type_local] << " and MoveType = " << MoveTypeStr[move_type_global] << std::endl;
-  
+/*  
       void (* current)(std::vector< Scalar > & mat, MoveSingle & m);
       void (* pausing)(std::vector< Scalar > & mat, MoveSingle & m);
       current = odd_move;
       pausing = even_move;
-      
+*/      
       for(std::size_t interval=0; interval<times.size()-1; ++interval){
         for(std::size_t timeCount=times[interval]; timeCount<times[interval+1]; ++timeCount) {
+          if(timeCount % 2 == 0)
+            odd_move(matrix_local.matrix(), move_object);
+          else
+            even_move(matrix_local.matrix(), move_object);
+          //*/  
+          /*
           current(matrix_local.matrix(), move_object);
           std::swap(current, pausing);
+          //*/
+
 //        copy(matrix_local.matrix(), data_global.matrix());
 //        std::cout << data_global;
       }
