@@ -224,22 +224,26 @@ Move::Move(MatrixType matrix_type, MoveType move_type, DataLocalColor & data_whi
 }
 void odd_move(std::vector< Scalar > & mat, Move & m) {
   Parameters * current = & m.blue_; 
+  /*
   if(m.matrix_type_ == ByCSC)
     move_parall(mat, * (current->data_color_), current->first_color_, current->second_color_, current->increment_, * (current->border_move_p_), current->border_no_move_, m.out_border, m.on_border);
   else
     move_across(mat, * (current->data_color_), current->first_color_, current->second_color_, current->increment_, * (current->border_move_p_), current->border_no_move_, m.out_border, m.on_border);
-//  m.move_active(mat, * (current->data_color_), current->first_color_, current->second_color_, current->increment_, * (current->border_move_p_), current->border_no_move_, m.out_border, m.on_border);
-//  std::swap(m.move_active, m.move_inactive);
+  */
+  m.move_active(mat, * (current->data_color_), current->first_color_, current->second_color_, current->increment_, * (current->border_move_p_), current->border_no_move_, m.out_border, m.on_border);
+  std::swap(m.move_active, m.move_inactive);
   return;
 }
 void even_move(std::vector< Scalar > & mat, Move & m) {
   Parameters * current = & m.red_; 
+  /*
   if(m.matrix_type_ == ByCSC)
     move_across(mat, * (current->data_color_), current->first_color_, current->second_color_, current->increment_, * (current->border_move_p_), current->border_no_move_, m.out_border, m.on_border);
   else
     move_parall(mat, * (current->data_color_), current->first_color_, current->second_color_, current->increment_, * (current->border_move_p_), current->border_no_move_, m.out_border, m.on_border);
-//  m.move_active(mat, * (current->data_color_), current->first_color_, current->second_color_, current->increment_, * (current->border_move_p_), current->border_no_move_, m.out_border, m.on_border);
-//  std::swap(m.move_active, m.move_inactive);
+  */
+  m.move_active(mat, * (current->data_color_), current->first_color_, current->second_color_, current->increment_, * (current->border_move_p_), current->border_no_move_, m.out_border, m.on_border);
+  std::swap(m.move_active, m.move_inactive);
   return;
 }
 void move_parall_bi(std::vector< Scalar > & mat, DataLocalColor & data_color, Scalar first_color, Scalar second_color, int increment, std::vector< std::size_t > & border_move, std::size_t border_no_move, std::vector< std::size_t > & out_border, std::vector< std::size_t > & on_border) {
