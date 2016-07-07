@@ -347,13 +347,6 @@ void copy(const std::vector< Scalar > & from, std::vector< Scalar > & to) {
     i_to = * i_from;
     ++i_from;
   }
-/*  std::cout << "from\t\t";
-  for(Scalar i : from) std::cout << i << " ";
-  std::cout << std::endl;
-  std::cout << "to\t\t";
-  for(Scalar i : to) std::cout << i << " ";
-  std::cout << std::endl;
-*/
   return;
 }
 

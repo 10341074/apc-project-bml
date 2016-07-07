@@ -101,7 +101,7 @@ int main(int argc, char ** argv){
 //        std::cout << data_global;
       }
       
-      copy(matrix_local.matrix(), data_global.matrix());
+//      copy(matrix_local.matrix(), data_global.matrix());
       std::stringstream convert;
       convert << times[interval+1];
       std::string ofname=convert.str();

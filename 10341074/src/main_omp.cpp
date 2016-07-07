@@ -50,7 +50,8 @@ int main(int argc, char ** argv){
 //  std::size_t global_remain = 0;
   std::size_t inn_size = 0;
   std::size_t ext_size = 0;
-  Matrix matrix_local;
+//  Matrix matrix_local;
+  Matrix & matrix_local = * data_global.matrix_pointer();
   
 //  std::vector< std::size_t > indices;
   MatrixType type_local;
@@ -61,8 +62,8 @@ int main(int argc, char ** argv){
   /////////////////////////////////////////////////////////////////
 
       ext_size = global_count;
-      matrix_local = Matrix(ext_size, inn_size);
-      copy(data_global.matrix(), matrix_local.matrix());
+//      matrix_local = Matrix(ext_size, inn_size);
+//      copy(data_global.matrix(), matrix_local.matrix());
     
       std::size_t white_count_g = 0;
       std::size_t blue_count_g  = 0;
@@ -104,7 +105,7 @@ int main(int argc, char ** argv){
 //        std::cout << data_global;
       }
     if(omp_get_thread_num() == 0) {
-      copy(matrix_local.matrix(), data_global.matrix());
+//      copy(matrix_local.matrix(), data_global.matrix());
       std::stringstream convert;
       convert << times[interval+1];
       std::string ofname=convert.str();

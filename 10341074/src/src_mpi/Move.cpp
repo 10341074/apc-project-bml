@@ -145,25 +145,6 @@ void move_across(std::vector< Scalar > & mat, DataLocalColor & data_color, Scala
   return;
 }
 
-Move::Move(MatrixType matrix_type, MoveType move_type, Data & data_local) : matrix_type_(matrix_type), move_type_(move_type) {
-  switch(matrix_type) {
-  case(ByCSR) :
-    move_active = move_across;
-    break;
-  case(ByCSC) :
-    move_active = move_parall;
-    break;
-  default:
-    throw std::logic_error("Move::Move not compact matrix_type");
-    break;
-  }
-  switch(move_type) {
-    case(MoveColor) :
-      break;
-    case(MoveWhite) :
-      break;
-  }
-}
 Move::Move(MatrixType matrix_type, MoveType move_type, DataLocalColor & data_white, DataLocalColor & data_blue, DataLocalColor & data_red) : matrix_type_(matrix_type), move_type_(move_type) {
   switch(move_type) {
     case(MoveColor) :
